@@ -4,7 +4,7 @@ import HorizontalShopItem from "../../components/ui/HorizontalShopItem.astro";
 import { getCollection } from "astro:content";
 
 export async function getStaticPaths({ paginate }) {
-  const items = await getCollection("store");
+  const items = await getCollection("store", ({ id }) => !id.startsWith("zh/"));
   items.sort((a, b) => b.data.updatedDate.valueOf() - a.data.updatedDate.valueOf());
   return paginate(items, { pageSize: 10 });
 }
