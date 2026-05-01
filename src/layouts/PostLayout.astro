@@ -3,6 +3,7 @@ import { type BlogSchema } from "../content/config";
 import BaseLayout from "./BaseLayout.astro";
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
+import { getRelativeLocaleUrl } from "astro:i18n";
 
 export interface Props extends BlogSchema {}
 
@@ -23,7 +24,7 @@ import { Image } from "astro:assets";
       {
         tags &&
           tags.map((tag) => (
-            <a href={`/blog/tag/${tag}`} class="badge badge-outline ml-2 no-underline">
+            <a href={getRelativeLocaleUrl(Astro.currentLocale || "en", `blog/tag/${tag}`)} class="badge badge-outline ml-2 no-underline">
               {tag}
             </a>
           ))

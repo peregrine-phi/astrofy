@@ -1,31 +1,33 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
-import HorizontalCard from "../components/ui/HorizontalCard.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import HorizontalCard from "../../components/ui/HorizontalCard.astro";
 import { getCollection } from "astro:content";
-import createSlug from "../lib/createSlug"
+import createSlug from "../../lib/createSlug";
 
-const posts = (await getCollection("blog")).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const posts = (await getCollection("blog")).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
 
 const last_posts = posts.slice(0, 3);
 ---
 
 <BaseLayout sideBarActiveItemID="home">
   <div class="pb-12 mt-5">
-    <div class="text-xl py-1">Hey there 👋</div>
-    <div class="text-5xl font-bold">I'm Peregrine Wang</div>
+    <div class="text-xl py-1">你好 👋</div>
+    <div class="text-5xl font-bold">我是 悠道</div>
     <div class="text-3xl py-3 font-bold">Full Stack Lifeplayer</div>
     <div class="py-2">
-      <text class="text-lg">
-        Commorandi enim natura deversorium nobis, non habitandi dedit.
-      </text>
+      <text class="text-lg"> 天地者，萬物之逆旅。光陰者，百代之過客。 </text>
     </div>
     <div class="mt-8">
-      <a class="btn" href="https://peregrinlog.restin.icu/" target="_blank"> Digital Garden</a>
+      <a class="btn" href="https://peregrinlog.restin.icu/" target="_blank">
+        数字花园</a
+      >
     </div>
   </div>
 
   <div>
-    <div class="text-3xl w-full font-bold mb-2">My last projects {"</>"}</div>
+    <div class="text-3xl w-full font-bold mb-2">我的最新项目 {"</>"}</div>
   </div>
 
   <HorizontalCard
@@ -52,7 +54,7 @@ const last_posts = posts.slice(0, 3);
   />
 
   <div>
-    <div class="text-3xl w-full font-bold mb-5 mt-10">Latest from blog</div>
+    <div class="text-3xl w-full font-bold mb-5 mt-10">最新博客</div>
   </div>
 
   {
