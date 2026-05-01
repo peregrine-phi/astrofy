@@ -3,5 +3,5 @@
 
 export const SITE_TITLE = 'Peregrine Wang | Digital Garden';
 export const SITE_DESCRIPTION = 'Full Stack Lifeplayer - Digital Garden';
-export const GENERATE_SLUG_FROM_TITLE = true
+export const GENERATE_SLUG_FROM_TITLE = false
 export const TRANSITION_API = true
