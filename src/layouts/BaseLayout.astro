@@ -9,18 +9,25 @@ import { SITE_TITLE, SITE_DESCRIPTION, TRANSITION_API } from "../config";
 
 const {
   image,
-  title = SITE_TITLE,
-  description = SITE_DESCRIPTION,
+  title,
+  description,
   includeSidebar = true,
   sideBarActiveItemID,
   ogType,
 } = Astro.props;
+
+const isZh = Astro.currentLocale === "zh";
+const defaultTitle = isZh ? "悠道 | 数字花园" : SITE_TITLE;
+const defaultDescription = isZh ? "Full Stack Lifeplayer - 悠道的数字花园" : SITE_DESCRIPTION;
+
+const finalTitle = title || defaultTitle;
+const finalDescription = description || defaultDescription;
 ---
 
 <!doctype html>
 <html lang={Astro.currentLocale || "en"} data-theme="lofi">
   <head>
-    <BaseHead title={title} description={description} image={image} , ogType={ogType} />
+    <BaseHead title={finalTitle} description={finalDescription} image={image} , ogType={ogType} />
     {TRANSITION_API && <ViewTransitions />}
   </head>
   <body>

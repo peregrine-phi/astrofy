@@ -1,12 +1,11 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import HorizontalCard from "../../components/ui/HorizontalCard.astro";
+import SectionHeader from "../../components/ui/SectionHeader.astro";
 ---
 
-<BaseLayout title = "Projects" sideBarActiveItemID="projects">
-  <div>
-    <div class="text-3xl w-full font-bold mb-5">Projects Header</div>
-  </div>
+<BaseLayout title = "项目" sideBarActiveItemID="projects">
+  <SectionHeader title="项目展示" />
 
   <HorizontalCard
     title="Demo Project 1"
@@ -23,9 +22,7 @@ import HorizontalCard from "../../components/ui/HorizontalCard.astro";
     url="#"
   />
 
-  <div>
-    <div class="text-3xl w-full font-bold mb-5 mt-10">Projects Header</div>
-  </div>
+  <SectionHeader title="项目展示" class="mb-5 mt-10" />
 
   <HorizontalCard
     title="Demo Project 3"

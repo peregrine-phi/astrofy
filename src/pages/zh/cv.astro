@@ -1,12 +1,11 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import TimeLineElement from "../../components/cv/TimeLine.astro";
+import SectionHeader from "../../components/ui/SectionHeader.astro";
 ---
 
-<BaseLayout title="Resume" sideBarActiveItemID="cv">
-  <div class="mb-5">
-    <div class="text-3xl w-full font-bold">Profile</div>
-  </div>
+<BaseLayout title="简历" sideBarActiveItemID="cv">
+  <SectionHeader title="个人简介" />
 
   <div class="mb-10 text-justify">
     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
@@ -15,9 +14,7 @@ import TimeLineElement from "../../components/cv/TimeLine.astro";
     cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
   </div>
 
-  <div class="mb-5">
-    <div class="text-3xl w-full font-bold">Education</div>
-  </div>
+  <SectionHeader title="教育背景" />
 
   <div class="time-line-container grid gap-4 mb-10">
     <TimeLineElement
@@ -30,9 +27,7 @@ import TimeLineElement from "../../components/cv/TimeLine.astro";
     />
   </div>
 
-  <div class="mb-5">
-    <div class="text-3xl w-full font-bold">Experience</div>
-  </div>
+  <SectionHeader title="工作经验" />
 
   <div class="time-line-container mb-10">
     <TimeLineElement
@@ -55,9 +50,7 @@ import TimeLineElement from "../../components/cv/TimeLine.astro";
     </TimeLineElement>
   </div>
 
-  <div class="mb-5">
-    <div class="text-3xl w-full font-bold">Certifications</div>
-  </div>
+  <SectionHeader title="证书资质" />
 
   <ul class="list-disc mx-6 mb-10 grid gap-2">
     <li>
@@ -68,9 +61,7 @@ import TimeLineElement from "../../components/cv/TimeLine.astro";
     </li>
   </ul>
 
-  <div class="mb-5">
-    <div class="text-3xl w-full font-bold">Skills</div>
-  </div>
+  <SectionHeader title="技能专长" />
 
   <ul class="list-disc md:columns-5 columns-2 mx-6">
     <li>Skill Name</li>

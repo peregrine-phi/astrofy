@@ -55,5 +55,23 @@ src/
 * 没有状态和布局依赖，只负责渲染外观（如卡片、标签）的纯组件，放入 `components/ui/`。
 * 决定网站骨架的导航条、侧边栏，放入 `components/layout/`。
 
+### 4. SEO 优化与 Bing 指南 (SEO & Bing Optimization)
+为了解决 Bing 等搜索引擎“已抓取但未索引”的问题，并提升多语言站点的排名：
+* **规范标签与多语言关联**：`BaseHead.astro` 中已集成自动化的 `canonical` 和 `hreflang` 标签。这些标签会根据当前路径自动映射对应的中英文版本，确保搜索引擎理解页面间的语言对应关系，避免重复内容惩罚。
+* **结构化数据 (JSON-LD)**：网站头部包含 `Person` 和 `WebSite` 类型的 JSON-LD。这有助于搜索引擎识别个人档案站点的身份和职业信息，从而提供富摘要展示。
+* **默认元数据本地化**：`BaseLayout.astro` 内部实现了语言感知的默认标题和描述逻辑。如果你在 `zh/` 目录下创建新页面，它将自动采用中文 SEO 信息，除非你在调用 `BaseLayout` 时显式传入参数。
+
+### 5. UI 一致性：SectionHeader 组件
+为了保持页面章节风格高度统一，所有页面的二级标题（如“项目展示”、“教育背景”）必须使用 `SectionHeader` 组件，严禁直接手写 `div` 或 `h2` 标签。
+* **用法示例**：
+  ```astro
+  import SectionHeader from "../components/ui/SectionHeader.astro";
+  
+  <SectionHeader title="我的项目" />
+  <!-- 如需自定义间距（如顶部预留 10 个单位） -->
+  <SectionHeader title="最新博客" class="mb-5 mt-10" />
+  ```
+* **维护建议**：`SectionHeader` 默认包含 `mb-5` (下边距)。如果需要调整全站章节标题的大小或样式，只需修改 `src/components/ui/SectionHeader.astro` 即可实现全局生效。
+
 ---
 > 提示：执行 `pnpm run build` 前，请确保你已经使用 Astro 的 `getRelativeLocaleUrl` 修复了新添加的链接路径，防止语言互相跳转出现 404。
