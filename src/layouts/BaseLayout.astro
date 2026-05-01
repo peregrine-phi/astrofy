@@ -14,6 +14,9 @@ const {
   includeSidebar = true,
   sideBarActiveItemID,
   ogType,
+  noindex,
+  pubDate,
+  updatedDate,
 } = Astro.props;
 
 const isZh = Astro.currentLocale === "zh";
@@ -27,7 +30,7 @@ const finalDescription = description || defaultDescription;
 <!doctype html>
 <html lang={Astro.currentLocale || "en"} data-theme="lofi">
   <head>
-    <BaseHead title={finalTitle} description={finalDescription} image={image} , ogType={ogType} />
+    <BaseHead title={finalTitle} description={finalDescription} image={image} ogType={ogType} noindex={noindex} pubDate={pubDate} updatedDate={updatedDate} />
     {TRANSITION_API && <ViewTransitions />}
   </head>
   <body>

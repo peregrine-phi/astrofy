@@ -1,4 +1,9 @@
 User-agent: *
 Allow: /
 
+# Exclude low-value / duplicate pages from crawling
+Disallow: /blog/tag/
+Disallow: /zh/blog/tag/
+Disallow: /404
+
 Sitemap: https://peregrinewang.me/sitemap-index.xml

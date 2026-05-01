@@ -8,6 +8,9 @@ export interface Props {
   description: string;
   image?: string;
   ogType?: string;
+  noindex?: boolean;
+  pubDate?: Date;
+  updatedDate?: Date;
 }
 
 const {
@@ -15,6 +18,9 @@ const {
   description,
   image = "/social_img.webp",
   ogType = "website",
+  noindex = false,
+  pubDate,
+  updatedDate,
 } = Astro.props;
 ---
 
@@ -23,6 +29,8 @@ const {
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <link rel="icon" type="image/x-icon" href="/favicon.ico" />
 <meta name="generator" content={Astro.generator} />
+
+{noindex && <meta name="robots" content="noindex, follow" />}
 
 <!-- Canonical URL -->
 <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
@@ -90,3 +98,23 @@ const {
     description: description,
   })}
 />
+
+{ogType === 'article' && (
+  <script
+    type="application/ld+json"
+    set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: title,
+      description: description,
+      image: [new URL(image, Astro.url)],
+      datePublished: pubDate?.toISOString(),
+      dateModified: updatedDate?.toISOString() || pubDate?.toISOString(),
+      author: [{
+          "@type": "Person",
+          "name": "Peregrine Wang",
+          "url": Astro.site
+        }]
+    })}
+  />
+)}
