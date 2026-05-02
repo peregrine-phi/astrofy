@@ -61,7 +61,7 @@ const last_posts = posts.slice(0, 3);
           title={post.data.title}
           img={post.data.heroImage}
           desc={post.data.description}
-          url={"/zh/blog/" + createSlug(post.data.title, post.slug)}
+          url={"/zh/blog/" + createSlug(post.data.title, post.slug).replace(/^zh\//, "")}
           target="_self"
           badge={post.data.badge}
         />

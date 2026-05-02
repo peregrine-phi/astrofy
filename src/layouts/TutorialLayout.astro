@@ -1,19 +1,16 @@
 ---
-import { type StoreSchema } from "../content/config";
+import { type TutorialSchema } from "../content/config";
 import BaseLayout from "./BaseLayout.astro";
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 
-export interface Props extends StoreSchema {}
+export interface Props extends TutorialSchema {}
 
 const {
   title,
   description,
   updatedDate,
   heroImage,
-  pricing,
-  oldPricing,
-  checkoutUrl,
   badge,
   custom_link,
   custom_link_label,
@@ -39,18 +36,16 @@ import { Image } from "astro:assets";
         </h1>
         <div class="flex place-content-between items-center">
           <div class="grow md:grow-0">
-            <span class="text-xl mr-1"> {pricing}</span>
-            <span class="text-md opacity-50 line-through">{oldPricing}</span>
+            {updatedDate && <span class="text-sm opacity-70">Updated: {displayDate}</span>}
           </div>
           <div>
             {
               custom_link && (
-                <a class="btn btn-outline grow md:grow-0 ml-4" href={custom_link} target="_blank">
-                  {custom_link_label}
+                <a class="btn btn-primary grow md:grow-0 ml-4" href={custom_link} target="_blank">
+                  {custom_link_label || "View Tutorial"}
                 </a>
               )
             }
-            <a class="btn btn-primary grow md:grow-0 ml-4" href={checkoutUrl} target="_blank">Buy Now</a>
           </div>
         </div>
       </div>

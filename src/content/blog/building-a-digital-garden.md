@@ -1,12 +1,14 @@
 ---
-title: "Building a Digital Garden with Astro"
-description: "A reflection on why I chose Astro to build my personal site and how the concept of a digital garden shaped the way I think about writing online."
-pubDate: "May 01 2026"
-heroImage: "/post_img.webp"
-badge: "NEW"
-tags: ["astro", "web", "digital-garden"]
+title: Building a Digital Garden with Astro
+description: A reflection on why I chose Astro to build my personal site and how the concept of a digital garden shaped the way I think about writing online.
+pubDate: May 01 2026
+heroImage: /post_img.webp
+badge: NEW
+tags:
+  - astro
+  - web
+  - digital-garden
 ---
-
 ## Why a Digital Garden?
 
 The internet is full of blogs. Most of them follow a familiar pattern: reverse-chronological posts, polished prose, and the implicit pressure to publish something *complete*. But what if writing didn't have to be like that?
@@ -42,7 +44,7 @@ Building in public teaches you things no tutorial can:
 
 ## What's Next?
 
-I'm planning to expand the garden with more notes on systems programming, philosophy, and the intersection of technology and human experience. Stay tuned.
+I'm planning to expand the garden with more notes on philosophy, and the intersection of technology and human experience. Stay tuned.
 
 > *"天地者，萬物之逆旅。光陰者，百代之過客。"*
 > — Li Bai
