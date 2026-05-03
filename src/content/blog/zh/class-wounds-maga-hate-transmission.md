@@ -7,6 +7,7 @@ badge: New
 tags:
   - Politics
 slug: class-wounds-maga-hate-transmission
+block_region: CN
 ---
 *作者说明：本文由用户提出主题与论证方向，M365 Copilot 与 Gemini App 辅助起草、整理和润色。*
 
