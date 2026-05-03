@@ -18,7 +18,12 @@ const {
   noindex,
   pubDate,
   updatedDate,
+  block_region,
 } = Astro.props;
+
+if (block_region) {
+  Astro.response.headers.set("X-Block-Region", block_region);
+}
 
 const isZh = Astro.currentLocale === "zh";
 const defaultTitle = isZh ? "悠道 | 数字花园" : SITE_TITLE;

@@ -23,6 +23,7 @@ const tutorialSchema = z.object({
     badge: z.string().optional(),
     checkoutUrl: z.string().optional(),
     heroImage: z.string().optional(),
+    block_region: z.string().optional(),
 });
 
 export type BlogSchema = z.infer<typeof blogSchema>;

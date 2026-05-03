@@ -75,6 +75,9 @@ export const onRequest: PagesFunction = async (context) => {
     newHeaders.delete("Content-Length");
   }
 
+  // 移除内部使用的辅助头，避免暴露给客户端
+  newHeaders.delete("X-Block-Region");
+
   // 返回重建的响应，确保流和头信息正确结合
   return new Response(finalResponse.body, {
     status: finalResponse.status,

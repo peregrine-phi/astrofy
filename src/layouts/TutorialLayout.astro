@@ -14,6 +14,7 @@ const {
   badge,
   custom_link,
   custom_link_label,
+  block_region,
 } = Astro.props;
 
 dayjs.extend(localizedFormat);
@@ -22,8 +23,8 @@ import { Image } from "astro:assets";
 import Comments from "../components/ui/Comments.astro";
 ---
 
-<BaseLayout title={title} description={description} image={heroImage} updatedDate={updatedDate}>
-  <main class="md:flex md:justify-center">
+<BaseLayout title={title} description={description} image={heroImage} updatedDate={updatedDate} block_region={block_region}>
+  <main class="md:flex md:justify-center" data-block-region={block_region}>
     <article class="prose prose-lg max-w-[750px] prose-img:mx-auto">
       {
         heroImage && (
