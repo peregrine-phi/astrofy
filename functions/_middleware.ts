@@ -12,15 +12,19 @@ export const onRequest: PagesFunction = async (context) => {
 
   // 如果是中国大陆用户，进行边缘侧内容清理
   if (country === 'CN') {
-    // @ts-ignore - HTMLRewriter 是 Cloudflare Pages 的原生全局变量
+    // 智能重定向：如果是访问英文首页，自动跳转到中文首页
+    const url = new URL(context.request.url);
+    if (url.pathname === '/') {
+      return Response.redirect(new URL('/zh/', url.origin), 302);
+    }
+
+    // @ts-ignore
     const rewriter = new HTMLRewriter()
-      // 1. 删除所有标记为 CN 屏蔽的元素
       .on('[data-block-region="CN"]', {
         element(element) {
           element.remove();
         },
       })
-      // 2. 详情页特殊处理
       .on('main[data-block-region="CN"]', {
         element(element) {
           element.setInnerContent(
@@ -30,8 +34,15 @@ export const onRequest: PagesFunction = async (context) => {
         }
       });
 
-    return rewriter.transform(response);
+    const newResponse = rewriter.transform(response);
+    // 注入安全头
+    newResponse.headers.set("X-Content-Type-Options", "nosniff");
+    newResponse.headers.set("X-Frame-Options", "SAMEORIGIN");
+    return newResponse;
   }
 
+  // 即使是非 CN 用户也注入安全头
+  response.headers.set("X-Content-Type-Options", "nosniff");
+  response.headers.set("X-Frame-Options", "SAMEORIGIN");
   return response;
 };
