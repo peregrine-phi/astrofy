@@ -81,5 +81,19 @@ src/
   * **未来扩展**：若需全站统一色值抽象，建议在 `src/styles/` 下定义 CSS Variables，并在组件中通过 `var(--your-variable)` 引用。
 * **i18n 策略**：评论区根据 `Astro.currentLocale` 自动切换语言界面，并使用 `window.location.pathname` 确保中英文页面的评论相互独立。
 
+### 7. 布局一致性与全局容器规则 (Layout Consistency)
+在维护页面布局时，需注意 `BaseLayout` 提供的基础容器约束：
+* **BaseLayout 容器行为**：`BaseLayout.astro` 的 `main` 标签定义了全局内容的最大宽度 `lg:max-w-[900px]`。
+* **宽度补丁 (Width Patch)**：为了防止页面在内容较少（如只有标题或少量文字）时因 Flex 布局特性而收缩并导致非预期的居中（尤其是在宽屏下），`main` 标签已显式添加 `w-full`。这确保了内容始终在 900px 的逻辑范围内左对齐。
+* **特殊宽度 (Individual Posts)**：博客正文（`PostLayout`）和教程正文（`TutorialLayout`）为了提升阅读体验，在 `BaseLayout` 内部又包裹了一层 `max-w-[750px] mx-auto` 的居中容器。在新增自定义展示页时，需明确选择是跟随“列表页（900px 左对齐）”还是“内容页（750px 居中）”的风格。
+
+### 8. 板块演进：从商业向“数字花园”转型
+网站已完成从传统简历/外包展示向“数字花园”风格的迁移：
+* **隐藏 CV 入口**：CV 页面虽保留，但已通过移除导航栏入口、页面添加 `noindex: true` 属性以及在 `astro.config.mjs` 中配置 `sitemap` 过滤，实现了对普通访客和搜索引擎的“深度隐藏”。
+* **自定义板块替换**：
+    - **Gallery (画廊)**：取代了原有的 `Services`。
+    - **Neighbors (邻居)**：取代了原有的 `Projects`。
+* **同步维护**：修改此类核心板块时，必须同步更新 `src/i18n/ui.ts` 字典、`src/components/layout/SideBarMenu.astro` 链接，以及 `src/pages/` 与 `src/pages/zh/` 下的对应物理文件。
+
 ---
 > 提示：执行 `pnpm run build` 前，请确保你已经使用 Astro 的 `getRelativeLocaleUrl` 修复了新添加的链接路径，防止语言互相跳转出现 404。

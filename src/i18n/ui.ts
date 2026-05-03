@@ -8,8 +8,8 @@ export const defaultLang = 'en';
 export const ui = {
   en: {
     'nav.home': 'Home',
-    'nav.projects': 'Projects',
-    'nav.services': 'Services',
+    'nav.gallery': 'Gallery',
+    'nav.neighbors': 'Neighbors',
     'nav.store': 'Tutorials',
     'nav.blog': 'Blog',
     'nav.cv': 'CV',
@@ -17,8 +17,8 @@ export const ui = {
   },
   zh: {
     'nav.home': '主页',
-    'nav.projects': '项目',
-    'nav.services': '服务',
+    'nav.gallery': '画廊',
+    'nav.neighbors': '邻居',
     'nav.store': '教程',
     'nav.blog': '博客',
     'nav.cv': '简历',

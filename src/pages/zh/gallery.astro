@@ -1,0 +1,35 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import HorizontalCard from "../../components/ui/HorizontalCard.astro";
+---
+
+<BaseLayout title="画廊" sideBarActiveItemID="gallery">
+  <div class="mb-5">
+    <div class="text-3xl w-full font-bold">画廊</div>
+  </div>
+
+  <p class="mb-10 text-justify">
+    欢迎来到我的画廊。在这里，我分享生活中的视觉瞬间和灵感。
+  </p>
+
+  <ul>
+    <li>
+      <HorizontalCard
+        title="瞬间 1"
+        img="/post_img.webp"
+        desc="关于这个视觉瞬间的简短描述。"
+        url="/zh/gallery"
+      />
+      <div class="divider my-0" />
+    </li>
+    <li>
+      <HorizontalCard
+        title="瞬间 2"
+        img="/post_img.webp"
+        desc="另一个被捕捉到的瞬间。"
+        url="/zh/gallery"
+      />
+      <div class="divider my-0" />
+    </li>
+  </ul>
+</BaseLayout>
