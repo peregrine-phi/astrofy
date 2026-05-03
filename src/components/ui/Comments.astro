@@ -1,7 +1,7 @@
 ---
 /**
- * Comments.astro - Minimalist & Integrated Version
- * 评论组件 - 极简主义集成方案，彻底消除“嵌套感”
+ * Comments.astro - Universal Theme Compatible Version
+ * 评论组件 - 彻底修复深色模式下的“白块”问题，实现全主题完美适配
  */
 
 const { title } = Astro.props;
@@ -20,13 +20,10 @@ const ARTALK_SITE = "Peregrine";
   </div>
 
   <div class="comments-wrapper relative min-h-[250px]">
-    <!-- 精简骨架屏 -->
     <div id="ArtalkSkeleton" class="absolute inset-0 flex flex-col gap-6 w-full transition-opacity duration-700 z-10">
       <div class="skeleton h-32 w-full opacity-10 rounded-2xl"></div>
       <div class="skeleton h-20 w-full opacity-5 rounded-2xl"></div>
     </div>
-
-    <!-- 评论区容器 -->
     <div id="ArtalkComments" class="opacity-0 transition-all duration-1000 relative z-20"></div>
   </div>
 </div>
@@ -53,7 +50,6 @@ const ARTALK_SITE = "Peregrine";
     artalk.on('list-loaded', () => {
       const skeleton = document.getElementById("ArtalkSkeleton");
       const comments = document.getElementById("ArtalkComments");
-      
       if (skeleton) {
         skeleton.classList.add("opacity-0");
         setTimeout(() => skeleton.style.display = 'none', 700); 
@@ -64,43 +60,44 @@ const ARTALK_SITE = "Peregrine";
       }
     });
   }
-
   document.addEventListener("astro:page-load", initArtalk);
 </script>
 
 <style is:global>
-  /* 基础变量重写 */
+  /* 全局变量覆盖 - 确保 Artalk 核心颜色变量跟随 DaisyUI */
   :root {
     --at-color-main: oklch(var(--p)) !important;
     --at-color-bg: transparent !important;
-    --at-color-border: oklch(var(--bc) / 0.08) !important;
+    --at-color-border: oklch(var(--bc) / 0.1) !important;
     --at-color-font: oklch(var(--bc)) !important;
     --at-color-deep: oklch(var(--b2)) !important;
     --at-color-sub: oklch(var(--bc) / 0.5) !important;
   }
 
-  /* 彻底消除外部容器感，让 Artalk 直接融入页面背景 */
-  .comments-wrapper {
-    @apply px-0;
+  /* 彻底修复深色模式白块问题 */
+  #ArtalkComments, 
+  .atk-main-editor, 
+  .atk-textarea, 
+  .atk-editor-container,
+  .atk-header input {
+    background-color: transparent !important;
+    color: oklch(var(--bc)) !important;
   }
 
-  /* 编辑器区域美化 */
   .atk-main-editor {
-    @apply border border-base-content/5 bg-base-content/[0.02] rounded-3xl p-4 transition-all duration-500 focus-within:bg-base-100 focus-within:shadow-xl focus-within:shadow-base-content/5 !important;
+    @apply border border-base-content/10 bg-base-content/[0.02] rounded-3xl p-4 transition-all duration-500 focus-within:bg-base-content/[0.05] focus-within:border-primary/30 !important;
     box-shadow: none !important;
   }
 
-  /* 昵称/邮箱/网址 输入框：改为极简下划线风格 */
-  .atk-header {
-    @apply flex flex-wrap gap-2 mb-4 !important;
+  /* 输入框焦点样式 */
+  .atk-header input {
+    @apply border-b border-base-content/10 transition-all focus:border-primary !important;
+    border-radius: 0 !important;
   }
 
-  .atk-header input {
-    @apply bg-transparent border-b border-base-content/10 px-2 py-2 text-sm transition-all focus:border-primary !important;
-    border-top: none !important;
-    border-left: none !important;
-    border-right: none !important;
-    border-radius: 0 !important;
+  /* 解决 Textarea 默认背景 */
+  .atk-textarea {
+    @apply py-4 min-h-[120px] !important;
   }
 
   /* 发送按钮 */
@@ -108,35 +105,32 @@ const ARTALK_SITE = "Peregrine";
     @apply btn btn-primary btn-md rounded-2xl px-10 border-none transition-all shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 !important;
   }
 
-  /* 评论列表 */
-  .atk-list {
-    @apply mt-12 !important;
-  }
-
+  /* 评论卡片样式 */
   .atk-comment-wrap {
-    @apply border-none bg-base-content/[0.01] mb-4 p-6 rounded-3xl transition-colors hover:bg-base-content/[0.03] !important;
+    @apply border-none bg-base-content/[0.02] mb-4 p-6 rounded-3xl transition-colors hover:bg-base-content/[0.04] !important;
   }
 
   .atk-avatar img {
-    @apply rounded-2xl !important;
+    @apply rounded-2xl shadow-sm !important;
   }
 
-  /* 修正所有残留的蓝色 */
-  .atk-content a, .atk-nick, .atk-item.active, .atk-layer-wrap a {
+  /* 修正下拉列表和弹出层背景 */
+  .atk-layer-wrap {
+    @apply rounded-2xl shadow-2xl border border-base-content/10 backdrop-blur-2xl bg-base-200/95 !important;
+    color: oklch(var(--bc)) !important;
+  }
+
+  .atk-list-no-comment {
+    @apply opacity-30 italic !important;
+  }
+
+  /* 修正所有残留链接色 */
+  .atk-content a, .atk-nick, .atk-item.active, .atk-layer-wrap a, .atk-comment-count {
     color: oklch(var(--p)) !important;
   }
 
+  /* 修正底部版权信息 */
   .atk-footer, .atk-power {
-    @apply opacity-30 text-[10px] grayscale transition-all hover:opacity-100 hover:grayscale-0 !important;
-  }
-
-  /* 下拉菜单和弹出层 */
-  .atk-layer-wrap {
-    @apply rounded-2xl shadow-2xl border border-base-content/10 backdrop-blur-xl bg-base-100/90 !important;
-  }
-
-  /* 适配暗色模式 */
-  [data-theme="dark"] .atk-main-editor {
-    @apply bg-white/[0.03] focus-within:bg-neutral !important;
+    @apply opacity-20 text-[10px] grayscale transition-all hover:opacity-100 hover:grayscale-0 !important;
   }
 </style>
