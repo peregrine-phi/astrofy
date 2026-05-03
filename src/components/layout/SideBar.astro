@@ -4,6 +4,8 @@ import { Image } from "astro:assets";
 import SideBarMenu from "./SideBarMenu.astro";
 import { getRelativeLocaleUrl } from "astro:i18n";
 import LanguagePicker from "../ui/LanguagePicker.astro";
+import ThemeSelector from "../ui/ThemeSelector.astro";
+
 
 const { sideBarActiveItemID } = Astro.props;
 const lang = Astro.currentLocale || "en";
@@ -22,7 +24,14 @@ const lang = Astro.currentLocale || "en";
       </a>
     </div>
     <SideBarMenu sideBarActiveItemID={sideBarActiveItemID} />
-    <LanguagePicker />
+    <div class="grow"></div>
+    
+    <div class="flex items-center justify-center gap-2 mb-2 px-4">
+      <LanguagePicker />
+      <div class="divider divider-horizontal m-0 w-1 opacity-20"></div>
+      <ThemeSelector />
+    </div>
+
     <SideBarFooter />
   </aside>
 </div>

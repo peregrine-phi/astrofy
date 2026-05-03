@@ -35,8 +35,8 @@ const day = today.getDate();
 let loaderColor = "oklch(var(--p))"; // Default daisyUI primary (v4 uses oklch!)
 let loaderHeight = "2px";
 
-if (month === 6) {
-  // Pride Month Rainbow
+if (month === 6 || month === 5) {
+  // Pride Month & Testing (May/June) Rainbow
   loaderColor = "linear-gradient(90deg, #ff0000, #ff8700, #ffd300, #deff0a, #a1ff0a, #0aff99, #0aefff, #147df5, #580aff, #be0aff)";
 } else if (month === 3 && day === 8) {
   // Women's Day Purple
@@ -53,10 +53,22 @@ if (month === 6) {
 ---
 
 <!doctype html>
-<html lang={Astro.currentLocale || "en"} data-theme="lofi">
+<html lang={Astro.currentLocale || "en"}>
   <head>
     <BaseHead title={finalTitle} description={finalDescription} image={image} ogType={ogType} noindex={noindex} pubDate={pubDate} updatedDate={updatedDate} />
     {TRANSITION_API && <ViewTransitions />}
+    
+    {/* Theme initialization script - runs before any rendering to prevent FOUC */}
+    <script is:inline>
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      } else {
+        // Default theme if none saved
+        document.documentElement.setAttribute('data-theme', 'lofi');
+      }
+    </script>
+
     
     {/* 将进度条组件移至 head 中，防止 View Transitions 导致重复初始化 */}
     <LoadingIndicator color="transparent" height={loaderHeight} threshold={0} />

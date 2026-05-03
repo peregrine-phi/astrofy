@@ -1,44 +1,49 @@
 ---
 /**
- * Comments.astro
- * 评论组件 - 基于 Artalk
- *
- * 颜色抽象化说明：
- * 本组件使用的颜色变量已提取至底部的 <style> 块中。
- * 未来如需全局统一调整颜色，可将这些变量迁移至 src/styles/variables.css 或通过 Tailwind 配置管理。
+ * Comments.astro - Premium Refined Version
+ * 评论组件 - 深度适配 DaisyUI 主题系统
  */
 
 const { title } = Astro.props;
 const lang = Astro.currentLocale === "zh" ? "zh-CN" : "en";
 
-// 这里的 server 地址建议后续通过环境变量或 config.ts 统一管理
-const ARTALK_SERVER = "https://comment.peregrinewang.me"; // 请替换为你的实际后端地址
+const ARTALK_SERVER = "https://comment.peregrinewang.me";
 const ARTALK_SITE = "Peregrine";
 ---
 
-<div class="divider my-10"></div>
+<div class="divider my-16 opacity-30"></div>
 
-<div class="comments-container relative min-h-[200px]">
-  <!-- 骨架屏 Loading 状态 -->
-  <div id="ArtalkSkeleton" class="absolute inset-0 p-6 flex flex-col gap-4 w-full transition-opacity duration-500 z-10">
-    <div class="skeleton h-24 w-full opacity-50"></div>
-    <div class="skeleton h-4 w-28 opacity-50 mt-2"></div>
-    <div class="skeleton h-4 w-full opacity-50"></div>
-    <div class="skeleton h-4 w-3/4 opacity-50"></div>
+<div class="comments-section max-w-full">
+  <div class="flex items-center gap-2 mb-8 px-2">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-50"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    <h2 class="text-xl font-bold opacity-80">{lang === 'zh-CN' ? '交流与反馈' : 'Comments'}</h2>
   </div>
 
-  <!-- 评论区容器，初始透明，加载完成后淡入 -->
-  <div id="ArtalkComments" class="opacity-0 transition-opacity duration-500 relative z-20"></div>
+  <div class="comments-container relative min-h-[250px]">
+    <!-- 骨架屏 Loading 状态 -->
+    <div id="ArtalkSkeleton" class="absolute inset-0 p-8 flex flex-col gap-6 w-full transition-opacity duration-700 z-10">
+      <div class="skeleton h-32 w-full opacity-20 rounded-2xl"></div>
+      <div class="flex gap-4 items-center">
+        <div class="skeleton w-12 h-12 rounded-full shrink-0 opacity-20"></div>
+        <div class="flex flex-col gap-2 w-full">
+          <div class="skeleton h-4 w-32 opacity-20"></div>
+          <div class="skeleton h-4 w-full opacity-20"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 评论区容器 -->
+    <div id="ArtalkComments" class="opacity-0 transition-all duration-700 translate-y-4 relative z-20"></div>
+  </div>
 </div>
 
-<!-- Artalk Assets -->
 <link href={`${ARTALK_SERVER}/dist/Artalk.css`} rel="stylesheet" />
 <script src={`${ARTALK_SERVER}/dist/Artalk.js`} is:inline></script>
 
 <script is:inline define:vars={{ ARTALK_SERVER, ARTALK_SITE, lang, title }}>
-  document.addEventListener("astro:page-load", () => {
+  function initArtalk() {
     const el = document.getElementById("ArtalkComments");
-    if (!el) return;
+    if (!el || el.classList.contains('artalk-initialized')) return;
 
     const artalk = Artalk.init({
       el: "#ArtalkComments",
@@ -48,77 +53,80 @@ const ARTALK_SITE = "Peregrine";
       site: ARTALK_SITE,
       darkMode: "auto",
       locale: lang,
-      pv: true, // 统计阅读量
+      pv: true,
     });
 
-    // 监听加载完成事件，隐藏骨架屏，显示评论区
     artalk.on('list-loaded', () => {
       const skeleton = document.getElementById("ArtalkSkeleton");
       const comments = document.getElementById("ArtalkComments");
       
       if (skeleton) {
         skeleton.classList.add("opacity-0");
-        // 等待淡出动画结束后彻底隐藏，防止遮挡点击
-        setTimeout(() => skeleton.style.display = 'none', 500); 
+        setTimeout(() => skeleton.style.display = 'none', 700); 
       }
       if (comments) {
         comments.classList.remove("opacity-0");
+        comments.classList.remove("translate-y-4");
+        comments.classList.add("artalk-initialized");
       }
     });
-  });
+  }
+
+  // 支持 View Transitions
+  document.addEventListener("astro:page-load", initArtalk);
 </script>
 
 <style is:global>
-  /* 颜色抽象化 Token (Color Abstraction Tokens) */
+  /* 动态色彩变量 - 完美适配 DaisyUI 主题 */
   :root {
-    /* 适配 lofi 主题：将蓝色主色调改为黑色/深灰色 */
-    --at-color-main: theme("colors.base-content") !important; 
+    --at-color-main: oklch(var(--p)) !important; /* 跟随主题主色 */
     --at-color-bg: transparent !important;
-    --at-color-border: theme("colors.base-300") !important;
-    --at-color-font: theme("colors.base-content") !important;
+    --at-color-border: oklch(var(--bc) / 0.1) !important;
+    --at-color-font: oklch(var(--bc)) !important;
+    --at-color-deep: oklch(var(--b2)) !important;
+    --at-color-sub: oklch(var(--bc) / 0.6) !important;
   }
 
   .comments-container {
-    @apply mt-16 p-8 rounded-3xl border border-base-200 bg-base-100/40 backdrop-blur-md shadow-xl shadow-base-content/5 transition-all duration-300;
+    @apply p-1 md:p-6 rounded-[2.5rem] border border-base-content/5 bg-base-100/30 backdrop-blur-2xl transition-all duration-500 hover:border-base-content/10;
   }
 
-  /* 深度美化 Artalk 内部元素 */
   #ArtalkComments {
-    --at-color-deep: theme("colors.base-200") !important;
-    --at-color-sub: theme("colors.base-content / 0.6") !important;
-    --at-font-family: theme("fontFamily.sans") !important;
+    --at-font-family: inherit !important;
   }
 
-  /* 输入框美化：去除生硬边框，增加悬浮感 */
+  /* 深度精致化 UI */
   .atk-main-editor {
-    @apply border-none bg-base-200/50 rounded-2xl p-2 transition-all duration-300 focus-within:bg-base-200 !important;
+    @apply border-none bg-base-content/5 rounded-3xl p-3 transition-all duration-300 focus-within:bg-base-content/[0.08] focus-within:shadow-inner !important;
   }
 
   .atk-header input {
-    @apply bg-transparent border-b border-base-300 focus:border-base-content transition-colors !important;
+    @apply bg-transparent border-b border-base-content/10 focus:border-primary transition-colors py-2 !important;
   }
 
-  /* 按钮美化：适配 lofi 的黑白简约风 */
   .atk-send-btn {
-    @apply btn btn-sm rounded-xl px-6 bg-base-content text-base-100 border-none hover:bg-base-content/80 !important;
+    @apply btn btn-primary btn-sm rounded-2xl px-8 border-none shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all !important;
   }
 
-  /* 评论列表项美化 */
+  /* 评论卡片样式 */
   .atk-comment-wrap {
-    @apply border-b border-base-200/50 py-6 last:border-none !important;
+    @apply border-b border-base-content/5 py-8 last:border-none transition-colors hover:bg-base-content/[0.02] rounded-2xl px-4 !important;
+  }
+
+  .atk-avatar img {
+    @apply rounded-2xl shadow-md !important;
   }
 
   .atk-nick {
-    @apply font-bold text-base-content !important;
+    @apply font-bold text-base-content transition-colors hover:text-primary !important;
   }
 
-  /* 隐藏 Artalk 自带的一些不协调的阴影 */
-  .atk-layer.atk-main-editor {
-    box-shadow: none !important;
+  .atk-content {
+    @apply text-[0.95rem] leading-relaxed opacity-90 !important;
   }
 
-  /* 适配深色模式下的微调 */
-  [data-theme="dark"] .comments-container {
-    @apply bg-neutral/30 border-white/5;
+  /* 修正暗色模式下的视觉表现 */
+  [data-theme="dark"] .atk-main-editor {
+    @apply bg-white/5 focus-within:bg-white/10 !important;
   }
 </style>

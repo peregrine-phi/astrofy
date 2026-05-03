@@ -7,21 +7,19 @@ const { pathname } = Astro.url;
 // A simple utility to get the URL for a different language
 function getLanguageUrl(targetLang: string) {
   if (targetLang === "en") {
-    // If current is zh, remove /zh
     return pathname.replace(/^\/zh/, "") || "/";
   } else {
-    // If target is zh, and current is en, prepend /zh
     return pathname.startsWith("/zh") ? pathname : `/zh${pathname}`;
   }
 }
 ---
 
-<div class="px-4 py-2 mt-4 flex justify-center gap-4">
+<div class="flex gap-2">
   {
     Object.entries(languages).map(([lang, label]) => (
       <a
         href={getLanguageUrl(lang)}
-        class={`btn btn-sm ${currentLang === lang ? "btn-primary" : "btn-ghost"}`}
+        class={`btn btn-sm px-3 ${currentLang === lang ? "btn-primary" : "btn-ghost"}`}
       >
         {label}
       </a>
