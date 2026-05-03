@@ -26,7 +26,7 @@ const last_posts = posts.slice(0, 3);
     </div>
   </div>
 
-  <HistoryOnThisDay />
+  <HistoryOnThisDay block_region="CN" />
 
   <SectionHeader title={'Recent moments 📸'} class="mb-2" />
 
@@ -48,7 +48,7 @@ const last_posts = posts.slice(0, 3);
 
   {
     last_posts.map((post) => (
-      <>
+      <div data-block-region={post.data.block_region}>
         <HorizontalCard
           title={post.data.title}
           img={post.data.heroImage}
@@ -56,10 +56,9 @@ const last_posts = posts.slice(0, 3);
           url={"/blog/" + createSlug(post.data.title, post.slug)}
           target="_self"
           badge={post.data.badge}
-          block_region={post.data.block_region}
         />
         <div class="divider my-0" />
-      </>
+      </div>
     ))
   }
 </BaseLayout>

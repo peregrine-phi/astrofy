@@ -84,32 +84,6 @@ if (month === 6 || month === 5) {
         display: none !important;
       }
     </style>
-    
-    <script is:inline>
-      async function checkRegionVisibility() {
-        try {
-          // 检查缓存
-          let country = sessionStorage.getItem('user-country');
-          
-          if (!country) {
-            const traceRes = await fetch('/cdn-cgi/trace');
-            const traceText = await traceRes.text();
-            const locMatch = traceText.match(/loc=([A-Z]{2})/);
-            country = locMatch ? locMatch[1] : 'unknown';
-            sessionStorage.setItem('user-country', country);
-          }
-          
-          if (country === 'CN') {
-            document.documentElement.setAttribute('data-region', 'CN');
-          }
-        } catch (e) {
-          console.error('Region check failed', e);
-        }
-      }
-      
-      checkRegionVisibility();
-      document.addEventListener('astro:after-swap', checkRegionVisibility);
-    </script>
   </head>
   <body>
     <div class="bg-base-100 drawer lg:drawer-open">

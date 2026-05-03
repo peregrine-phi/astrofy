@@ -50,7 +50,7 @@ const last_posts = posts.slice(0, 3);
 
   {
     last_posts.map((post) => (
-      <>
+      <div data-block-region={post.data.block_region}>
         <HorizontalCard
           title={post.data.title}
           img={post.data.heroImage}
@@ -58,10 +58,9 @@ const last_posts = posts.slice(0, 3);
           url={"/zh/blog/" + createSlug(post.data.title, post.slug).replace(/^zh\//, "")}
           target="_self"
           badge={post.data.badge}
-          block_region={post.data.block_region}
         />
         <div class="divider my-0" />
-      </>
+      </div>
     ))
   }
 </BaseLayout>

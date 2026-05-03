@@ -15,20 +15,6 @@ import Comments from "../components/ui/Comments.astro";
 ---
 
 <BaseLayout title={title} description={description} image={heroImage} ogType="article" pubDate={pubDate} updatedDate={updatedDate}>
-  <script is:inline define:vars={{ block_region }}>
-    function checkAccess() {
-      if (block_region === 'CN') {
-        const country = sessionStorage.getItem('user-country');
-        if (country === 'CN') {
-          // 如果是屏蔽地区，隐藏内容并重定向
-          document.documentElement.style.display = 'none';
-          window.location.href = '/';
-        }
-      }
-    }
-    checkAccess();
-    document.addEventListener('astro:after-swap', checkAccess);
-  </script>
   <main class="md:flex md:justify-center" data-block-region={block_region}>
     <article class="prose prose-lg max-w-[750px] prose-img:mx-auto">
       {heroImage && <Image width={750} height={422} format="webp" src={heroImage} alt={title} class="w-full mb-6" />}

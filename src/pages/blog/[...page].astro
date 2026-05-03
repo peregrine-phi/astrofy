@@ -27,7 +27,7 @@ const { page } = Astro.props;
     ) : (
       <ul>
         {page.data.map((post) => (
-          <>
+          <div data-block-region={post.data.block_region}>
             <HorizontalCard
               title={post.data.title}
               img={post.data.heroImage}
@@ -36,10 +36,9 @@ const { page } = Astro.props;
               target="_self"
               badge={post.data.badge}
               tags={post.data.tags}
-              block_region={post.data.block_region}
             />
             <div class="divider my-0" />
-          </>
+          </div>
         ))}
       </ul>
     )
