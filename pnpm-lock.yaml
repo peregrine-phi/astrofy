@@ -23,6 +23,9 @@ importers:
       astro:
         specifier: ^4.0.2
         version: 4.16.19(@types/node@24.12.2)(rollup@4.60.2)(typescript@5.9.3)
+      astro-loading-indicator:
+        specifier: ^0.8.0
+        version: 0.8.0(astro@4.16.19(@types/node@24.12.2)(rollup@4.60.2)(typescript@5.9.3))
       daisyui:
         specifier: ^4.4.10
         version: 4.12.24(postcss@8.5.13)
@@ -751,6 +754,11 @@ packages:
   astring@1.9.0:
     resolution: {integrity: sha512-LElXdjswlqjWrPpJFg1Fx4wpkOCxj1TDHlSV4PlaRxHGWko024xICaa97ZkMfs6DRKlCguiAI+rbXv5GWwXIkg==}
     hasBin: true
+
+  astro-loading-indicator@0.8.0:
+    resolution: {integrity: sha512-huqaHbSCe8KLWnogxu9yNDybtVyp9OhJhU9LA5GwzBo8g4CcAQWcwjurleV+OpJAK2qNL2gO/V5ocPltvCC7Dg==}
+    peerDependencies:
+      astro: ^4.0.0 || ^5.0.0 || ^6.0.0
 
   astro@4.16.19:
     resolution: {integrity: sha512-baeSswPC5ZYvhGDoj25L2FuzKRWMgx105FetOPQVJFMCAp0o08OonYC7AhwsFdhvp7GapqjnC1Fe3lKb2lupYw==}
@@ -2997,6 +3005,10 @@ snapshots:
   array-iterate@2.0.1: {}
 
   astring@1.9.0: {}
+
+  astro-loading-indicator@0.8.0(astro@4.16.19(@types/node@24.12.2)(rollup@4.60.2)(typescript@5.9.3)):
+    dependencies:
+      astro: 4.16.19(@types/node@24.12.2)(rollup@4.60.2)(typescript@5.9.3)
 
   astro@4.16.19(@types/node@24.12.2)(rollup@4.60.2)(typescript@5.9.3):
     dependencies:

@@ -4,8 +4,10 @@ import Header from "../components/layout/Header.astro";
 import Footer from "../components/layout/Footer.astro";
 import SideBar from "../components/layout/SideBar.astro";
 import { ViewTransitions } from "astro:transitions";
+import LoadingIndicator from "astro-loading-indicator/component";
 
 import { SITE_TITLE, SITE_DESCRIPTION, TRANSITION_API } from "../config";
+
 
 const {
   image,
@@ -25,7 +27,33 @@ const defaultDescription = isZh ? "Full Stack Lifeplayer - 悠道的数字花园
 
 const finalTitle = title || defaultTitle;
 const finalDescription = description || defaultDescription;
+
+// --- Loading Indicator Theme Logic ---
+const today = new Date();
+const month = today.getMonth() + 1;
+const day = today.getDate();
+
+let loaderColor = "hsl(var(--p))"; // Default daisyUI primary
+let loaderHeight = "3px";
+
+if (month === 6) {
+  // Pride Month Rainbow
+  loaderColor = "linear-gradient(90deg, #ff0000, #ff8700, #ffd300, #deff0a, #a1ff0a, #0aff99, #0aefff, #147df5, #580aff, #be0aff)";
+  loaderHeight = "4px";
+} else if (month === 3 && day === 8) {
+  // Women's Day Purple
+  loaderColor = "linear-gradient(90deg, #8e44ad, #d2b4de)";
+} else {
+  // Programmer's Day (Day 256)
+  const year = today.getFullYear();
+  const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+  const dayOfYear = Math.floor((today.getTime() - new Date(year, 0, 0).getTime()) / 86400000);
+  if (isLeapYear ? dayOfYear === 257 : dayOfYear === 256) {
+    loaderColor = "#00ff41";
+  }
+}
 ---
+
 
 <!doctype html>
 <html lang={Astro.currentLocale || "en"} data-theme="lofi">
@@ -34,7 +62,10 @@ const finalDescription = description || defaultDescription;
     {TRANSITION_API && <ViewTransitions />}
   </head>
   <body>
+    <LoadingIndicator color={loaderColor} height={loaderHeight} />
+
     <div class="bg-base-100 drawer lg:drawer-open">
+
       <input id="my-drawer" type="checkbox" class="drawer-toggle" />
       <div class="drawer-content bg-base-100">
         <Header title={SITE_TITLE} transition:persist />

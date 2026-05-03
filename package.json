@@ -17,6 +17,7 @@
     "@astrojs/sitemap": "^3.1.6",
     "@astrojs/tailwind": "^5.0.3",
     "astro": "^4.0.2",
+    "astro-loading-indicator": "^0.8.0",
     "daisyui": "^4.4.10",
     "dayjs": "^1.11.9",
     "sharp": "^0.32.6",
