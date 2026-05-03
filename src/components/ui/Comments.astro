@@ -25,6 +25,17 @@ const ARTALK_SITE = "Peregrine";
       <div class="skeleton h-20 w-full opacity-5 rounded-2xl"></div>
     </div>
     <div id="ArtalkComments" class="opacity-0 transition-all duration-1000 relative z-20"></div>
+    
+    <!-- Maintenance Message -->
+    <div id="ArtalkMaintenance" class="hidden absolute inset-0 flex items-center justify-center text-center p-6 bg-base-content/[0.02] rounded-3xl border border-dashed border-base-content/20 animate-in fade-in duration-700">
+      <div class="flex flex-col items-center gap-3">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-30"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        <p class="text-sm opacity-60 leading-relaxed">
+          {lang === 'zh-CN' ? '评论功能正在维护中，请联系' : 'Comments are under maintenance, please contact'}<br/>
+          <a href="mailto:contact_me@peregrinewang.me" class="link link-primary no-underline font-medium">contact_me@peregrinewang.me</a>
+        </p>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -34,7 +45,26 @@ const ARTALK_SITE = "Peregrine";
 <script is:inline define:vars={{ ARTALK_SERVER, ARTALK_SITE, lang, title }}>
   function initArtalk() {
     const el = document.getElementById("ArtalkComments");
+    const skeleton = document.getElementById("ArtalkSkeleton");
+    const maintenance = document.getElementById("ArtalkMaintenance");
+    
     if (!el || el.classList.contains('artalk-initialized')) return;
+
+    let hasLoaded = false;
+    
+    // 设置 10 秒超时
+    const timeoutTimer = setTimeout(() => {
+      if (!hasLoaded) {
+        console.warn("Artalk load timeout - switching to maintenance mode");
+        if (skeleton) {
+          skeleton.classList.add("opacity-0");
+          setTimeout(() => skeleton.style.display = 'none', 700);
+        }
+        if (maintenance) {
+          maintenance.classList.remove("hidden");
+        }
+      }
+    }, 10000);
 
     const artalk = Artalk.init({
       el: "#ArtalkComments",
@@ -48,7 +78,9 @@ const ARTALK_SITE = "Peregrine";
     });
 
     artalk.on('list-loaded', () => {
-      const skeleton = document.getElementById("ArtalkSkeleton");
+      hasLoaded = true;
+      clearTimeout(timeoutTimer);
+      
       const comments = document.getElementById("ArtalkComments");
       if (skeleton) {
         skeleton.classList.add("opacity-0");
@@ -57,6 +89,9 @@ const ARTALK_SITE = "Peregrine";
       if (comments) {
         comments.classList.remove("opacity-0");
         comments.classList.add("artalk-initialized");
+      }
+      if (maintenance) {
+        maintenance.style.display = 'none';
       }
     });
   }
