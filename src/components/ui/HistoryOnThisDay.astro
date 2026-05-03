@@ -7,7 +7,7 @@ const month = today.getMonth() + 1;
 const day = today.getDate();
 ---
 
-<div class="history-ticker" id="history-ticker" data-month={month} data-day={day}>
+<div class="history-ticker" id="history-ticker" data-month={month} data-day={day} style="display: none;">
   <div class="history-ticker__meta">
     <div class="history-ticker__icon">
       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -37,6 +37,33 @@ const day = today.getDate();
 </div>
 
 <script is:inline>
+  async function checkGeoAndInit() {
+    const ticker = document.getElementById('history-ticker');
+    if (!ticker) return;
+
+    try {
+      // 1. 利用 Cloudflare 的诊断接口检查地理位置
+      const traceRes = await fetch('/cdn-cgi/trace');
+      const traceText = await traceRes.text();
+      const locMatch = traceText.match(/loc=([A-Z]{2})/);
+      const country = locMatch ? locMatch[1] : null;
+
+      // 2. 如果是中国大陆用户 (CN)，保持隐藏并退出
+      if (country === 'CN') {
+        console.log('History ticker disabled for CN region');
+        return;
+      }
+
+      // 3. 非 CN 用户，显示组件并初始化
+      ticker.style.display = 'flex';
+      initHistoryTicker();
+    } catch (e) {
+      // 如果接口报错（如本地开发环境），默认显示
+      ticker.style.display = 'flex';
+      initHistoryTicker();
+    }
+  }
+
   function initHistoryTicker() {
     const ticker = document.getElementById('history-ticker');
     const track = document.getElementById('history-track');
@@ -135,13 +162,16 @@ const day = today.getDate();
       });
   }
 
-  initHistoryTicker();
-  document.addEventListener('astro:after-swap', initHistoryTicker);
+  // 初始检查
+  checkGeoAndInit();
+  // View Transitions 切换后检查
+  document.addEventListener('astro:after-swap', checkGeoAndInit);
 </script>
 
 <style>
   .history-ticker {
-    display: flex;
+    /* 默认隐藏，由 JS 根据地理位置决定是否显示 */
+    display: none; 
     align-items: center;
     gap: 1.5rem;
     padding: 1.25rem 1.75rem;
@@ -161,7 +191,7 @@ const day = today.getDate();
   .history-ticker__meta {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem; /* 增加元素间的间距 */
+    gap: 0.5rem;
     flex-shrink: 0;
     min-width: 6.5rem;
   }
@@ -171,14 +201,14 @@ const day = today.getDate();
     align-items: center;
     color: oklch(var(--p));
     opacity: 0.8;
-    margin-left: 1px; /* 微调图标对齐 */
+    margin-left: 1px;
   }
 
   .history-ticker__label {
     font-size: 0.65rem;
     font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.12em; /* 增加字间距使其更精致 */
+    letter-spacing: 0.12em;
     color: oklch(var(--bc) / 0.4);
     line-height: 1;
   }
@@ -194,16 +224,16 @@ const day = today.getDate();
     font-weight: 800;
     font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
     color: oklch(var(--p));
-    background: oklch(var(--p) / 0.08); /* 调淡背景色 */
+    background: oklch(var(--p) / 0.08);
     padding: 0.25rem 0.6rem;
     border-radius: 6px;
     transition: opacity 0.3s ease;
-    border: 1px solid oklch(var(--p) / 0.1); /* 增加细微边框感 */
+    border: 1px solid oklch(var(--p) / 0.1);
   }
 
   .history-ticker__divider {
     width: 1px;
-    height: 4rem; /* 增加分隔线高度 */
+    height: 4rem;
     background: linear-gradient(to bottom, transparent, oklch(var(--bc) / 0.08), transparent);
     flex-shrink: 0;
   }
@@ -222,7 +252,7 @@ const day = today.getDate();
   }
 
   .history-ticker__item {
-    min-height: 5rem; /* 增加最小高度 */
+    min-height: 5rem;
     display: flex;
     align-items: center;
     padding: 0.5rem 0;
@@ -251,7 +281,7 @@ const day = today.getDate();
   }
 
   .history-ticker__text {
-    font-size: 1rem; /* 稍微调大正文字号 */
+    font-size: 1rem;
     color: oklch(var(--bc) / 0.8);
     line-height: 1.6;
     font-weight: 450;
