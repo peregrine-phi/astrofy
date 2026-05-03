@@ -2,7 +2,7 @@ export const onRequest: PagesFunction = async (context) => {
   const url = new URL(context.request.url);
   const pathname = url.pathname;
   const origin = url.origin;
-  const search = url.search; // 保留可能的查询参数如 ?ref=twitter
+  const search = url.search;
 
   // 1. 基础重定向：统一补全末尾斜杠
   if (pathname === '/zh') {
@@ -11,7 +11,8 @@ export const onRequest: PagesFunction = async (context) => {
 
   // 2. 静态资源“绝对放行”
   // 匹配特定后缀，或者直接匹配 Astro 的专属静态目录
-  const isStaticAsset = /\.(css|js|png|jpg|jpeg|webp|gif|svg|ico|woff|woff2)$/i.test(pathname);
+  // 增加对 .xml, .txt 等常见静态文件的放行
+  const isStaticAsset = /\.(css|js|png|jpg|jpeg|webp|gif|svg|ico|woff|woff2|xml|txt)$/i.test(pathname);
   if (isStaticAsset || pathname.startsWith('/_astro/')) {
     return context.next();
   }
@@ -52,15 +53,32 @@ export const onRequest: PagesFunction = async (context) => {
       });
 
     finalResponse = rewriter.transform(response);
-  } else {
-    // 如果是非 CN 用户，我们需要克隆响应才能修改其 Header
-    finalResponse = new Response(response.body, response);
   }
 
-  // 6. 全局安全加固：为所有 HTML 页面注入安全头
-  finalResponse.headers.set("X-Content-Type-Options", "nosniff");
-  finalResponse.headers.set("X-Frame-Options", "SAMEORIGIN");
-  finalResponse.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  // 6. 全局安全加固与响应优化
+  // 我们创建一个新的 Headers 对象来修改响应头
+  const newHeaders = new Headers(finalResponse.headers);
+  
+  // 注入安全头
+  newHeaders.set("X-Content-Type-Options", "nosniff");
+  newHeaders.set("X-Frame-Options", "SAMEORIGIN");
+  newHeaders.set("Referrer-Policy", "strict-origin-when-cross-origin");
 
-  return finalResponse;
+  // 关键点：安卓设备在开启 nosniff 后，如果 Content-Type 缺少 charset，
+  // 可能会导致解析器在遇到非 ASCII 字符时报错或放弃加载后续资源（如样式）。
+  if (!contentType.includes("charset")) {
+    newHeaders.set("content-type", "text/html; charset=UTF-8");
+  }
+
+  // 如果进行了 HTML 重写，原始的 Content-Length 就不再准确了
+  if (country === 'CN') {
+    newHeaders.delete("Content-Length");
+  }
+
+  // 返回重建的响应，确保流和头信息正确结合
+  return new Response(finalResponse.body, {
+    status: finalResponse.status,
+    statusText: finalResponse.statusText,
+    headers: newHeaders
+  });
 };
