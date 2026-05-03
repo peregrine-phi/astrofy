@@ -1,7 +1,7 @@
 ---
 /**
- * Comments.astro - Premium Refined Version
- * 评论组件 - 深度适配 DaisyUI 主题系统
+ * Comments.astro - Minimalist & Integrated Version
+ * 评论组件 - 极简主义集成方案，彻底消除“嵌套感”
  */
 
 const { title } = Astro.props;
@@ -11,29 +11,23 @@ const ARTALK_SERVER = "https://comment.peregrinewang.me";
 const ARTALK_SITE = "Peregrine";
 ---
 
-<div class="divider my-16 opacity-30"></div>
+<div class="divider my-16 opacity-20"></div>
 
 <div class="comments-section max-w-full">
-  <div class="flex items-center gap-2 mb-8 px-2">
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-50"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-    <h2 class="text-xl font-bold opacity-80">{lang === 'zh-CN' ? '交流与反馈' : 'Comments'}</h2>
+  <div class="flex items-center gap-2 mb-10 px-2">
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-40"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    <h2 class="text-lg font-bold tracking-tight opacity-70 uppercase">{lang === 'zh-CN' ? '交流与反馈' : 'Comments'}</h2>
   </div>
 
-  <div class="comments-container relative min-h-[250px]">
-    <!-- 骨架屏 Loading 状态 -->
-    <div id="ArtalkSkeleton" class="absolute inset-0 p-8 flex flex-col gap-6 w-full transition-opacity duration-700 z-10">
-      <div class="skeleton h-32 w-full opacity-20 rounded-2xl"></div>
-      <div class="flex gap-4 items-center">
-        <div class="skeleton w-12 h-12 rounded-full shrink-0 opacity-20"></div>
-        <div class="flex flex-col gap-2 w-full">
-          <div class="skeleton h-4 w-32 opacity-20"></div>
-          <div class="skeleton h-4 w-full opacity-20"></div>
-        </div>
-      </div>
+  <div class="comments-wrapper relative min-h-[250px]">
+    <!-- 精简骨架屏 -->
+    <div id="ArtalkSkeleton" class="absolute inset-0 flex flex-col gap-6 w-full transition-opacity duration-700 z-10">
+      <div class="skeleton h-32 w-full opacity-10 rounded-2xl"></div>
+      <div class="skeleton h-20 w-full opacity-5 rounded-2xl"></div>
     </div>
 
     <!-- 评论区容器 -->
-    <div id="ArtalkComments" class="opacity-0 transition-all duration-700 translate-y-4 relative z-20"></div>
+    <div id="ArtalkComments" class="opacity-0 transition-all duration-1000 relative z-20"></div>
   </div>
 </div>
 
@@ -66,67 +60,83 @@ const ARTALK_SITE = "Peregrine";
       }
       if (comments) {
         comments.classList.remove("opacity-0");
-        comments.classList.remove("translate-y-4");
         comments.classList.add("artalk-initialized");
       }
     });
   }
 
-  // 支持 View Transitions
   document.addEventListener("astro:page-load", initArtalk);
 </script>
 
 <style is:global>
-  /* 动态色彩变量 - 完美适配 DaisyUI 主题 */
+  /* 基础变量重写 */
   :root {
-    --at-color-main: oklch(var(--p)) !important; /* 跟随主题主色 */
+    --at-color-main: oklch(var(--p)) !important;
     --at-color-bg: transparent !important;
-    --at-color-border: oklch(var(--bc) / 0.1) !important;
+    --at-color-border: oklch(var(--bc) / 0.08) !important;
     --at-color-font: oklch(var(--bc)) !important;
     --at-color-deep: oklch(var(--b2)) !important;
-    --at-color-sub: oklch(var(--bc) / 0.6) !important;
+    --at-color-sub: oklch(var(--bc) / 0.5) !important;
   }
 
-  .comments-container {
-    @apply p-1 md:p-6 rounded-[2.5rem] border border-base-content/5 bg-base-100/30 backdrop-blur-2xl transition-all duration-500 hover:border-base-content/10;
+  /* 彻底消除外部容器感，让 Artalk 直接融入页面背景 */
+  .comments-wrapper {
+    @apply px-0;
   }
 
-  #ArtalkComments {
-    --at-font-family: inherit !important;
-  }
-
-  /* 深度精致化 UI */
+  /* 编辑器区域美化 */
   .atk-main-editor {
-    @apply border-none bg-base-content/5 rounded-3xl p-3 transition-all duration-300 focus-within:bg-base-content/[0.08] focus-within:shadow-inner !important;
+    @apply border border-base-content/5 bg-base-content/[0.02] rounded-3xl p-4 transition-all duration-500 focus-within:bg-base-100 focus-within:shadow-xl focus-within:shadow-base-content/5 !important;
+    box-shadow: none !important;
+  }
+
+  /* 昵称/邮箱/网址 输入框：改为极简下划线风格 */
+  .atk-header {
+    @apply flex flex-wrap gap-2 mb-4 !important;
   }
 
   .atk-header input {
-    @apply bg-transparent border-b border-base-content/10 focus:border-primary transition-colors py-2 !important;
+    @apply bg-transparent border-b border-base-content/10 px-2 py-2 text-sm transition-all focus:border-primary !important;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-radius: 0 !important;
   }
 
+  /* 发送按钮 */
   .atk-send-btn {
-    @apply btn btn-primary btn-sm rounded-2xl px-8 border-none shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all !important;
+    @apply btn btn-primary btn-md rounded-2xl px-10 border-none transition-all shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 !important;
   }
 
-  /* 评论卡片样式 */
+  /* 评论列表 */
+  .atk-list {
+    @apply mt-12 !important;
+  }
+
   .atk-comment-wrap {
-    @apply border-b border-base-content/5 py-8 last:border-none transition-colors hover:bg-base-content/[0.02] rounded-2xl px-4 !important;
+    @apply border-none bg-base-content/[0.01] mb-4 p-6 rounded-3xl transition-colors hover:bg-base-content/[0.03] !important;
   }
 
   .atk-avatar img {
-    @apply rounded-2xl shadow-md !important;
+    @apply rounded-2xl !important;
   }
 
-  .atk-nick {
-    @apply font-bold text-base-content transition-colors hover:text-primary !important;
+  /* 修正所有残留的蓝色 */
+  .atk-content a, .atk-nick, .atk-item.active, .atk-layer-wrap a {
+    color: oklch(var(--p)) !important;
   }
 
-  .atk-content {
-    @apply text-[0.95rem] leading-relaxed opacity-90 !important;
+  .atk-footer, .atk-power {
+    @apply opacity-30 text-[10px] grayscale transition-all hover:opacity-100 hover:grayscale-0 !important;
   }
 
-  /* 修正暗色模式下的视觉表现 */
+  /* 下拉菜单和弹出层 */
+  .atk-layer-wrap {
+    @apply rounded-2xl shadow-2xl border border-base-content/10 backdrop-blur-xl bg-base-100/90 !important;
+  }
+
+  /* 适配暗色模式 */
   [data-theme="dark"] .atk-main-editor {
-    @apply bg-white/5 focus-within:bg-white/10 !important;
+    @apply bg-white/[0.03] focus-within:bg-neutral !important;
   }
 </style>
