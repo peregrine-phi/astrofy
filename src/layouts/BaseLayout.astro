@@ -33,7 +33,7 @@ const month = today.getMonth() + 1;
 const day = today.getDate();
 
 let loaderColor = "oklch(var(--p))"; // Default daisyUI primary (v4 uses oklch!)
-let loaderHeight = "2px"; // Thinner for a more refined look
+let loaderHeight = "2px";
 
 if (month === 6) {
   // Pride Month Rainbow
@@ -57,16 +57,18 @@ if (month === 6) {
   <head>
     <BaseHead title={finalTitle} description={finalDescription} image={image} ogType={ogType} noindex={noindex} pubDate={pubDate} updatedDate={updatedDate} />
     {TRANSITION_API && <ViewTransitions />}
-  </head>
-  <body>
+    
+    {/* 将进度条组件移至 head 中，防止 View Transitions 导致重复初始化 */}
     <LoadingIndicator color="transparent" height={loaderHeight} threshold={0} />
     <style is:global define:vars={{ loaderBg: loaderColor }}>
       .astro-loading-indicator {
         background: var(--loaderBg) !important;
         box-shadow: 0 0 10px var(--loaderBg);
+        z-index: 99999 !important;
       }
     </style>
-
+  </head>
+  <body>
     <div class="bg-base-100 drawer lg:drawer-open">
       <input id="my-drawer" type="checkbox" class="drawer-toggle" />
       <div class="drawer-content bg-base-100">
