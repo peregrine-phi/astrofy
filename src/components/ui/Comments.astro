@@ -1,7 +1,7 @@
 ---
 /**
  * Comments.astro - Universal Theme Compatible Version
- * 评论组件 - 彻底修复深色模式下的“白块”问题，实现全主题完美适配
+ * 评论组件 - 彻底修复深色模式下的“白块”问题，并保留极简下划线样式
  */
 
 const { title } = Astro.props;
@@ -89,9 +89,16 @@ const ARTALK_SITE = "Peregrine";
     box-shadow: none !important;
   }
 
-  /* 输入框焦点样式 */
+  /* 恢复极简下划线样式 */
+  .atk-header {
+    @apply flex flex-wrap gap-2 mb-4 !important;
+  }
+
   .atk-header input {
-    @apply border-b border-base-content/10 transition-all focus:border-primary !important;
+    @apply border-b border-base-content/10 transition-all focus:border-primary px-2 py-2 text-sm !important;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
     border-radius: 0 !important;
   }
 
@@ -118,10 +125,6 @@ const ARTALK_SITE = "Peregrine";
   .atk-layer-wrap {
     @apply rounded-2xl shadow-2xl border border-base-content/10 backdrop-blur-2xl bg-base-200/95 !important;
     color: oklch(var(--bc)) !important;
-  }
-
-  .atk-list-no-comment {
-    @apply opacity-30 italic !important;
   }
 
   /* 修正所有残留链接色 */
