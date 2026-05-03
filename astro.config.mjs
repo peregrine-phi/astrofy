@@ -16,6 +16,8 @@ export default defineConfig({
         if (/\/\d+\/?$/.test(page)) return false;
         // Exclude tag listing pages (low SEO value, duplicate content)
         if (/\/blog\/tag\//.test(page)) return false;
+        // Exclude CV pages
+        if (page.includes('/cv')) return false;
         return true;
       },
       i18n: {
