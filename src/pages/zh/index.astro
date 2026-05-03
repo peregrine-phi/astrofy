@@ -58,6 +58,7 @@ const last_posts = posts.slice(0, 3);
           url={"/zh/blog/" + createSlug(post.data.title, post.slug).replace(/^zh\//, "")}
           target="_self"
           badge={post.data.badge}
+          block_region={post.data.block_region}
         />
         <div class="divider my-0" />
       </>
