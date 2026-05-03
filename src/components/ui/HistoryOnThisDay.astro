@@ -1,0 +1,261 @@
+---
+const locale = Astro.currentLocale || "en";
+const isZh = locale === "zh";
+
+const today = new Date();
+const month = today.getMonth() + 1;
+const day = today.getDate();
+---
+
+<div class="history-ticker" id="history-ticker" data-month={month} data-day={day}>
+  <div class="history-ticker__meta">
+    <div class="history-ticker__icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <polyline points="12 6 12 12 16 14"></polyline>
+      </svg>
+    </div>
+    <div class="history-ticker__label" id="history-ticker-label">
+      {isZh ? "历史上的今天" : "On This Day"}
+    </div>
+    <div class="history-ticker__year-wrapper">
+        <span class="history-ticker__year-display" id="history-year-display">----</span>
+    </div>
+  </div>
+  
+  <div class="history-ticker__divider"></div>
+  
+  <div class="history-ticker__content" id="history-content">
+    <div class="history-ticker__track" id="history-track">
+      <div class="history-ticker__item history-ticker__item--loading">
+        <span class="history-ticker__loading-dot"></span>
+        <span class="history-ticker__loading-dot"></span>
+        <span class="history-ticker__loading-dot"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  function initHistoryTicker() {
+    const ticker = document.getElementById('history-ticker');
+    const track = document.getElementById('history-track');
+    const content = document.getElementById('history-content');
+    const yearDisplay = document.getElementById('history-year-display');
+    const label = document.getElementById('history-ticker-label');
+    if (!ticker || !track || !content || !yearDisplay) return;
+
+    const lang = document.documentElement.lang || 'en';
+    const isZh = lang.startsWith('zh');
+    const month = ticker.dataset.month;
+    const day = ticker.dataset.day;
+
+    if (window._historyTickerInterval) {
+      clearInterval(window._historyTickerInterval);
+      window._historyTickerInterval = null;
+    }
+    track.style.transform = 'translateY(0)';
+    track.innerHTML = `
+      <div class="history-ticker__item history-ticker__item--loading">
+        <span class="history-ticker__loading-dot"></span>
+        <span class="history-ticker__loading-dot"></span>
+        <span class="history-ticker__loading-dot"></span>
+      </div>`;
+    content.style.height = 'auto';
+    yearDisplay.textContent = '----';
+    label.textContent = isZh ? "历史上的今天" : "On This Day";
+
+    const requestId = Date.now();
+    window._historyLastRequestId = requestId;
+
+    const url = isZh 
+      ? 'https://v2.xxapi.cn/api/history'
+      : `https://byabbe.se/on-this-day/${month}/${day}/events.json`;
+
+    fetch(url)
+      .then(res => res.json())
+      .then(json => {
+        if (window._historyLastRequestId !== requestId) return;
+
+        let events = [];
+        if (isZh) {
+          if (json.code === 200 && json.data) events = json.data;
+        } else {
+          if (json.events) events = json.events.map(e => ({ year: e.year, text: e.description }));
+        }
+
+        if (!events.length) throw new Error('Empty data');
+
+        if (isZh) {
+          events = events.map(e => {
+            const m = e.match(/^(\d+)年.*?日\s+(.*)$/);
+            return m ? { year: m[1], text: m[2] } : { year: '', text: e };
+          });
+        }
+
+        events.sort(() => Math.random() - 0.5);
+        track.innerHTML = events.map(e => `
+          <div class="history-ticker__item" data-year="${e.year}">
+            <div class="history-ticker__text">${e.text}</div>
+          </div>
+        `).join('');
+
+        const items = track.querySelectorAll('.history-ticker__item');
+        
+        function updateYear(year) {
+            yearDisplay.style.opacity = '0';
+            setTimeout(() => {
+                yearDisplay.textContent = year || '----';
+                yearDisplay.style.opacity = '1';
+            }, 300);
+        }
+
+        requestAnimationFrame(() => {
+          if (!items[0]) return;
+          content.style.height = items[0].offsetHeight + 'px';
+          updateYear(items[0].dataset.year);
+
+          let idx = 0;
+          window._historyTickerInterval = setInterval(() => {
+            const currentItems = track.querySelectorAll('.history-ticker__item');
+            if (!currentItems.length) return;
+            
+            idx = (idx + 1) % currentItems.length;
+            const target = currentItems[idx];
+            track.style.transform = `translateY(-${target.offsetTop}px)`;
+            content.style.height = target.offsetHeight + 'px';
+            updateYear(target.dataset.year);
+          }, 5000);
+        });
+      })
+      .catch(err => {
+        if (window._historyLastRequestId !== requestId) return;
+        console.error('History ticker error:', err);
+        track.innerHTML = `<div class="history-ticker__item"><div class="history-ticker__text" style="opacity:0.5;font-style:italic">${isZh ? '暂时无法加载' : 'Unable to load'}</div></div>`;
+      });
+  }
+
+  initHistoryTicker();
+  document.addEventListener('astro:after-swap', initHistoryTicker);
+</script>
+
+<style>
+  .history-ticker {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.25rem 1.75rem;
+    margin-bottom: 2.5rem;
+    border-radius: 1.25rem;
+    border: 1px solid oklch(var(--b3));
+    background: oklch(var(--b2) / 0.3);
+    backdrop-filter: blur(12px);
+    transition: all 0.3s ease;
+  }
+
+  .history-ticker:hover {
+    border-color: oklch(var(--p) / 0.15);
+    box-shadow: 0 8px 30px -10px oklch(var(--p) / 0.08);
+  }
+
+  .history-ticker__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem; /* 增加元素间的间距 */
+    flex-shrink: 0;
+    min-width: 6.5rem;
+  }
+
+  .history-ticker__icon {
+    display: flex;
+    align-items: center;
+    color: oklch(var(--p));
+    opacity: 0.8;
+    margin-left: 1px; /* 微调图标对齐 */
+  }
+
+  .history-ticker__label {
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.12em; /* 增加字间距使其更精致 */
+    color: oklch(var(--bc) / 0.4);
+    line-height: 1;
+  }
+
+  .history-ticker__year-wrapper {
+    height: 1.8rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .history-ticker__year-display {
+    font-size: 0.9rem;
+    font-weight: 800;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+    color: oklch(var(--p));
+    background: oklch(var(--p) / 0.08); /* 调淡背景色 */
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+    transition: opacity 0.3s ease;
+    border: 1px solid oklch(var(--p) / 0.1); /* 增加细微边框感 */
+  }
+
+  .history-ticker__divider {
+    width: 1px;
+    height: 4rem; /* 增加分隔线高度 */
+    background: linear-gradient(to bottom, transparent, oklch(var(--bc) / 0.08), transparent);
+    flex-shrink: 0;
+  }
+
+  .history-ticker__content {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .history-ticker__track {
+    width: 100%;
+    transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+  }
+
+  .history-ticker__item {
+    min-height: 5rem; /* 增加最小高度 */
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0;
+    box-sizing: border-box;
+  }
+
+  .history-ticker__item--loading {
+    height: 5rem;
+    justify-content: flex-start;
+  }
+
+  .history-ticker__loading-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: oklch(var(--p) / 0.5);
+    margin: 0 2px;
+    animation: ticker-dot 1.4s infinite;
+  }
+  .history-ticker__loading-dot:nth-child(2) { animation-delay: 0.2s; }
+  .history-ticker__loading-dot:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes ticker-dot {
+    0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+    40% { opacity: 1; transform: scale(1.2); }
+  }
+
+  .history-ticker__text {
+    font-size: 1rem; /* 稍微调大正文字号 */
+    color: oklch(var(--bc) / 0.8);
+    line-height: 1.6;
+    font-weight: 450;
+    width: 100%;
+    word-break: break-word;
+  }
+</style>

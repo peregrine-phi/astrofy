@@ -28,6 +28,17 @@ html {
     font-size: 1.4rem !important;
 }
 
+/* Make iframes (like YouTube) responsive */
+.prose iframe {
+    width: 100% !important;
+    aspect-ratio: 16 / 9;
+    height: auto !important;
+    border-radius: 0.75rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+}
+
 /* Typography Overrides */
 body {
     font-family: "Google Sans", "Noto Sans SC", sans-serif;
