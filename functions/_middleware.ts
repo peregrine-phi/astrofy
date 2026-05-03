@@ -1,19 +1,26 @@
 export const onRequest: PagesFunction = async (context) => {
   const url = new URL(context.request.url);
-  const { pathname, origin } = url;
+  const pathname = url.pathname;
+  const origin = url.origin;
 
-  // 1. 基础重定向：统一补全末尾斜杠
+  // 1. 基础重定向（处理末尾斜杠）
   if (pathname === '/zh') {
     return Response.redirect(new URL('/zh/', origin), 301);
   }
 
-  // 2. 获取响应
+  // 2. 静态资源“绝对放行”
+  // 如果是 CSS, JS, 图片等，直接跳过所有逻辑，不请求 next() 之后的处理
+  const isStaticAsset = /\.(css|js|png|jpg|jpeg|webp|gif|svg|ico|woff|woff2)$/i.test(pathname);
+  if (isStaticAsset) {
+    return context.next();
+  }
+
   const response = await context.next();
 
-  // 3. 严格过滤：非 HTML 资源（CSS/JS/图片）直接返回，不做任何处理
-  // 这样能确保手机端加载静态资源时 100% 原始、无损
+  // 3. 仅处理 200 OK 的 HTML 响应
+  // 避开 304 Not Modified，防止缓存失效导致的样式掉落
   const contentType = response.headers.get("content-type") || "";
-  if (!contentType.includes("text/html")) {
+  if (response.status !== 200 || !contentType.includes("text/html")) {
     return response;
   }
 
@@ -22,7 +29,6 @@ export const onRequest: PagesFunction = async (context) => {
 
   // 5. 核心逻辑：CN 用户处理
   if (country === 'CN') {
-    // 首页重定向
     if (pathname === '/') {
       return Response.redirect(new URL('/zh/', origin), 302);
     }
@@ -44,9 +50,7 @@ export const onRequest: PagesFunction = async (context) => {
       });
 
     const newResponse = rewriter.transform(response);
-    // 注入安全头
     newResponse.headers.set("X-Content-Type-Options", "nosniff");
-    newResponse.headers.set("X-Frame-Options", "SAMEORIGIN");
     return newResponse;
   }
 
