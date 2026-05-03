@@ -8,7 +8,6 @@ import LoadingIndicator from "astro-loading-indicator/component";
 
 import { SITE_TITLE, SITE_DESCRIPTION, TRANSITION_API } from "../config";
 
-
 const {
   image,
   title,
@@ -33,13 +32,12 @@ const today = new Date();
 const month = today.getMonth() + 1;
 const day = today.getDate();
 
-let loaderColor = "hsl(var(--p))"; // Default daisyUI primary
-let loaderHeight = "3px";
+let loaderColor = "oklch(var(--p))"; // Default daisyUI primary (v4 uses oklch!)
+let loaderHeight = "2px"; // Thinner for a more refined look
 
 if (month === 6) {
   // Pride Month Rainbow
   loaderColor = "linear-gradient(90deg, #ff0000, #ff8700, #ffd300, #deff0a, #a1ff0a, #0aff99, #0aefff, #147df5, #580aff, #be0aff)";
-  loaderHeight = "4px";
 } else if (month === 3 && day === 8) {
   // Women's Day Purple
   loaderColor = "linear-gradient(90deg, #8e44ad, #d2b4de)";
@@ -54,7 +52,6 @@ if (month === 6) {
 }
 ---
 
-
 <!doctype html>
 <html lang={Astro.currentLocale || "en"} data-theme="lofi">
   <head>
@@ -62,10 +59,15 @@ if (month === 6) {
     {TRANSITION_API && <ViewTransitions />}
   </head>
   <body>
-    <LoadingIndicator color={loaderColor} height={loaderHeight} />
+    <LoadingIndicator color="transparent" height={loaderHeight} threshold={0} />
+    <style is:global define:vars={{ loaderBg: loaderColor }}>
+      .astro-loading-indicator {
+        background: var(--loaderBg) !important;
+        box-shadow: 0 0 10px var(--loaderBg);
+      }
+    </style>
 
     <div class="bg-base-100 drawer lg:drawer-open">
-
       <input id="my-drawer" type="checkbox" class="drawer-toggle" />
       <div class="drawer-content bg-base-100">
         <Header title={SITE_TITLE} transition:persist />
