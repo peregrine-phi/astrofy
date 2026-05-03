@@ -1,6 +1,6 @@
 ---
 title: 幸福额度乐评
-description: 在这里输入简短的文章描述，用于 SEO 和列表展示
+description: 苏打绿<幸福额度>乐评
 pubDate: 2026-05-01
 heroImage: /post_img.webp
 badge: New
