@@ -73,5 +73,13 @@ src/
   ```
 * **维护建议**：`SectionHeader` 默认包含 `mb-5` (下边距)。如果需要调整全站章节标题的大小或样式，只需修改 `src/components/ui/SectionHeader.astro` 即可实现全局生效。
 
+### 6. 评论系统与 UI 抽象化 (Comments & Styling Abstraction)
+我们集成了 **Artalk** 作为评论系统。为了保持代码的灵活性和未来的可维护性：
+* **组件化集成**：评论逻辑封装在 `src/components/ui/Comments.astro` 中。它自动处理多语言（i18n）路径隔离和深色模式适配。
+* **颜色抽象化 (Color Tokens)**：
+  * **禁止硬编码**：在 `Comments.astro` 的 `<style>` 块中，我们将 Artalk 的内部变量（如 `--at-color-main`）映射到了 Tailwind 的主题色（如 `theme('colors.primary')`）。
+  * **未来扩展**：若需全站统一色值抽象，建议在 `src/styles/` 下定义 CSS Variables，并在组件中通过 `var(--your-variable)` 引用。
+* **i18n 策略**：评论区根据 `Astro.currentLocale` 自动切换语言界面，并使用 `window.location.pathname` 确保中英文页面的评论相互独立。
+
 ---
 > 提示：执行 `pnpm run build` 前，请确保你已经使用 Astro 的 `getRelativeLocaleUrl` 修复了新添加的链接路径，防止语言互相跳转出现 404。

@@ -1,0 +1,75 @@
+---
+/**
+ * Comments.astro
+ * 评论组件 - 基于 Artalk
+ *
+ * 颜色抽象化说明：
+ * 本组件使用的颜色变量已提取至底部的 <style> 块中。
+ * 未来如需全局统一调整颜色，可将这些变量迁移至 src/styles/variables.css 或通过 Tailwind 配置管理。
+ */
+
+const { title } = Astro.props;
+const lang = Astro.currentLocale === "zh" ? "zh-CN" : "en";
+
+// 这里的 server 地址建议后续通过环境变量或 config.ts 统一管理
+const ARTALK_SERVER = "https://comment.peregrinewang.me"; // 请替换为你的实际后端地址
+const ARTALK_SITE = "Peregrine";
+---
+
+<div class="divider my-10"></div>
+
+<div class="comments-container">
+  <div id="ArtalkComments"></div>
+</div>
+
+<!-- Artalk Assets -->
+<link href={`${ARTALK_SERVER}/dist/Artalk.css`} rel="stylesheet" />
+<script src={`${ARTALK_SERVER}/dist/Artalk.js`} is:inline></script>
+
+<script is:inline define:vars={{ ARTALK_SERVER, ARTALK_SITE, lang, title }}>
+  document.addEventListener("astro:page-load", () => {
+    const el = document.getElementById("ArtalkComments");
+    if (!el) return;
+
+    const artalk = Artalk.init({
+      el: "#ArtalkComments",
+      pageKey: window.location.pathname,
+      pageTitle: title,
+      server: ARTALK_SERVER,
+      site: ARTALK_SITE,
+      darkMode: "auto",
+      locale: lang,
+      pv: true, // 统计阅读量
+    });
+
+    // 可以在这里添加更多全局事件处理
+  });
+</script>
+
+<style is:global>
+  /* 颜色抽象化 Token (Color Abstraction Tokens) */
+  :root {
+    --at-color-main: theme("colors.primary"); /* 关联 Tailwind Primary 颜色 */
+    --at-color-bg: transparent;
+    --at-color-border: theme("colors.base-300");
+  }
+
+  .comments-container {
+    @apply mt-10 p-6 rounded-2xl border border-base-300 bg-base-100/50 backdrop-blur-sm shadow-sm;
+  }
+
+  /* 适配 Artalk 内部样式以匹配博客美学 */
+  #ArtalkComments {
+    --at-color-font: theme("colors.base-content");
+    --at-color-deep: theme("colors.base-200");
+    --at-color-sub: theme("colors.base-content / 0.7");
+  }
+
+  .atk-main-editor {
+    @apply border-none bg-transparent !important;
+  }
+
+  .atk-comment-wrap {
+    @apply border-b border-base-200 last:border-none !important;
+  }
+</style>

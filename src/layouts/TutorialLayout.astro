@@ -19,6 +19,7 @@ const {
 dayjs.extend(localizedFormat);
 const displayDate = dayjs(updatedDate).format("ll");
 import { Image } from "astro:assets";
+import Comments from "../components/ui/Comments.astro";
 ---
 
 <BaseLayout title={title} description={description} image={heroImage} updatedDate={updatedDate}>
@@ -51,6 +52,7 @@ import { Image } from "astro:assets";
       </div>
       <div class="divider my-2"></div>
       <slot />
+      <Comments title={title} />
     </article>
   </main>
 </BaseLayout>
