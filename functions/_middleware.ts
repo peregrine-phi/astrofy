@@ -2,26 +2,35 @@ export const onRequest: PagesFunction = async (context) => {
   const url = new URL(context.request.url);
   const { pathname, origin } = url;
 
-  // 1. 获取响应
+  // 1. SEO 优化：URL 规范化 (URL Normalization)
+  // 强制小写并移除 index.html 结尾，避免重复内容惩罚
+  if (pathname.includes("index.html") || pathname !== pathname.toLowerCase()) {
+    const normalizedPath = pathname.replace("index.html", "").toLowerCase();
+    return Response.redirect(new URL(normalizedPath, origin), 301);
+  }
+
   const response = await context.next();
   
-  // 2. 仅对 HTML 进行处理
+  // 2. 性能优化：Early Hints (预加载关键资源)
+  // 告诉浏览器在解析 HTML 前先下载 CSS
+  response.headers.append("Link", "</index.css>; rel=preload; as=style");
+
+  // 仅处理 HTML 页面
   const contentType = response.headers.get("content-type");
   if (!contentType || !contentType.includes("text/html")) {
     return response;
   }
 
-  // 3. 获取地理位置
+  // 获取地理位置信息
   const country = context.request.cf?.country;
 
-  // 4. 核心逻辑：仅针对 CN 用户进行拦截和重定向
+  // 如果是中国大陆用户，进行内容清理
   if (country === 'CN') {
-    // 首页重定向
+    // 3. 智能重定向：如果是访问英文首页，自动跳转到中文首页
     if (pathname === '/') {
       return Response.redirect(new URL('/zh/', origin), 302);
     }
 
-    // HTML 内容改写
     // @ts-ignore
     const rewriter = new HTMLRewriter()
       .on('[data-block-region="CN"]', {
@@ -38,9 +47,14 @@ export const onRequest: PagesFunction = async (context) => {
         }
       });
 
-    return rewriter.transform(response);
+    const newResponse = rewriter.transform(response);
+    newResponse.headers.set("X-Content-Type-Options", "nosniff");
+    newResponse.headers.set("X-Frame-Options", "SAMEORIGIN");
+    return newResponse;
   }
 
-  // 非 CN 用户或非 HTML 资源，直接返回原响应
+  response.headers.set("X-Content-Type-Options", "nosniff");
+  response.headers.set("X-Frame-Options", "SAMEORIGIN");
   return response;
 };
+
