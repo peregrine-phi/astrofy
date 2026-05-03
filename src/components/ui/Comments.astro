@@ -71,27 +71,54 @@ const ARTALK_SITE = "Peregrine";
 <style is:global>
   /* 颜色抽象化 Token (Color Abstraction Tokens) */
   :root {
-    --at-color-main: theme("colors.primary"); /* 关联 Tailwind Primary 颜色 */
-    --at-color-bg: transparent;
-    --at-color-border: theme("colors.base-300");
+    /* 适配 lofi 主题：将蓝色主色调改为黑色/深灰色 */
+    --at-color-main: theme("colors.base-content") !important; 
+    --at-color-bg: transparent !important;
+    --at-color-border: theme("colors.base-300") !important;
+    --at-color-font: theme("colors.base-content") !important;
   }
 
   .comments-container {
-    @apply mt-10 p-6 rounded-2xl border border-base-300 bg-base-100/50 backdrop-blur-sm shadow-sm;
+    @apply mt-16 p-8 rounded-3xl border border-base-200 bg-base-100/40 backdrop-blur-md shadow-xl shadow-base-content/5 transition-all duration-300;
   }
 
-  /* 适配 Artalk 内部样式以匹配博客美学 */
+  /* 深度美化 Artalk 内部元素 */
   #ArtalkComments {
-    --at-color-font: theme("colors.base-content");
-    --at-color-deep: theme("colors.base-200");
-    --at-color-sub: theme("colors.base-content / 0.7");
+    --at-color-deep: theme("colors.base-200") !important;
+    --at-color-sub: theme("colors.base-content / 0.6") !important;
+    --at-font-family: theme("fontFamily.sans") !important;
   }
 
+  /* 输入框美化：去除生硬边框，增加悬浮感 */
   .atk-main-editor {
-    @apply border-none bg-transparent !important;
+    @apply border-none bg-base-200/50 rounded-2xl p-2 transition-all duration-300 focus-within:bg-base-200 !important;
   }
 
+  .atk-header input {
+    @apply bg-transparent border-b border-base-300 focus:border-base-content transition-colors !important;
+  }
+
+  /* 按钮美化：适配 lofi 的黑白简约风 */
+  .atk-send-btn {
+    @apply btn btn-sm rounded-xl px-6 bg-base-content text-base-100 border-none hover:bg-base-content/80 !important;
+  }
+
+  /* 评论列表项美化 */
   .atk-comment-wrap {
-    @apply border-b border-base-200 last:border-none !important;
+    @apply border-b border-base-200/50 py-6 last:border-none !important;
+  }
+
+  .atk-nick {
+    @apply font-bold text-base-content !important;
+  }
+
+  /* 隐藏 Artalk 自带的一些不协调的阴影 */
+  .atk-layer.atk-main-editor {
+    box-shadow: none !important;
+  }
+
+  /* 适配深色模式下的微调 */
+  [data-theme="dark"] .comments-container {
+    @apply bg-neutral/30 border-white/5;
   }
 </style>
