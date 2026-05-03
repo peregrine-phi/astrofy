@@ -1,3 +1,4 @@
+---
 const { title, img, desc, url, badge, tags, target = "_blank", block_region } = Astro.props;
 import { Image } from "astro:assets";
 const tag_url = url.split("/").slice(0, -1).join("/") + "/tag";
