@@ -2,19 +2,23 @@ export const onRequest: PagesFunction = async (context) => {
   const url = new URL(context.request.url);
   const { pathname, origin } = url;
 
-  // 1. SEO 优化：URL 规范化 (URL Normalization)
-  // 强制小写并移除 index.html 结尾，避免重复内容惩罚
-  if (pathname.includes("index.html") || pathname !== pathname.toLowerCase()) {
-    const normalizedPath = pathname.replace("index.html", "").toLowerCase();
-    return Response.redirect(new URL(normalizedPath, origin), 301);
+  // 1. 精准 SEO 优化：仅针对 HTML 页面请求进行规范化
+  // 排除 _astro, fonts, images 等静态资源目录，防止 Linux 环境下大小写敏感导致 404
+  const isAsset = pathname.startsWith('/_astro/') || 
+                  pathname.match(/\.(jpg|jpeg|png|webp|gif|svg|css|js|woff|woff2|ttf|eot)$/i);
+  
+  if (!isAsset) {
+    if (pathname.includes("index.html") || (pathname !== pathname.toLowerCase() && !pathname.startsWith('/_astro/'))) {
+      const normalizedPath = pathname.replace("index.html", "").toLowerCase();
+      // 避免根路径重复重定向
+      if (normalizedPath !== pathname) {
+        return Response.redirect(new URL(normalizedPath, origin), 301);
+      }
+    }
   }
 
   const response = await context.next();
   
-  // 2. 性能优化：Early Hints (预加载关键资源)
-  // 告诉浏览器在解析 HTML 前先下载 CSS
-  response.headers.append("Link", "</index.css>; rel=preload; as=style");
-
   // 仅处理 HTML 页面
   const contentType = response.headers.get("content-type");
   if (!contentType || !contentType.includes("text/html")) {
@@ -26,7 +30,7 @@ export const onRequest: PagesFunction = async (context) => {
 
   // 如果是中国大陆用户，进行内容清理
   if (country === 'CN') {
-    // 3. 智能重定向：如果是访问英文首页，自动跳转到中文首页
+    // 2. 智能重定向：如果是访问英文首页，自动跳转到中文首页
     if (pathname === '/') {
       return Response.redirect(new URL('/zh/', origin), 302);
     }
@@ -57,4 +61,3 @@ export const onRequest: PagesFunction = async (context) => {
   response.headers.set("X-Frame-Options", "SAMEORIGIN");
   return response;
 };
-
