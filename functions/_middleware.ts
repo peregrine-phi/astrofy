@@ -1,21 +1,34 @@
 export const onRequest: PagesFunction = async (context) => {
+  const url = new URL(context.request.url);
+  const { pathname, origin } = url;
+
+  // 1. SEO 优化：URL 规范化 (URL Normalization)
+  // 强制小写并移除 index.html 结尾，避免重复内容惩罚
+  if (pathname.includes("index.html") || pathname !== pathname.toLowerCase()) {
+    const normalizedPath = pathname.replace("index.html", "").toLowerCase();
+    return Response.redirect(new URL(normalizedPath, origin), 301);
+  }
+
   const response = await context.next();
   
+  // 2. 性能优化：Early Hints (预加载关键资源)
+  // 告诉浏览器在解析 HTML 前先下载 CSS
+  response.headers.append("Link", "</index.css>; rel=preload; as=style");
+
   // 仅处理 HTML 页面
   const contentType = response.headers.get("content-type");
   if (!contentType || !contentType.includes("text/html")) {
     return response;
   }
 
-  // 获取地理位置信息 (Cloudflare Pages 原生提供)
+  // 获取地理位置信息
   const country = context.request.cf?.country;
 
-  // 如果是中国大陆用户，进行边缘侧内容清理
+  // 如果是中国大陆用户，进行内容清理
   if (country === 'CN') {
-    // 智能重定向：如果是访问英文首页，自动跳转到中文首页
-    const url = new URL(context.request.url);
-    if (url.pathname === '/') {
-      return Response.redirect(new URL('/zh/', url.origin), 302);
+    // 3. 智能重定向：如果是访问英文首页，自动跳转到中文首页
+    if (pathname === '/') {
+      return Response.redirect(new URL('/zh/', origin), 302);
     }
 
     // @ts-ignore
@@ -35,14 +48,13 @@ export const onRequest: PagesFunction = async (context) => {
       });
 
     const newResponse = rewriter.transform(response);
-    // 注入安全头
     newResponse.headers.set("X-Content-Type-Options", "nosniff");
     newResponse.headers.set("X-Frame-Options", "SAMEORIGIN");
     return newResponse;
   }
 
-  // 即使是非 CN 用户也注入安全头
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("X-Frame-Options", "SAMEORIGIN");
   return response;
 };
+

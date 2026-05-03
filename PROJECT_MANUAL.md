@@ -95,5 +95,26 @@ src/
     - **Neighbors (邻居)**：取代了原有的 `Projects`。
 * **同步维护**：修改此类核心板块时，必须同步更新 `src/i18n/ui.ts` 字典、`src/components/layout/SideBarMenu.astro` 链接，以及 `src/pages/` 与 `src/pages/zh/` 下的对应物理文件。
 
+### 9. 边缘侧控制与地区可见性 (Edge Functions & Regional Visibility)
+为了在静态站点上实现高级的动态拦截和安全控制，我们引入了 **Cloudflare Pages Functions** 机制：
+*   **物理级拦截 (_middleware.ts)**：在项目根目录的 `functions/` 下，我们部署了一个边缘中间件。它通过检测 Cloudflare 提供的地理位置标头（`cf-ipcountry`），利用 `HTMLRewriter` 在响应发回前物理删除带有 `data-block-region="CN"` 属性的 HTML 元素。
+    - **优点**：源码级过滤，无视觉闪烁，安全性极高（CN 用户源码中不含被屏蔽内容）。
+*   **智能重定向与分流**：
+    - **逻辑**：当检测到 CN 用户访问根路径 `/`（英文首页）时，中间件会自动执行 302 重定向至 `/zh/`。
+    - **异常处理**：我们在中文首页（`zh/index.astro`）显式移除了屏蔽标签，确保国内用户依然能访问中文核心内容（如历史上的今天）。
+*   **全局安全加固**：中间件会自动为所有页面注入安全响应头（如 `X-Content-Type-Options` 和 `X-Frame-Options`），提升站点安全评级。
+
+### 10. 动态历史小组件 (History Ticker)
+`src/components/ui/HistoryOnThisDay.astro` 实现了一个高定制化的历史事件轮播器：
+*   **多源 API 适配**：根据页面语言自动切换数据源（中文：xxapi 聚合接口；英文：byabbe REST API）。
+*   **View Transitions 兼容**：脚本使用 `astro:page-load` 或 `astro:after-swap` 监听器，确保在页面切换后依然能正确重新初始化定时器，避免内存泄漏或逻辑停滞。
+*   **容器自适应**：轮播轨道的高度会根据当前显示的事件字数动态伸缩，确保布局紧凑且不遮挡下方内容。
+
+### 11. 评论系统鲁棒性与超时处理 (Comment System Robustness)
+针对第三方评论系统（Artalk）加载不稳定的情况，我们实施了主动防御：
+*   **10 秒超时熔断**：在 `Comments.astro` 中内置了定时器。若 Artalk 服务器在 10 秒内未响应 `list-loaded` 事件，前端将自动停止加载动画。
+*   **维护模式切换**：超时后会自动展示预定义的维护提示信息（`ArtalkMaintenance` 层），并引导用户通过邮件联系站长。
+*   **前端埋点警告**：在控制台会同步输出 `load timeout` 警告，便于通过浏览器日志排查服务端状态。
+
 ---
 > 提示：执行 `pnpm run build` 前，请确保你已经使用 Astro 的 `getRelativeLocaleUrl` 修复了新添加的链接路径，防止语言互相跳转出现 404。
