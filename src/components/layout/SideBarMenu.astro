@@ -10,15 +10,15 @@ const t = useTranslations(lang as any);
 
 <ul class="menu grow shrink menu-md overflow-y-auto">
     <li><a class="py-3 text-base" id="home" href={getRelativeLocaleUrl(lang, "")}>{t('nav.home')}</a></li>
+    <li><a class="py-3 text-base" id="blog" href={getRelativeLocaleUrl(lang, "blog")}>{t('nav.blog')}</a></li>
+    <li><a class="py-3 text-base" id="tutorials" href={getRelativeLocaleUrl(lang, "tutorials")}>{t('nav.store')}</a></li>
     <li><a class="py-3 text-base" id="gallery" href={getRelativeLocaleUrl(lang, "gallery")}>{t('nav.gallery')}</a></li>
     <li><a class="py-3 text-base" id="neighbors" href={getRelativeLocaleUrl(lang, "neighbors")}>{t('nav.neighbors')}</a></li>
-    <li><a class="py-3 text-base" id="tutorials" href={getRelativeLocaleUrl(lang, "tutorials")}>{t('nav.store')}</a></li>
-    <li><a class="py-3 text-base" id="blog" href={getRelativeLocaleUrl(lang, "blog")}>{t('nav.blog')}</a></li>
 
     <li>
         <a
             class="py-3 text-base"
-            href="mailto:contact.manuelernestog@gmail.com"
+            href="mailto:contact_me@peregrinewang.me"
             target="_blank"
             referrerpolicy="no-referrer-when-downgrade">{t('nav.contact')}</a
         >
