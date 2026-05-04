@@ -21,5 +21,5 @@ pnpm-debug.log*
 # Astro
 .astro/
 
-# Obsidian
-/src/content/.obsidian/
+# contents for local use
+/src/content
