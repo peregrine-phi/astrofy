@@ -115,6 +115,29 @@ src/
 *   **10 秒超时熔断**：在 `Comments.astro` 中内置了定时器。若 Artalk 服务器在 10 秒内未响应 `list-loaded` 事件，前端将自动停止加载动画。
 *   **维护模式切换**：超时后会自动展示预定义的维护提示信息（`ArtalkMaintenance` 层），并引导用户通过邮件联系站长。
 *   **前端埋点警告**：在控制台会同步输出 `load timeout` 警告，便于通过浏览器日志排查服务端状态。
+### 12. 内容与代码分离架构 (Content & Code Decoupling)
+为了实现“内容创作”与“代码逻辑”的解耦，并支持使用独立工具（如 Obsidian）管理文章，我们采用了 **“本地嵌套 + 云端动态组装”** 的架构。
 
----
+#### 核心设计逻辑：
+*   **主仓库 (Code Repo)**：仅存放展示逻辑、组件和页面路由。通过 `.gitignore` 彻底忽略 `src/content` 目录。
+*   **内容仓库 (Content Repo)**：存放所有 Markdown/MDX 文章以及内容校验配置文件 `src/content/config.ts`。
+*   **解耦点**：主仓库在 GitHub 上不含任何文章数据，保证了代码历史的纯净。
+
+#### 本地开发维护：
+*   **物理嵌套**：在本地开发环境下，你可以直接在主项目的 `src/content` 目录下 `git clone` 内容仓库。
+*   **双重忽略**：主仓库的 `.gitignore` 必须包含 `/src/content`。这样即使你在 `src/content` 下进行独立的 Git 操作，主仓库也不会受到干扰。
+*   **实时预览**：由于文件在物理上处于 Astro 预期的路径下，本地 `pnpm run dev` 时可以实时捕捉到文章的修改。
+
+#### 云端构建与同步 (Cloudflare Pages)：
+*   **触发机制**：在 Cloudflare Pages 后台配置 **Deploy Hook**，并在 GitHub 内容仓库中配置对应的 Webhook。每当你推送新文章，Cloudflare 会自动启动构建。
+*   **动态组装脚本**：在 Cloudflare 的构建命令中，我们不再直接运行 `astro build`，而是使用以下复合命令：
+    ```bash
+    rm -rf src/content && git clone --depth 1 https://$GITHUB_TOKEN@github.com/your-name/your-content-repo.git src/content && pnpm run build
+    ```
+*   **健壮性保证**：`rm -rf` 确保了每次构建的环境都是“绝对新鲜”的，彻底杜绝了因缓存导致的“文章不更新”问题。
+
+#### 关于 config.ts 的归属：
+*   **决策**：`src/content/config.ts` 被定义为内容仓库的一部分。
+*   **依据**：该文件定义了数据的“形状（Schema）”。数据（文章）与它的形状描述符（config.ts）在逻辑上属于同一生命周期。当内容结构发生变化时，只需在文章仓库内完成闭环修改即可。
+
 > 提示：执行 `pnpm run build` 前，请确保你已经使用 Astro 的 `getRelativeLocaleUrl` 修复了新添加的链接路径，防止语言互相跳转出现 404。
