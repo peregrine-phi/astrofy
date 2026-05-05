@@ -25,9 +25,9 @@ import TableOfContents from "../components/ui/TableOfContents.astro";
 ---
 
 <BaseLayout title={title} description={description} image={heroImage} updatedDate={updatedDate} block_region={block_region}>
-  <main class="md:flex md:justify-center" data-block-region={block_region}>
-    <article class="prose prose-lg max-w-[750px] prose-img:mx-auto relative">
-      <TableOfContents />
+  <div class="flex flex-col lg:flex-row lg:justify-center gap-12" data-block-region={block_region}>
+    <article class="prose prose-lg max-w-[750px] w-full relative">
+      <TableOfContents mode="mobile" />
       {
         heroImage && (
           <Image width={750} height={422} format="webp" src={heroImage} alt={title} class="w-full mb-6" />
@@ -57,5 +57,8 @@ import TableOfContents from "../components/ui/TableOfContents.astro";
       <slot />
       <Comments title={title} />
     </article>
-  </main>
+    <aside class="hidden lg:block w-[220px] shrink-0">
+      <TableOfContents mode="desktop" />
+    </aside>
+  </div>
 </BaseLayout>

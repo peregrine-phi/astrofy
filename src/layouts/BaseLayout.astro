@@ -100,13 +100,11 @@ if (month === 6 || month === 5) {
   <body>
     <div class="bg-base-100 drawer lg:drawer-open">
       <input id="my-drawer" type="checkbox" class="drawer-toggle" />
-      <div class="drawer-content bg-base-100">
+      <div class="drawer-content bg-base-100 flex flex-col items-center">
         <Header title={SITE_TITLE} transition:persist />
-        <div class="md:flex md:justify-center">
-          <main class="p-6 pt-10 lg:max-w-[900px] max-w-[100vw] w-full">
-            <slot />
-          </main>
-        </div>
+        <main class="p-6 pt-10 lg:max-w-[1150px] max-w-[100vw] w-full">
+          <slot />
+        </main>
         <Footer />
       </div>
       {includeSidebar && <SideBar sideBarActiveItemID={sideBarActiveItemID} transition:persist />}
