@@ -88,6 +88,13 @@ if (month === 6 || month === 5) {
       html[data-region="CN"] [data-block-region="CN"] {
         display: none !important;
       }
+
+      /* Allow TOC to overflow containers on large screens */
+      @media (min-width: 1024px) {
+        .drawer-content {
+          overflow: visible !important;
+        }
+      }
     </style>
   </head>
   <body>

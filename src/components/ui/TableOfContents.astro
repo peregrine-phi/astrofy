@@ -1,0 +1,212 @@
+---
+const { class: klass } = Astro.props;
+---
+
+<!-- Mobile: collapsible details -->
+<details id="toc-mobile" class="toc-mobile lg:hidden mb-6 group">
+  <summary id="toc-mobile-summary" class="cursor-pointer text-sm font-medium opacity-60 hover:opacity-100 transition-opacity select-none">
+    <span class="flex items-center gap-1.5">
+      <svg class="w-4 h-4 transition-transform group-open:rotate-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+      <span data-toc-title="mobile"></span>
+    </span>
+  </summary>
+  <nav id="toc-nav-mobile" class="mt-3 pl-4 border-l-2 border-base-content/15 text-sm"></nav>
+</details>
+
+<!-- Desktop: sticky sidebar -->
+<aside id="toc-desktop" class="hidden lg:block toc-desktop">
+  <h4 class="text-xs font-bold uppercase tracking-widest opacity-40 mb-3" data-toc-title="desktop"></h4>
+  <nav id="toc-nav-desktop" class="text-sm"></nav>
+</aside>
+
+<script>
+  function initTOC() {
+    const article = document.querySelector('article.prose') || document.querySelector('article');
+    const mobileNav = document.getElementById('toc-nav-mobile');
+    const desktopNav = document.getElementById('toc-nav-desktop');
+    const mobileDetails = document.getElementById('toc-mobile');
+    const desktopAside = document.getElementById('toc-desktop');
+
+    if (!article || (!mobileNav && !desktopNav)) return;
+
+    // Detect language
+    const isZh = document.documentElement.lang?.startsWith('zh');
+    const titleText = isZh ? '本页目录' : 'On this page';
+    document.querySelectorAll('[data-toc-title]').forEach(el => {
+      el.textContent = titleText;
+    });
+
+    // Collect headings from the article, excluding the article title and headings inside the TOC itself
+    const headingElements = [...article.querySelectorAll('h1, h2, h3, h4')].filter(h => {
+      return !h.classList.contains('title') && !h.closest('.toc-desktop') && !h.closest('.toc-mobile');
+    });
+
+    if (headingElements.length < 2) {
+      if (mobileDetails) mobileDetails.style.display = 'none';
+      if (desktopAside) desktopAside.style.display = 'none';
+      return;
+    }
+
+    // Ensure every heading has an id
+    headingElements.forEach((h, i) => {
+      if (!h.id) {
+        h.id = 'section-' + i + '-' + h.textContent!.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
+      }
+    });
+
+    // Build the list HTML
+    const buildList = () => {
+      let html = '<ul class="list-none m-0 p-0 relative">';
+      for (const h of headingElements) {
+        const level = parseInt(h.tagName[1]);
+        const indentClass = level === 1 ? 'pl-0' : level === 2 ? 'pl-3' : 'pl-6';
+        
+        html += `
+          <li class="relative">
+            <a href="#${h.id}"
+               class="toc-link block py-1.5 pr-4 text-xs transition-all duration-200 no-underline border-l-2 border-transparent opacity-40 hover:opacity-100 ${indentClass}"
+               data-toc-target="${h.id}">
+              ${h.textContent}
+            </a>
+          </li>`;
+      }
+      html += '</ul>';
+      return html;
+    };
+
+    const tocHTML = buildList();
+    if (mobileNav) mobileNav.innerHTML = tocHTML;
+    if (desktopNav) desktopNav.innerHTML = tocHTML;
+
+    // Scroll spy — highlight the heading currently nearest the top of the viewport
+    const allLinks = document.querySelectorAll('.toc-link');
+
+    function updateActiveLink() {
+      let activeId: string | null = null;
+      const threshold = 150; // Distance from top of viewport to trigger activation
+
+      for (const h of headingElements) {
+        const rect = h.getBoundingClientRect();
+        if (rect.top <= threshold) {
+          activeId = h.id;
+        } else {
+          break; // Headings are ordered, can stop once we pass the threshold
+        }
+      }
+
+      allLinks.forEach(link => {
+        const isActive = link.getAttribute('data-toc-target') === activeId;
+        if (isActive) {
+          link.classList.add('text-primary', 'opacity-100', 'font-semibold', 'active-toc-link');
+          link.classList.remove('opacity-40');
+          
+          if (desktopAside && desktopAside.contains(link)) {
+            const linkRect = link.getBoundingClientRect();
+            const asideRect = desktopAside.getBoundingClientRect();
+            if (linkRect.top < asideRect.top || linkRect.bottom > asideRect.bottom) {
+              link.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+          }
+        } else {
+          link.classList.remove('text-primary', 'opacity-100', 'font-semibold', 'active-toc-link');
+          link.classList.add('opacity-40');
+        }
+      });
+    }
+
+    // Run on scroll (throttled)
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          updateActiveLink();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+
+    updateActiveLink();
+
+    // Smooth scroll on click
+    document.querySelectorAll('.toc-link').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const id = link.getAttribute('data-toc-target');
+        const target = id ? document.getElementById(id) : null;
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // Push the hash without a jump
+          history.pushState(null, '', '#' + id);
+        }
+      });
+    });
+
+    // Show the mobile details on small screens, hide on large
+    if (mobileDetails) mobileDetails.style.display = '';
+    if (desktopAside) desktopAside.style.display = '';
+  }
+
+  // Initialize and re-init on View Transitions navigation
+  initTOC();
+  document.addEventListener('astro:after-swap', initTOC);
+</script>
+
+<style>
+  .toc-desktop {
+    position: sticky;
+    top: 6rem;
+    float: right;
+    margin-right: -260px;
+    width: 220px;
+    max-height: calc(100vh - 10rem);
+    overflow-y: auto;
+    padding-right: 1rem;
+    z-index: 20;
+    scrollbar-width: thin;
+    scrollbar-color: oklch(var(--bc) / 0.1) transparent;
+  }
+
+  .toc-link.active-toc-link {
+    border-left-color: oklch(var(--p));
+  }
+
+  /* Specific styles for levels to override base classes if needed */
+  .toc-link {
+    border-left-width: 2px;
+    line-height: 1.5;
+    text-decoration: none !important;
+  }
+
+  /* Custom scrollbar */
+  .toc-desktop::-webkit-scrollbar {
+    width: 3px;
+  }
+  .toc-desktop::-webkit-scrollbar-thumb {
+    background-color: oklch(var(--bc) / 0.1);
+    border-radius: 10px;
+  }
+
+  @media (max-width: 1300px) {
+    .toc-desktop {
+      display: none !important;
+    }
+  }
+
+  .toc-mobile {
+    border: 1px solid oklch(var(--bc) / 0.08);
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .toc-mobile summary {
+    list-style: none;
+  }
+  .toc-mobile summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .toc-link {
+    transition: all 0.15s ease;
+  }
+</style>
