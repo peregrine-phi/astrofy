@@ -19,6 +19,11 @@ interface Props {
 const { entry } = Astro.props;
 const post: BlogSchema = entry.data;
 const { Content } = await entry.render();
+
+// 为中文页面生成 slug 时保持一致性，slug 用于 KV 键名，建议带上 zh/ 前缀以区分
+const slug = createSlug(post.title, entry.slug);
+// 优先使用 frontmatter 中的 readingTime，否则自动计算
+const readingTime = post.readingTime || `${Math.ceil(entry.body.length / 300)} 分钟`;
 ---
 
 <PostLayout
@@ -30,6 +35,8 @@ const { Content } = await entry.render();
   badge={post.badge}
   tags={post.tags}
   block_region={post.block_region}
+  slug={slug}
+  readingTime={readingTime}
 >
   <Content />
 </PostLayout>

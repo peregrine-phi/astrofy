@@ -5,9 +5,17 @@ import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import { getRelativeLocaleUrl } from "astro:i18n";
 
-export interface Props extends BlogSchema {}
+import { useTranslations } from "../i18n/utils";
 
-const { title, description, pubDate, updatedDate, heroImage, badge, tags = [], block_region } = Astro.props;
+export interface Props extends BlogSchema {
+  slug?: string;
+  readingTime?: string;
+}
+
+const { title, description, pubDate, updatedDate, heroImage, badge, tags = [], block_region, slug, readingTime } = Astro.props;
+const lang = Astro.currentLocale || "en";
+const t = useTranslations(lang as any);
+
 dayjs.extend(localizedFormat);
 const displayDate = dayjs(pubDate).format("ll")
 import { Image } from "astro:assets";
@@ -21,8 +29,21 @@ import TableOfContents from "../components/ui/TableOfContents.astro";
       <TableOfContents mode="mobile" />
       {heroImage && <Image width={750} height={422} format="webp" src={heroImage} alt={title} class="w-full mb-6" />}
       <h1 class="title my-2 text-4xl font-bold">{title}</h1>
-      {pubDate && <time>{displayDate}</time>}
-      <br />
+      <div class="flex flex-wrap items-center gap-y-1 mb-4">
+        {pubDate && <time class="opacity-70 text-sm">{displayDate}</time>}
+        {
+          readingTime && (
+            <span class="opacity-70 text-sm flex items-center">
+              <span class="mx-2 text-base-content/20">|</span>
+              {t("post.readingTime")}：{readingTime}
+            </span>
+          )
+        }
+        <span class="opacity-70 text-sm flex items-center">
+          <span class="mx-2 text-base-content/20">|</span>
+          {t("post.viewCount")}：<span id="view-count" data-slug={slug}>...</span>
+        </span>
+      </div>
       {badge && <div class="badge badge-secondary my-1">{badge}</div>}
       {
         tags &&
@@ -79,8 +100,30 @@ import TableOfContents from "../components/ui/TableOfContents.astro";
     });
   }
 
+  async function updateViewCount() {
+    const viewCountEl = document.getElementById('view-count');
+    if (!viewCountEl) return;
+    const slug = viewCountEl.dataset.slug;
+    if (!slug) return;
+
+    try {
+      const res = await fetch(`/api/views?slug=${encodeURIComponent(slug)}`);
+      const data = await res.json();
+      if (data.views) {
+        viewCountEl.textContent = data.views.toLocaleString();
+      }
+    } catch (e) {
+      console.error('Failed to fetch view count:', e);
+      viewCountEl.textContent = '---';
+    }
+  }
+
   addAnchorLinks();
-  document.addEventListener('astro:page-load', addAnchorLinks);
+  updateViewCount();
+  document.addEventListener('astro:page-load', () => {
+    addAnchorLinks();
+    updateViewCount();
+  });
 </script>
 
 <style is:global>

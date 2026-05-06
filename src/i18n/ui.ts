@@ -14,6 +14,8 @@ export const ui = {
     'nav.blog': 'Blog',
     'nav.cv': 'CV',
     'nav.contact': 'Contact',
+    'post.readingTime': 'Reading Time',
+    'post.viewCount': 'Views',
   },
   zh: {
     'nav.home': '主页',
@@ -23,5 +25,7 @@ export const ui = {
     'nav.blog': '博客',
     'nav.cv': '简历',
     'nav.contact': '联系',
+    'post.readingTime': '阅读时间',
+    'post.viewCount': '阅读量',
   },
 } as const;
