@@ -46,7 +46,23 @@ export const onRequest: PagesFunction = async (context) => {
       .on('main[data-block-region="CN"]', {
         element(element) {
           element.setInnerContent(
-            '<div class="p-10 text-center"><h2 class="text-2xl font-bold mb-4">内容不可见</h2><p>根据相关法律法规，该内容在您所在的地区不可见。</p></div>', 
+            `<div class="flex flex-col items-center justify-center min-h-[50vh] p-8 text-center animate-in fade-in duration-700">
+              <div class="relative mb-6">
+                <div class="absolute -inset-4 bg-error/10 blur-2xl rounded-full opacity-50"></div>
+                <div class="relative w-20 h-20 bg-base-200 rounded-3xl flex items-center justify-center border border-base-content/5 shadow-inner">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-error/70"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                </div>
+              </div>
+              <h2 class="text-2xl font-bold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-base-content to-base-content/40">
+                内容不可见
+              </h2>
+              <p class="text-base-content/60 max-w-sm leading-relaxed mb-8">
+                抱歉，根据相关法律法规及政策，该内容在您所在的地区暂不提供。
+              </p>
+              <a href="/zh/" class="btn btn-outline btn-sm rounded-xl px-6 border-base-content/10 hover:bg-base-content/5 transition-all">
+                返回花园首页
+              </a>
+            </div>`, 
             { html: true }
           );
         }
