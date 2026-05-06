@@ -1,12 +1,99 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import createSlug from "../lib/createSlug";
+import HorizontalCard from "../components/ui/HorizontalCard.astro";
+
+const lang = Astro.currentLocale || "en";
+const isZh = lang === "zh";
+
+const title = isZh ? "404: 页面走丢了" : "404: Page Not Found";
+const description = isZh ? "您访问的页面不存在或已被移除。" : "The page you're looking for doesn't exist.";
+
+// Fetch 3 most recent posts to help the user find something interesting
+const posts = (await getCollection("blog", ({ id }) => {
+  return isZh ? id.startsWith("zh/") : !id.startsWith("zh/");
+})).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const recent_posts = posts.slice(0, 2);
 ---
 
-<BaseLayout title = "404: Not Found" includeSidebar={false} noindex={true}>
-  <div class="text-center">
-    <h1 class="text-9xl font-bold mb-4">🏝</h1>
-    <h1 class="text-9xl font-bold mb-2">404</h1>
-    <h3 class="text-2xl">The page you're looking for couldn't be found.</h3>
-    <a class="btn btn-accent mt-9" href="/">Home</a>
+<BaseLayout title={title} includeSidebar={false} noindex={true}>
+  <div class="flex flex-col items-center justify-center min-h-[70vh] px-4">
+    <!-- Animated Illustration Area -->
+    <div class="relative mb-8 group">
+      <div class="absolute -inset-4 bg-primary/20 blur-3xl rounded-full opacity-50 group-hover:opacity-100 transition-opacity duration-1000"></div>
+      <div class="relative text-[120px] sm:text-[180px] font-black leading-none tracking-tighter select-none bg-clip-text text-transparent bg-gradient-to-b from-base-content to-base-content/20">
+        404
+      </div>
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-5xl sm:text-7xl animate-bounce pointer-events-none">
+        🌱
+      </div>
+    </div>
+
+    <!-- Error Message -->
+    <div class="text-center max-w-lg mb-12">
+      <h1 class="text-2xl sm:text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+        {isZh ? "糟糕！进入了未知的荒野" : "Whoops! You've wandered into the wild"}
+      </h1>
+      <p class="text-base-content/60 leading-relaxed mb-8">
+        {isZh 
+          ? "你请求的页面可能已经搬迁或者在某个时空裂缝中失踪了。不如在花园里随便逛逛？" 
+          : "The page you're looking for might have been moved or is hiding in a digital thicket. Why not explore other paths?"}
+      </p>
+      
+      <!-- Action Buttons -->
+      <div class="flex flex-wrap justify-center gap-4">
+        <a href={isZh ? "/zh/" : "/"} class="btn btn-primary btn-md sm:btn-lg rounded-2xl px-8 shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all">
+          {isZh ? "返回首页" : "Return Home"}
+        </a>
+        <button id="search-trigger-404" class="btn btn-outline btn-md sm:btn-lg rounded-2xl px-8 border-base-content/20 hover:bg-base-content/5 transition-all">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mr-2 opacity-60"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          {isZh ? "搜索全站" : "Search Site"}
+        </button>
+      </div>
+    </div>
+
+    <!-- Helpful Suggestions -->
+    {recent_posts.length > 0 && (
+      <div class="w-full max-w-2xl bg-base-200/50 backdrop-blur-xl border border-base-content/5 rounded-[2.5rem] p-6 sm:p-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div class="flex items-center gap-3 mb-6 opacity-60">
+          <div class="h-px flex-1 bg-gradient-to-r from-transparent to-base-content/20"></div>
+          <span class="text-xs font-bold uppercase tracking-widest">{isZh ? "或许你是在找这些？" : "Maybe you were looking for..."}</span>
+          <div class="h-px flex-1 bg-gradient-to-l from-transparent to-base-content/20"></div>
+        </div>
+        
+        <div class="grid gap-6">
+          {recent_posts.map((post) => (
+            <HorizontalCard
+              title={post.data.title}
+              img={post.data.heroImage}
+              desc={post.data.description}
+              url={(isZh ? "/zh/blog/" : "/blog/") + createSlug(post.data.title, post.slug)}
+              target="_self"
+            />
+          ))}
+        </div>
+      </div>
+    )}
   </div>
+
+  <script is:inline>
+    // Link the 404 search button to our global search trigger
+    document.getElementById('search-trigger-404')?.addEventListener('click', () => {
+      document.getElementById('search-trigger')?.click();
+    });
+  </script>
 </BaseLayout>
+
+<style>
+  /* Subtle pulse for the 404 text shadow area */
+  @keyframes pulse-slow {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.05); }
+  }
+  
+  .blur-3xl {
+    animation: pulse-slow 8s infinite ease-in-out;
+  }
+</style>

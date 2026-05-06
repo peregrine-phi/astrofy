@@ -53,7 +53,9 @@ const noResults = isZh ? "未找到相关结果" : "No results found";
 
 <script is:inline>
 (function() {
-  let pagefind = null;
+  let pagefindModule = null;  // The imported ES module (cached by browser, never changes)
+  let pagefindReady = false;  // Whether init() has been called
+  let pagefindLang = null;    // The language currently loaded
 
   function initSearch() {
     const overlay = document.getElementById('search-overlay');
@@ -66,10 +68,24 @@ const noResults = isZh ? "未找到相关结果" : "No results found";
     if (!overlay || !input) return;
 
     async function loadPagefind() {
-      if (pagefind) return;
+      const currentLang = document.documentElement.lang || 'en';
       try {
-        pagefind = await import('/pagefind/pagefind.js');
-        await pagefind.init();
+        // First time: import the module
+        if (!pagefindModule) {
+          pagefindModule = await import('/pagefind/pagefind.js');
+        }
+        // Language changed: destroy old index, reinitialize
+        if (pagefindReady && pagefindLang !== currentLang) {
+          await pagefindModule.destroy();
+          pagefindReady = false;
+        }
+        // Initialize with current language
+        if (!pagefindReady) {
+          await pagefindModule.options({ language: currentLang });
+          await pagefindModule.init();
+          pagefindLang = currentLang;
+          pagefindReady = true;
+        }
       } catch (e) {
         console.warn('Pagefind not available:', e);
         if (placeholder) {
@@ -147,9 +163,9 @@ const noResults = isZh ? "未找到相关结果" : "No results found";
       }
 
       debounceTimer = setTimeout(async () => {
-        if (!pagefind) return;
+        if (!pagefindModule || !pagefindReady) return;
 
-        const search = await pagefind.search(query);
+        const search = await pagefindModule.search(query);
         if (search.results.length === 0) {
           results.innerHTML = `<div class="search-placeholder">${input.dataset.noResults || 'No results found'} "${query}"</div>`;
           return;
