@@ -205,3 +205,25 @@ src/
 *   **构建集成**：集成在 `astro.config.mjs` 中，运行 `pnpm run build` 时会自动在 `dist/pagefind` 生成索引。
 *   **快捷键支持**：全站支持 `/` 或 `Ctrl/Cmd + K` 呼出搜索。
 *   **开发环境注意**：在 `npm run dev` 模式下，由于索引仅在构建时生成，搜索框会显示“索引未生成”提示。测试需通过 `pnpm run build` 配合 `pnpm run preview` 进行。
+
+### 16. 侧边栏与布局兼容性 (Sidebar & Layout Compatibility)
+为了实现高度稳定的侧边栏导航和目录停留效果，我们在维护过程中总结了以下关键坑点与解决方案：
+
+*   **DaisyUI Drawer 与 Sticky 的冲突**：
+    - **避坑**：严禁给 `.drawer-content` 设置 `overflow: visible`（除非高度受限）。虽然这能解决部分溢出显示问题，但它会破坏父级滚动上下文，导致内部的 `position: sticky` 元素（如侧边栏和目录）失效。
+    - **解决方案**：保持 DaisyUI 默认的 `overflow` 行为。对于需要吸顶的组件，确保其父容器在 `lg` 断点下具有正确的布局特征。
+
+*   **响应式断点真空区 (Breakpoint Gap)**：
+    - **现象**：在 1024px 到 1100px 之间目录同时消失。
+    - **准则**：所有自定义的媒体查询（Media Query）必须与 Tailwind 的内置断点（如 `lg: 1024px`）**严格对齐**。确保移动端 UI 消失的同时，桌面端 UI 精确出现。
+
+*   **Safari 滚动击穿补丁 (Safari Sticky Rubber-band Fix)**：
+    - **问题**：Safari 浏览器在嵌套 Grid 布局下处理 `position: sticky` 存在 Bug。当页面触发橡胶带回弹（Rubber-banding）滚动时，侧边栏会产生位移或抖动。
+    - **精准打击方案**：
+        1.  **JS 检测**：在 `BaseLayout.astro` 的内联脚本中通过 UA 检测识别真正的 Safari 环境，并给 `html` 注入 `is-safari` 类。
+        2.  **CSS 覆盖**：仅针对 `html.is-safari` 环境，在 `lg` 断点下将 `.drawer-side` 强制设为 `position: fixed`，并配合 `.drawer` 的 `padding-left` 进行布局补偿。
+    - **优点**：该方案对 Chrome/Edge 用户完全透明（保留原生 Grid 性能），仅在 Safari 中启用固定补丁，实现了极佳的跨平台稳定性。
+
+*   **真机调试建议**：
+    - 使用 `pnpm run dev --host` 开启局域网监听，通过物理 iPhone/iPad 访问 IP 地址来验证 Safari 的滚动行为，这是模拟器无法完全还原的。
+
