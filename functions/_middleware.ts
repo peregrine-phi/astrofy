@@ -46,7 +46,7 @@ export const onRequest: PagesFunction = async (context) => {
       .on('main[data-block-region="CN"]', {
         element(element) {
           element.setInnerContent(
-            `<div class="flex flex-col items-center pt-28 pb-32 px-8 text-center animate-in fade-in duration-700">
+            `<div style="display: flex; flex-direction: column; align-items: center; padding-top: 120px; padding-bottom: 120px; padding-left: 20px; padding-right: 20px; text-align: center;" class="animate-in fade-in duration-700">
               <div class="mb-6 opacity-80">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="64" height="64" fill="currentColor" class="text-base-content">
                   <path d="M46,8 h26 v8 h8 v6 h-4 v4 h-4 v-4 h-4 v4 h-4 v18 h-8 v8 h-4 v8 h-6 v-4 h4 v-8 h-4 v-4 h-16 v-4 h-4 v-4 h-4 v-10 h4 v4 h4 v4 h12 v-8 h4 v-14 h6 z m14,4 h4 v4 h-4 z" />
