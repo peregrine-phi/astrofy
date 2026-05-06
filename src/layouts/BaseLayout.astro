@@ -103,7 +103,7 @@ if (month === 6 || month === 5) {
       <input id="my-drawer" type="checkbox" class="drawer-toggle" />
       <div class="drawer-content bg-base-100 flex flex-col items-center">
         <Header title={SITE_TITLE} transition:persist />
-        <main class="p-6 pt-10 lg:max-w-[1150px] max-w-[100vw] w-full">
+        <main class="p-6 pt-10 lg:max-w-[1150px] max-w-[100vw] w-full" data-block-region={block_region}>
           <slot />
         </main>
         <Footer />

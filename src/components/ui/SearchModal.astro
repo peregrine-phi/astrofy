@@ -53,33 +53,30 @@ const noResults = isZh ? "未找到相关结果" : "No results found";
 
 <script is:inline>
 (function() {
-  let pagefindModule = null;  // The imported ES module (cached by browser, never changes)
-  let pagefindReady = false;  // Whether init() has been called
-  let pagefindLang = null;    // The language currently loaded
+  let pagefindModule = null;
+  let pagefindReady = false;
+  let pagefindLang = null;
+  let globalEventsBound = false;
 
-  function initSearch() {
+  function openSearch() {
     const overlay = document.getElementById('search-overlay');
-    const backdrop = document.getElementById('search-backdrop');
     const input = document.getElementById('search-input');
-    const results = document.getElementById('search-results');
-    const placeholder = document.getElementById('search-placeholder');
-    const closeBtn = document.getElementById('search-close');
-
     if (!overlay || !input) return;
 
-    async function loadPagefind() {
-      const currentLang = document.documentElement.lang || 'en';
+    overlay.classList.add('active');
+    overlay.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+
+    const currentLang = document.documentElement.lang || 'en';
+    (async () => {
       try {
-        // First time: import the module
         if (!pagefindModule) {
           pagefindModule = await import('/pagefind/pagefind.js');
         }
-        // Language changed: destroy old index, reinitialize
         if (pagefindReady && pagefindLang !== currentLang) {
           await pagefindModule.destroy();
           pagefindReady = false;
         }
-        // Initialize with current language
         if (!pagefindReady) {
           await pagefindModule.options({ language: currentLang });
           await pagefindModule.init();
@@ -88,114 +85,136 @@ const noResults = isZh ? "未找到相关结果" : "No results found";
         }
       } catch (e) {
         console.warn('Pagefind not available:', e);
-        if (placeholder) {
-          placeholder.textContent = input.dataset.indexNotFound || 'Search index not found.';
-        }
+        const p = document.getElementById('search-placeholder');
+        if (p) p.textContent = input.dataset.indexNotFound || 'Search index not found.';
       }
-    }
+    })();
 
-    function openSearch() {
-      overlay.classList.add('active');
-      overlay.setAttribute('aria-hidden', 'false');
-      document.body.style.overflow = 'hidden';
-      loadPagefind();
-      setTimeout(() => input.focus(), 80);
-    }
+    setTimeout(() => input.focus(), 80);
+  }
 
-    function closeSearch() {
+  function closeSearch() {
+    const overlay = document.getElementById('search-overlay');
+    const input = document.getElementById('search-input');
+    const results = document.getElementById('search-results');
+    const placeholder = document.getElementById('search-placeholder');
+    
+    if (overlay) {
       overlay.classList.remove('active');
       overlay.setAttribute('aria-hidden', 'true');
-      document.body.style.overflow = '';
-      input.value = '';
-      if (results && placeholder) {
-        results.innerHTML = '';
-        results.appendChild(placeholder);
-        placeholder.style.display = '';
-      }
     }
+    document.body.style.overflow = '';
+    if (input) input.value = '';
+    if (results && placeholder) {
+      results.innerHTML = '';
+      results.appendChild(placeholder);
+      placeholder.style.display = '';
+    }
+  }
 
-    // --- Event Bindings ---
-    // Close on backdrop click
-    backdrop.addEventListener('click', closeSearch);
-    closeBtn.addEventListener('click', closeSearch);
+  function bindPageEvents() {
+    const backdrop = document.getElementById('search-backdrop');
+    const closeBtn = document.getElementById('search-close');
+    const input = document.getElementById('search-input');
+    const results = document.getElementById('search-results');
+    const placeholder = document.getElementById('search-placeholder');
 
-    // Open from trigger (use event delegation on document for persist compatibility)
-    document.addEventListener('click', function(e) {
-      if (e.target.closest('#search-trigger')) {
-        e.preventDefault();
-        openSearch();
-      }
-    });
+    if (backdrop) backdrop.addEventListener('click', closeSearch);
+    if (closeBtn) closeBtn.addEventListener('click', closeSearch);
 
-    // Keyboard shortcuts
-    document.addEventListener('keydown', function(e) {
-      // Open
-      if (e.key === '/' && !overlay.classList.contains('active') &&
-          !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) {
-        e.preventDefault();
-        openSearch();
-      }
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault();
-        if (overlay.classList.contains('active')) {
-          closeSearch();
-        } else {
-          openSearch();
-        }
-      }
-      // Close
-      if (e.key === 'Escape' && overlay.classList.contains('active')) {
-        closeSearch();
-      }
-    });
+    if (input) {
+      let debounceTimer;
+      input.addEventListener('input', function(e) {
+        const query = e.target.value.trim();
+        clearTimeout(debounceTimer);
 
-    // Search input handler
-    let debounceTimer;
-    input.addEventListener('input', function(e) {
-      const query = e.target.value.trim();
-      clearTimeout(debounceTimer);
-
-      if (!query) {
-        results.innerHTML = '';
-        results.appendChild(placeholder);
-        placeholder.style.display = '';
-        return;
-      }
-
-      debounceTimer = setTimeout(async () => {
-        if (!pagefindModule || !pagefindReady) return;
-
-        const search = await pagefindModule.search(query);
-        if (search.results.length === 0) {
-          results.innerHTML = `<div class="search-placeholder">${input.dataset.noResults || 'No results found'} "${query}"</div>`;
+        if (!query) {
+          if (results && placeholder) {
+            results.innerHTML = '';
+            results.appendChild(placeholder);
+            placeholder.style.display = '';
+          }
           return;
         }
 
-        results.innerHTML = '';
-        const firstResults = search.results.slice(0, 8);
+        debounceTimer = setTimeout(async () => {
+          if (!pagefindModule || !pagefindReady) return;
 
-        for (const result of firstResults) {
-          const data = await result.data();
-          const item = document.createElement('a');
-          item.href = data.url;
-          item.className = 'search-result-item';
-          item.addEventListener('click', () => closeSearch());
-          item.innerHTML = `
-            <div class="search-result-title">
-              <span>${data.meta?.title || 'Untitled'}</span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="search-result-arrow"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-            </div>
-            <div class="search-result-excerpt">${data.excerpt || ''}</div>
-          `;
-          results.appendChild(item);
+          const search = await pagefindModule.search(query);
+          if (search.results.length === 0) {
+            if (results) results.innerHTML = `<div class="search-placeholder">${input.dataset.noResults || 'No results found'} "${query}"</div>`;
+            return;
+          }
+
+          if (results) results.innerHTML = '';
+          const firstResults = search.results.slice(0, 20);
+          
+          const seenUrls = new Set();
+          let addedCount = 0;
+
+          for (const result of firstResults) {
+            if (addedCount >= 8) break;
+            
+            const data = await result.data();
+            const baseUrl = data.url.split('#')[0].split('?')[0].replace(/\/+$/, '');
+            
+            if (seenUrls.has(baseUrl)) continue;
+            seenUrls.add(baseUrl);
+            addedCount++;
+
+            const item = document.createElement('a');
+            item.href = data.url;
+            item.className = 'search-result-item';
+            item.addEventListener('click', () => closeSearch());
+            item.innerHTML = `
+              <div class="search-result-title">
+                <span>${data.meta?.title || 'Untitled'}</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="search-result-arrow"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </div>
+              <div class="search-result-excerpt">${data.excerpt || ''}</div>
+            `;
+            if (results) results.appendChild(item);
+          }
+          
+          if (addedCount === 0 && results) {
+             results.innerHTML = `<div class="search-placeholder">${input.dataset.noResults || 'No results found'} "${query}"</div>`;
+          }
+
+        }, 200);
+      });
+    }
+
+    if (!globalEventsBound) {
+      globalEventsBound = true;
+      
+      document.addEventListener('click', function(e) {
+        if (e.target.closest('#search-trigger')) {
+          e.preventDefault();
+          openSearch();
         }
-      }, 200);
-    });
+      });
+
+      document.addEventListener('keydown', function(e) {
+        const overlay = document.getElementById('search-overlay');
+        const isActive = overlay && overlay.classList.contains('active');
+
+        if (e.key === '/' && !isActive && !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) {
+          e.preventDefault();
+          openSearch();
+        }
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+          e.preventDefault();
+          if (isActive) closeSearch();
+          else openSearch();
+        }
+        if (e.key === 'Escape' && isActive) {
+          closeSearch();
+        }
+      });
+    }
   }
 
-  // Init on first load and after every View Transition navigation
-  initSearch();
-  document.addEventListener('astro:page-load', initSearch);
+  document.addEventListener('astro:page-load', bindPageEvents);
 })();
 </script>
 
