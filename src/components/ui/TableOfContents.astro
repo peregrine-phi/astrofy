@@ -5,21 +5,21 @@ const { mode = 'all' } = Astro.props;
 { (mode === 'all' || mode === 'mobile') && (
   /* Mobile: collapsible details */
   <details id="toc-mobile" class={`toc-mobile mb-6 group lg:hidden`}>
-    <summary id="toc-mobile-summary" class="cursor-pointer text-sm font-medium opacity-60 hover:opacity-100 transition-opacity select-none">
+    <summary id="toc-mobile-summary" class="cursor-pointer text-base font-medium opacity-60 hover:opacity-100 transition-opacity select-none">
       <span class="flex items-center gap-1.5">
         <svg class="w-4 h-4 transition-transform group-open:rotate-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
         <span data-toc-title="mobile"></span>
       </span>
     </summary>
-    <nav id="toc-nav-mobile" class="mt-3 pl-4 border-l-2 border-base-content/15 text-sm"></nav>
+    <nav id="toc-nav-mobile" class="mt-3 pl-4 border-l-2 border-base-content/15 text-base"></nav>
   </details>
 )}
 
 { (mode === 'all' || mode === 'desktop') && (
   /* Desktop: sticky sidebar */
   <aside id="toc-desktop" class={`toc-desktop hidden lg:block`}>
-    <h4 class="text-xs font-bold uppercase tracking-widest opacity-40 mb-3" data-toc-title="desktop"></h4>
-    <nav id="toc-nav-desktop" class="text-sm"></nav>
+    <h4 class="text-sm font-bold uppercase tracking-widest opacity-40 mb-3" data-toc-title="desktop"></h4>
+    <nav id="toc-nav-desktop" class="text-base"></nav>
   </aside>
 )}
 
@@ -68,7 +68,7 @@ const { mode = 'all' } = Astro.props;
         html += `
           <li class="relative">
             <a href="#${h.id}"
-               class="toc-link block py-2 pr-4 text-xs transition-all duration-200 no-underline opacity-40 hover:opacity-100 ${indentClass}"
+               class="toc-link block py-2 pr-4 text-sm transition-all duration-200 no-underline opacity-40 hover:opacity-100 ${indentClass}"
                data-toc-target="${h.id}"
                data-toc-level="${level}">
               ${h.textContent}
@@ -102,7 +102,7 @@ const { mode = 'all' } = Astro.props;
       allLinks.forEach(link => {
         const isActive = link.getAttribute('data-toc-target') === activeId;
         if (isActive) {
-          link.classList.add('text-primary', 'opacity-100', 'font-semibold', 'active-toc-link');
+          link.classList.add('text-base-content', 'opacity-100', 'font-semibold', 'active-toc-link');
           link.classList.remove('opacity-40');
           
           if (desktopAside && desktopAside.contains(link)) {
@@ -113,7 +113,7 @@ const { mode = 'all' } = Astro.props;
             }
           }
         } else {
-          link.classList.remove('text-primary', 'opacity-100', 'font-semibold', 'active-toc-link');
+          link.classList.remove('text-base-content', 'opacity-100', 'font-semibold', 'active-toc-link');
           link.classList.add('opacity-40');
         }
       });
@@ -189,27 +189,26 @@ const { mode = 'all' } = Astro.props;
     left: -4px; /* Cross the vertical spine line */
     top: 50%;
     transform: translateY(-50%);
-    background-color: oklch(var(--bc) / 0.2);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    @apply bg-base-content/20;
   }
 
   /* Elegant graduated tick lengths */
-  .toc-link[data-toc-level="1"]::before { width: 10px; height: 1px; background-color: oklch(var(--bc) / 0.4); }
-  .toc-link[data-toc-level="2"]::before { width: 6px;  height: 1px; background-color: oklch(var(--bc) / 0.25); }
-  .toc-link[data-toc-level="3"]::before { width: 4px;  height: 1px; background-color: oklch(var(--bc) / 0.15); }
+  .toc-link[data-toc-level="1"]::before { width: 10px; height: 1px; @apply bg-base-content/40; }
+  .toc-link[data-toc-level="2"]::before { width: 6px;  height: 1px; @apply bg-base-content/25; }
+  .toc-link[data-toc-level="3"]::before { width: 4px;  height: 1px; @apply bg-base-content/[0.15]; }
 
   /* Active pointer - Elegant highlight */
   .toc-link.active-toc-link {
     opacity: 1 !important;
-    color: oklch(var(--p));
     font-weight: 600;
+    @apply text-base-content;
   }
 
   .toc-link.active-toc-link::before {
     width: 14px !important;
     height: 2px !important;
-    background-color: oklch(var(--p));
-    box-shadow: 0 0 8px oklch(var(--p) / 0.3);
+    @apply bg-base-content;
   }
 
   @media (max-width: 1023px) {

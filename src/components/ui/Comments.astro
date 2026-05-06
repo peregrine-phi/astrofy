@@ -101,12 +101,12 @@ const ARTALK_SITE = "Peregrine";
 <style is:global>
   /* 全局变量覆盖 - 确保 Artalk 核心颜色变量跟随 DaisyUI */
   :root {
-    --at-color-main: oklch(var(--p)) !important;
+    --at-color-main: var(--fallback-p, oklch(var(--p))) !important;
     --at-color-bg: transparent !important;
-    --at-color-border: oklch(var(--bc) / 0.1) !important;
-    --at-color-font: oklch(var(--bc)) !important;
-    --at-color-deep: oklch(var(--b2)) !important;
-    --at-color-sub: oklch(var(--bc) / 0.5) !important;
+    --at-color-border: var(--fallback-bc, oklch(var(--bc) / 0.1)) !important;
+    --at-color-font: var(--fallback-bc, oklch(var(--bc))) !important;
+    --at-color-deep: var(--fallback-b2, oklch(var(--b2))) !important;
+    --at-color-sub: var(--fallback-bc, oklch(var(--bc) / 0.5)) !important;
   }
 
   /* 彻底修复深色模式白块问题 */
@@ -116,7 +116,7 @@ const ARTALK_SITE = "Peregrine";
   .atk-editor-container,
   .atk-header input {
     background-color: transparent !important;
-    color: oklch(var(--bc)) !important;
+    color: var(--fallback-bc, oklch(var(--bc))) !important;
   }
 
   .atk-main-editor {
@@ -159,12 +159,12 @@ const ARTALK_SITE = "Peregrine";
   /* 修正下拉列表和弹出层背景 */
   .atk-layer-wrap {
     @apply rounded-2xl shadow-2xl border border-base-content/10 backdrop-blur-2xl bg-base-200/95 !important;
-    color: oklch(var(--bc)) !important;
+    color: var(--fallback-bc, oklch(var(--bc))) !important;
   }
 
   /* 修正所有残留链接色 */
   .atk-content a, .atk-nick, .atk-item.active, .atk-layer-wrap a, .atk-comment-count {
-    color: oklch(var(--p)) !important;
+    color: var(--fallback-p, oklch(var(--p))) !important;
   }
 
   /* 修正底部版权信息 */

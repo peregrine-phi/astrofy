@@ -40,7 +40,7 @@ const today = new Date();
 const month = today.getMonth() + 1;
 const day = today.getDate();
 
-let loaderColor = "oklch(var(--p))"; // Default daisyUI primary (v4 uses oklch!)
+let loaderColor = "var(--fallback-p, oklch(var(--p)))"; // Default daisyUI primary (v4 uses oklch!)
 let loaderHeight = "2px";
 
 if (month === 6 || month === 5) {
@@ -75,7 +75,6 @@ if (month === 6 || month === 5) {
       pubDate={pubDate}
       updatedDate={updatedDate}
     />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=mail" />
     {TRANSITION_API && <ViewTransitions />}
 
     {
@@ -83,17 +82,26 @@ if (month === 6 || month === 5) {
     }
     <script is:inline>
       const savedTheme = localStorage.getItem("theme");
-      if (savedTheme) {
+      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'black' : 'lofi';
+      
+      if (savedTheme && savedTheme !== 'auto') {
         document.documentElement.setAttribute("data-theme", savedTheme);
       } else {
-        // Default theme if none saved
-        document.documentElement.setAttribute("data-theme", "lofi");
+        document.documentElement.setAttribute("data-theme", systemTheme);
       }
 
       // Detect Safari to apply specific CSS fixes for rubber-band sticky bug
       if (/^((?!chrome|android).)*safari/i.test(navigator.userAgent)) {
         document.documentElement.classList.add('is-safari');
       }
+
+      // Listen for system theme changes
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        const currentSaved = localStorage.getItem('theme');
+        if (!currentSaved || currentSaved === 'auto') {
+          document.documentElement.setAttribute('data-theme', e.matches ? 'black' : 'lofi');
+        }
+      });
     </script>
 
     {/* 将进度条组件移至 head 中，防止 View Transitions 导致重复初始化 */}

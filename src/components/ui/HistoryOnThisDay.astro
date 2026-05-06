@@ -142,105 +142,57 @@ const day = today.getDate();
 
 <style>
   .history-ticker {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    padding: 1.25rem 1.75rem;
-    margin-bottom: 2.5rem;
-    border-radius: 1.25rem;
-    border: 1px solid oklch(var(--b3));
-    background: oklch(var(--b2) / 0.3);
-    backdrop-filter: blur(12px);
-    transition: all 0.3s ease;
+    @apply flex items-center gap-6 px-7 py-5 mb-10 rounded-2xl border border-base-300 bg-base-200/30 backdrop-blur-xl transition-all duration-300;
   }
 
   .history-ticker:hover {
-    border-color: oklch(var(--p) / 0.15);
-    box-shadow: 0 8px 30px -10px oklch(var(--p) / 0.08);
+    @apply border-primary/20 shadow-lg shadow-primary/5;
   }
 
   .history-ticker__meta {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    flex-shrink: 0;
-    min-width: 6.5rem;
+    @apply flex flex-col gap-2 shrink-0 min-w-[6.5rem];
   }
 
   .history-ticker__icon {
-    display: flex;
-    align-items: center;
-    color: oklch(var(--p));
-    opacity: 0.8;
-    margin-left: 1px;
+    @apply flex items-center text-primary opacity-80 ml-0.5;
   }
 
   .history-ticker__label {
-    font-size: 0.65rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: oklch(var(--bc) / 0.4);
-    line-height: 1;
+    @apply text-[0.65rem] font-extrabold uppercase tracking-widest text-base-content/40 leading-none;
   }
 
   .history-ticker__year-wrapper {
-    height: 1.8rem;
-    display: flex;
-    align-items: center;
+    @apply h-[1.8rem] flex items-center;
   }
 
   .history-ticker__year-display {
-    font-size: 0.9rem;
-    font-weight: 800;
-    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
-    color: oklch(var(--p));
-    background: oklch(var(--p) / 0.08);
-    padding: 0.25rem 0.6rem;
-    border-radius: 6px;
-    transition: opacity 0.3s ease;
-    border: 1px solid oklch(var(--p) / 0.1);
+    @apply text-[0.9rem] font-extrabold font-mono text-primary bg-primary/10 px-2.5 py-1 rounded-md transition-opacity duration-300 border border-primary/10;
   }
 
   .history-ticker__divider {
-    width: 1px;
-    height: 4rem;
-    background: linear-gradient(to bottom, transparent, oklch(var(--bc) / 0.08), transparent);
-    flex-shrink: 0;
+    @apply w-px h-16 shrink-0;
+    background: linear-gradient(to bottom, transparent, var(--fallback-bc, oklch(var(--bc) / 0.08)), transparent);
   }
 
   .history-ticker__content {
-    flex: 1;
-    overflow: hidden;
-    position: relative;
-    transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    @apply flex-1 overflow-hidden relative transition-[height] duration-500 ease-in-out;
   }
 
   .history-ticker__track {
-    width: 100%;
-    transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    @apply w-full transition-transform duration-700 ease-in-out;
     will-change: transform;
   }
 
   .history-ticker__item {
-    min-height: 5rem;
-    display: flex;
-    align-items: center;
-    padding: 0.5rem 0;
-    box-sizing: border-box;
+    @apply min-h-[5rem] flex items-center py-2 box-border;
   }
 
   .history-ticker__item--loading {
-    height: 5rem;
-    justify-content: flex-start;
+    @apply h-20 justify-start;
   }
 
   .history-ticker__loading-dot {
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: oklch(var(--p) / 0.5);
-    margin: 0 2px;
+    @apply w-1 h-1 rounded-full bg-primary/50 mx-0.5;
     animation: ticker-dot 1.4s infinite;
   }
   .history-ticker__loading-dot:nth-child(2) { animation-delay: 0.2s; }
@@ -252,11 +204,6 @@ const day = today.getDate();
   }
 
   .history-ticker__text {
-    font-size: 1rem;
-    color: oklch(var(--bc) / 0.8);
-    line-height: 1.6;
-    font-weight: 450;
-    width: 100%;
-    word-break: break-word;
+    @apply text-base text-base-content/80 leading-relaxed font-medium w-full break-words;
   }
 </style>

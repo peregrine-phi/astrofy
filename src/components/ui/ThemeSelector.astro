@@ -3,11 +3,8 @@
  * ThemeSelector.astro - Compact Icon Version
  */
 const themes = [
-  { name: "lofi", label: "Lofi" },
   { name: "nord", label: "Nord" },
   { name: "dracula", label: "Dracula" },
-  { name: "cupcake", label: "Cupcake" },
-  { name: "emerald", label: "Emerald" },
   { name: "retro", label: "Retro" },
   { name: "winter", label: "Winter" },
 ];
@@ -34,8 +31,10 @@ const themes = [
 
 <script is:inline>
   function applyTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'lofi';
-    document.documentElement.setAttribute('data-theme', savedTheme);
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme && savedTheme !== 'auto') {
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    }
   }
 
   function initThemeSelector() {
@@ -45,8 +44,10 @@ const themes = [
       btn.addEventListener('click', () => {
         const theme = btn.getAttribute('data-theme-set');
         if (theme) {
-          document.documentElement.setAttribute('data-theme', theme);
           localStorage.setItem('theme', theme);
+          document.documentElement.setAttribute('data-theme', theme);
+          // Dispatch a custom event to notify ThemeToggle to update its icon
+          window.dispatchEvent(new Event('theme-changed'));
         }
       });
     });

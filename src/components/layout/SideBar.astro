@@ -5,6 +5,7 @@ import SideBarMenu from "./SideBarMenu.astro";
 import { getRelativeLocaleUrl } from "astro:i18n";
 import LanguagePicker from "../ui/LanguagePicker.astro";
 import ThemeSelector from "../ui/ThemeSelector.astro";
+import ThemeToggle from "../ui/ThemeToggle.astro";
 
 
 import Search from "../ui/Search.astro";
@@ -33,6 +34,7 @@ const lang = Astro.currentLocale || "en";
     <div class="flex items-center justify-center gap-2 mb-2 px-4">
       <LanguagePicker />
       <div class="divider divider-horizontal m-0 w-1 opacity-20"></div>
+      <ThemeToggle />
       <ThemeSelector />
     </div>
 

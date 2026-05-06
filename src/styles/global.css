@@ -1,5 +1,24 @@
 html {
     overflow-y: scroll !important;
+    /* Unified Management for responsive font scaling */
+    font-size: 100%;
+    /* Default: 16px */
+}
+
+/* Optimize for small screens by shrinking base font size */
+@media (max-width: 768px) {
+    html {
+        font-size: 87.5%;
+        ;
+        /* Scales down to ~15px base */
+    }
+}
+
+@media (max-width: 480px) {
+    html {
+        font-size: 76.5%;
+        /* Scales down to ~14px base */
+    }
 }
 
 .drawer-content {
@@ -46,20 +65,81 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, h4, h5, h6, .title {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.title {
     font-family: "Playfair Display", "Noto Serif SC", serif;
     letter-spacing: -0.01em;
 }
 
 .prose {
-    line-height: 1.8 !important; /* Enhanced readability for long articles */
+    line-height: 1.8 !important;
+    /* Enhanced readability for long articles */
     letter-spacing: 0.01em;
 }
+
 /* Utility to hide scrollbars but keep functionality */
 .no-scrollbar::-webkit-scrollbar {
     display: none;
 }
+
 .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
+}
+
+/* --- Truly Minimalist Reference List --- */
+.references-list {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 3rem 0 !important;
+    counter-reset: ref-counter;
+}
+
+.references-list li {
+    counter-increment: ref-counter;
+    position: relative;
+    padding: 1rem 1.5rem 1rem 3.5rem;
+    margin-bottom: 0.75rem;
+    border-left-width: 3px;
+    border-left-style: solid;
+    /* Academic Serif Font Stack */
+    font-family: "Noto Serif SC", "Playfair Display", Georgia, serif;
+    font-size: 0.85rem;
+    line-height: 1.8;
+    transition: all 0.2s ease;
+    
+    /* Strict Theme Semantic Colors with mathematically perfect contrast */
+    @apply bg-base-200 border-base-content/10 text-base-content/80 rounded-lg;
+}
+
+.references-list li::before {
+    content: counter(ref-counter, decimal-leading-zero);
+    position: absolute;
+    left: 1rem;
+    top: 1rem;
+    font-family: "Playfair Display", serif;
+    font-size: 1rem;
+    @apply font-bold text-base-content/30;
+}
+
+.references-list li:hover {
+    @apply bg-base-300 border-base-content/30;
+}
+
+.references-list li strong {
+    @apply font-semibold text-base-content;
+}
+
+.references-list li a {
+    text-decoration: none !important;
+    @apply text-base-content font-medium underline decoration-base-content/30 underline-offset-4;
+}
+
+.references-list li a:hover {
+    @apply decoration-base-content/80;
 }

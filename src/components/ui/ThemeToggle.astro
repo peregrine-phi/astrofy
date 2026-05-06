@@ -1,0 +1,75 @@
+---
+/**
+ * ThemeToggle.astro - Handles cycling between Lofi (Light), Black (Dark), and System (Auto)
+ */
+---
+<button id="theme-toggle-btn" class="btn btn-sm btn-ghost px-2" title="Toggle Light/Dark/System">
+  <span class="material-symbols-outlined !text-[20px] opacity-70" id="theme-toggle-icon" style="text-transform: none !important;">
+    computer
+  </span>
+</button>
+
+<script is:inline>
+  function getSystemTheme() {
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'black' : 'lofi';
+  }
+
+  function updateToggleIcon(theme) {
+    const iconEl = document.getElementById('theme-toggle-icon');
+    if (!iconEl) return;
+    
+    if (theme === 'lofi') {
+      iconEl.textContent = 'light_mode';
+    } else if (theme === 'black') {
+      iconEl.textContent = 'dark_mode';
+    } else {
+      iconEl.textContent = 'computer';
+    }
+  }
+
+  function cycleTheme() {
+    const currentSaved = localStorage.getItem('theme') || 'auto';
+    let nextTheme;
+    
+    if (currentSaved === 'auto') {
+      nextTheme = 'lofi';
+    } else if (currentSaved === 'lofi') {
+      nextTheme = 'black';
+    } else {
+      nextTheme = 'auto';
+    }
+    
+    localStorage.setItem('theme', nextTheme);
+    
+    if (nextTheme === 'auto') {
+      document.documentElement.setAttribute('data-theme', getSystemTheme());
+    } else {
+      document.documentElement.setAttribute('data-theme', nextTheme);
+    }
+    
+    updateToggleIcon(nextTheme);
+  }
+
+  function initThemeToggle() {
+    const btn = document.getElementById('theme-toggle-btn');
+    if (btn) {
+      btn.removeEventListener('click', cycleTheme);
+      btn.addEventListener('click', cycleTheme);
+      
+      const currentTheme = localStorage.getItem('theme') || 'auto';
+      updateToggleIcon(currentTheme);
+    }
+  }
+
+  // Initialize
+  initThemeToggle();
+
+  // Listen for external changes (from ThemeSelector)
+  window.addEventListener('theme-changed', () => {
+    const currentTheme = localStorage.getItem('theme') || 'auto';
+    updateToggleIcon(currentTheme);
+  });
+
+  // Handle View Transitions
+  document.addEventListener('astro:after-swap', initThemeToggle);
+</script>
