@@ -41,9 +41,17 @@ html {
 
 /* Typography Overrides */
 body {
-    font-family: "Google Sans", "Noto Sans SC", sans-serif;
+    font-family: "Google Sans", "Google Sans Flex", "Noto Sans SC", system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
 }
 
 h1, h2, h3, h4, h5, h6, .title {
     font-family: "Playfair Display", "Noto Serif SC", serif;
+    letter-spacing: -0.01em;
+}
+
+.prose {
+    line-height: 1.8 !important; /* Enhanced readability for long articles */
+    letter-spacing: 0.01em;
 }
