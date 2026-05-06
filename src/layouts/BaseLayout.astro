@@ -28,7 +28,9 @@ if (block_region) {
 
 const isZh = Astro.currentLocale === "zh";
 const defaultTitle = isZh ? "悠道 | 数字花园" : SITE_TITLE;
-const defaultDescription = isZh ? "Full Stack Lifeplayer - 悠道的数字花园" : SITE_DESCRIPTION;
+const defaultDescription = isZh
+  ? "Full Stack Lifeplayer - 悠道的数字花园"
+  : SITE_DESCRIPTION;
 
 const finalTitle = title || defaultTitle;
 const finalDescription = description || defaultDescription;
@@ -43,15 +45,18 @@ let loaderHeight = "2px";
 
 if (month === 6 || month === 5) {
   // Pride Month & Testing (May/June) Rainbow
-  loaderColor = "linear-gradient(90deg, #ff0000, #ff8700, #ffd300, #deff0a, #a1ff0a, #0aff99, #0aefff, #147df5, #580aff, #be0aff)";
+  loaderColor =
+    "linear-gradient(90deg, #ff0000, #ff8700, #ffd300, #deff0a, #a1ff0a, #0aff99, #0aefff, #147df5, #580aff, #be0aff)";
 } else if (month === 3 && day === 8) {
   // Women's Day Purple
   loaderColor = "linear-gradient(90deg, #8e44ad, #d2b4de)";
 } else {
   // Programmer's Day (Day 256)
   const year = today.getFullYear();
-  const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
-  const dayOfYear = Math.floor((today.getTime() - new Date(year, 0, 0).getTime()) / 86400000);
+  const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+  const dayOfYear = Math.floor(
+    (today.getTime() - new Date(year, 0, 0).getTime()) / 86400000,
+  );
   if (isLeapYear ? dayOfYear === 257 : dayOfYear === 256) {
     loaderColor = "#00ff41";
   }
@@ -61,21 +66,35 @@ if (month === 6 || month === 5) {
 <!doctype html>
 <html lang={Astro.currentLocale || "en"}>
   <head>
-    <BaseHead title={finalTitle} description={finalDescription} image={image} ogType={ogType} noindex={noindex} pubDate={pubDate} updatedDate={updatedDate} />
+    <BaseHead
+      title={finalTitle}
+      description={finalDescription}
+      image={image}
+      ogType={ogType}
+      noindex={noindex}
+      pubDate={pubDate}
+      updatedDate={updatedDate}
+    />
     {TRANSITION_API && <ViewTransitions />}
-    
-    {/* Theme initialization script - runs before any rendering to prevent FOUC */}
+
+    {
+      /* Theme initialization script - runs before any rendering to prevent FOUC */
+    }
     <script is:inline>
-      const savedTheme = localStorage.getItem('theme');
+      const savedTheme = localStorage.getItem("theme");
       if (savedTheme) {
-        document.documentElement.setAttribute('data-theme', savedTheme);
+        document.documentElement.setAttribute("data-theme", savedTheme);
       } else {
         // Default theme if none saved
-        document.documentElement.setAttribute('data-theme', 'lofi');
+        document.documentElement.setAttribute("data-theme", "lofi");
+      }
+
+      // Detect Safari to apply specific CSS fixes for rubber-band sticky bug
+      if (/^((?!chrome|android).)*safari/i.test(navigator.userAgent)) {
+        document.documentElement.classList.add('is-safari');
       }
     </script>
 
-    
     {/* 将进度条组件移至 head 中，防止 View Transitions 导致重复初始化 */}
     <LoadingIndicator color="transparent" height={loaderHeight} threshold={0} />
     <style is:global define:vars={{ loaderBg: loaderColor }}>
@@ -84,12 +103,25 @@ if (month === 6 || month === 5) {
         box-shadow: 0 0 10px var(--loaderBg);
         z-index: 99999 !important;
       }
-      
+
       /* Regional Blocking CSS */
       html[data-region="CN"] [data-block-region="CN"] {
         display: none !important;
       }
 
+      /* Safari-only compatibility fix for sidebar scrolling */
+      @media (min-width: 1024px) {
+        html.is-safari .drawer.lg\:drawer-open {
+          padding-left: 19rem; /* Matches the 19rem w-[19rem] sidebar */
+        }
+        html.is-safari .drawer-side {
+          position: fixed !important;
+          top: 0;
+          left: 0;
+          height: 100vh !important;
+          z-index: 40;
+        }
+      }
     </style>
   </head>
   <body>
@@ -97,12 +129,22 @@ if (month === 6 || month === 5) {
       <input id="my-drawer" type="checkbox" class="drawer-toggle" />
       <div class="drawer-content bg-base-100 flex flex-col items-center">
         <Header title={SITE_TITLE} transition:persist />
-        <main class="p-6 pt-10 lg:max-w-[1150px] max-w-[100vw] w-full" data-block-region={block_region}>
+        <main
+          class="p-6 pt-10 lg:max-w-[1150px] max-w-[100vw] w-full"
+          data-block-region={block_region}
+        >
           <slot />
         </main>
         <Footer />
       </div>
-      {includeSidebar && <SideBar sideBarActiveItemID={sideBarActiveItemID} transition:persist />}
+      {
+        includeSidebar && (
+          <SideBar
+            sideBarActiveItemID={sideBarActiveItemID}
+            transition:persist
+          />
+        )
+      }
     </div>
     <SearchModal />
   </body>
