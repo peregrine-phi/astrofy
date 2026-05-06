@@ -49,3 +49,71 @@ import TableOfContents from "../components/ui/TableOfContents.astro";
     </aside>
   </div>
 </BaseLayout>
+
+<script is:inline>
+  function addAnchorLinks() {
+    const article = document.querySelector('article[data-pagefind-body]');
+    if (!article) return;
+    const headings = article.querySelectorAll('h2, h3, h4');
+    
+    headings.forEach(heading => {
+      if (heading.id && !heading.querySelector('.anchor-link')) {
+        const anchor = document.createElement('a');
+        anchor.className = 'anchor-link';
+        anchor.href = `#${heading.id}`;
+        anchor.ariaLabel = 'Direct link to this section';
+        anchor.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>';
+        
+        // Add click handler to copy URL
+        anchor.addEventListener('click', (e) => {
+          e.preventDefault();
+          const url = new URL(window.location.href);
+          url.hash = heading.id;
+          navigator.clipboard.writeText(url.toString());
+          window.location.hash = heading.id;
+        });
+
+        heading.style.position = 'relative';
+        heading.prepend(anchor);
+      }
+    });
+  }
+
+  addAnchorLinks();
+  document.addEventListener('astro:page-load', addAnchorLinks);
+</script>
+
+<style is:global>
+  .anchor-link {
+    position: absolute;
+    left: -1.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0;
+    transition: all 0.2s ease;
+    color: oklch(var(--p));
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 6px;
+  }
+  
+  .anchor-link:hover {
+    background-color: oklch(var(--p) / 0.1);
+  }
+
+  h2:hover .anchor-link,
+  h3:hover .anchor-link,
+  h4:hover .anchor-link {
+    opacity: 0.6;
+  }
+
+  .anchor-link:hover {
+    opacity: 1 !important;
+  }
+
+  @media (max-width: 1024px) {
+    .anchor-link {
+      display: none; /* Mobile avoids accidental clicks */
+    }
+  }
+</style>
