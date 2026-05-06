@@ -191,3 +191,17 @@ src/
 *   **依据**：该文件定义了数据的"形状（Schema）"。数据（文章）与它的形状描述符（config.ts）在逻辑上属于同一生命周期。当内容结构发生变化时，只需在文章仓库内完成闭环修改即可。
 
 > 提示：执行 `pnpm run build` 前，请确保你已经使用 Astro 的 `getRelativeLocaleUrl` 修复了新添加的链接路径，防止语言互相跳转出现 404。
+
+### 15. 全文搜索系统 (Full-text Search)
+我们集成了 **Pagefind** 并结合 **astro-pagefind** 插件，实现了高性能、低功耗且具备“高级感”的全文搜索。
+*   **双组件架构**：
+    - `Search.astro`：侧边栏中的触发按钮，保持 `transition:persist`。
+    - `SearchModal.astro`：挂载在 `BaseLayout.astro` 最外层（`</body>` 前）的全局覆盖层。
+*   **位置与层叠上下文修复**：为了绕过 `.drawer` 容器的 CSS `transform` 对 `fixed` 定位的干扰，搜索框被放置在所有布局容器之外。这确保了搜索框能够**真正的水平居中**且背景模糊（Backdrop Blur）能穿透全局。
+*   **索引范围控制**：在 `BaseLayout.astro` 的 `main` 标签上标记了 `data-pagefind-body`。索引器会自动抓取该区域内的正文内容，同时排除侧边栏、页脚等重复的 UI 元素。
+*   **View Transitions 兼容性**：
+    - 脚本使用 `astro:page-load` 事件监听，确保在路由切换后重新初始化。
+    - 使用 **事件委托** 绑定触发器，即使侧边栏按钮被持久化，点击逻辑依然有效。
+*   **构建集成**：集成在 `astro.config.mjs` 中，运行 `pnpm run build` 时会自动在 `dist/pagefind` 生成索引。
+*   **快捷键支持**：全站支持 `/` 或 `Ctrl/Cmd + K` 呼出搜索。
+*   **开发环境注意**：在 `npm run dev` 模式下，由于索引仅在构建时生成，搜索框会显示“索引未生成”提示。测试需通过 `pnpm run build` 配合 `pnpm run preview` 进行。

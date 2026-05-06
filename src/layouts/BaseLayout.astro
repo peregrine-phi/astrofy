@@ -3,6 +3,7 @@ import BaseHead from "../components/layout/BaseHead.astro";
 import Header from "../components/layout/Header.astro";
 import Footer from "../components/layout/Footer.astro";
 import SideBar from "../components/layout/SideBar.astro";
+import SearchModal from "../components/ui/SearchModal.astro";
 import { ViewTransitions } from "astro:transitions";
 import LoadingIndicator from "astro-loading-indicator/component";
 
@@ -102,12 +103,13 @@ if (month === 6 || month === 5) {
       <input id="my-drawer" type="checkbox" class="drawer-toggle" />
       <div class="drawer-content bg-base-100 flex flex-col items-center">
         <Header title={SITE_TITLE} transition:persist />
-        <main class="p-6 pt-10 lg:max-w-[1150px] max-w-[100vw] w-full">
+        <main class="p-6 pt-10 lg:max-w-[1150px] max-w-[100vw] w-full" data-pagefind-body>
           <slot />
         </main>
         <Footer />
       </div>
       {includeSidebar && <SideBar sideBarActiveItemID={sideBarActiveItemID} transition:persist />}
     </div>
+    <SearchModal />
   </body>
 </html>

@@ -7,6 +7,9 @@ import LanguagePicker from "../ui/LanguagePicker.astro";
 import ThemeSelector from "../ui/ThemeSelector.astro";
 
 
+import Search from "../ui/Search.astro";
+
+
 const { sideBarActiveItemID } = Astro.props;
 const lang = Astro.currentLocale || "en";
 ---
@@ -23,6 +26,7 @@ const lang = Astro.currentLocale || "en";
         </div>
       </a>
     </div>
+    <Search />
     <SideBarMenu sideBarActiveItemID={sideBarActiveItemID} />
     <div class="grow"></div>
     
