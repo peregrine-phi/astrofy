@@ -47,13 +47,12 @@ export const onRequest: PagesFunction = async (context) => {
         element(element) {
           element.setInnerContent(
             `<div class="flex flex-col items-center justify-center min-h-[50vh] p-8 text-center animate-in fade-in duration-700">
-              <div class="relative mb-6">
-                <div class="absolute -inset-4 bg-error/10 blur-2xl rounded-full opacity-50"></div>
-                <div class="relative w-20 h-20 bg-base-200 rounded-3xl flex items-center justify-center border border-base-content/5 shadow-inner">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-error/70"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                </div>
+              <div class="mb-6 opacity-80">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="64" height="64" fill="currentColor" class="text-base-content">
+                  <path d="M46,8 h26 v8 h8 v6 h-4 v4 h-4 v-4 h-4 v4 h-4 v18 h-8 v8 h-4 v8 h-6 v-4 h4 v-8 h-4 v-4 h-16 v-4 h-4 v-4 h-4 v-10 h4 v4 h4 v4 h12 v-8 h4 v-14 h6 z m14,4 h4 v4 h-4 z" />
+                </svg>
               </div>
-              <h2 class="text-2xl font-bold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-base-content to-base-content/40">
+              <h2 class="text-2xl font-bold mb-3 text-base-content">
                 内容不可见
               </h2>
               <p class="text-base-content/60 max-w-sm leading-relaxed mb-8">
