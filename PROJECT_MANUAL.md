@@ -63,7 +63,7 @@ src/
 ### 2. 多语言 (i18n) 维护指南
 我们目前使用的是 Astro 4+ 的原生国际化机制。
 * **修改导航词汇**：如果你要增加侧边栏菜单或者修改固定的提示语，请直接修改 `src/i18n/ui.ts`。
-  - **注意**：历史遗留原因，`nav.store` 这个翻译键对应的是 "Tutorials / 教程" 页面，而不是真正的商店页面。页面路径和内容集合命名为 `tutorials`，仅 i18n 键名保留 "store"。
+  - **注意**：页面路径和内容集合命名为 `tutorials`，对应的 i18n 键名为 `nav.tutorials`。之前曾使用过 `nav.store` 作为键名，现已统一。
 * **增加新页面**：
   1. 如果你要增加一个新的中文页面，请复制英文页面到 `src/pages/zh/` 下。
   2. 在页面和导航组件中使用 `getRelativeLocaleUrl` 来确保跳转链接携带正确的语言路径。
@@ -116,7 +116,7 @@ src/
 * **板块替换**：
     - **Gallery (画廊)**：取代了原有的 Services。
     - **Neighbors (邻居)**：取代了原有的 Projects。
-    - **Tutorials (教程)**：取代了原有的 Store 商品页（内容集合命名为 `tutorials`，但 i18n 键名保留 `nav.store`）。
+    - **Tutorials (教程)**：取代了原有的 Store 商品页（内容集合和 i18n 键名均已统一为 `tutorials`）。
 * **导航菜单结构**：SideBar 中的实际顺序为 Home → Blog → Tutorials → Gallery → Neighbors → Contact（CV 已移除）。
 * **同步维护**：修改此类核心板块时，必须同步更新 `src/i18n/ui.ts` 字典、`src/components/layout/SideBarMenu.astro` 链接，以及 `src/pages/` 与 `src/pages/zh/` 下的对应物理文件。
 

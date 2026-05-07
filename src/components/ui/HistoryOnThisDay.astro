@@ -20,7 +20,7 @@ const day = today.getDate();
       {isZh ? "历史上的今天" : "On This Day"}
     </div>
     <div class="history-ticker__year-wrapper">
-        <span class="history-ticker__year-display" id="history-year-display">----</span>
+        <span class="history-ticker__year-display history-ticker__year-display--loading" id="history-year-display">----</span>
     </div>
   </div>
   
@@ -29,9 +29,10 @@ const day = today.getDate();
   <div class="history-ticker__content" id="history-content">
     <div class="history-ticker__track" id="history-track">
       <div class="history-ticker__item history-ticker__item--loading">
-        <span class="history-ticker__loading-dot"></span>
-        <span class="history-ticker__loading-dot"></span>
-        <span class="history-ticker__loading-dot"></span>
+        <div class="history-ticker__skeleton-wrapper">
+          <div class="history-ticker__skeleton-line w-3/4"></div>
+          <div class="history-ticker__skeleton-line w-1/2"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -58,12 +59,14 @@ const day = today.getDate();
     track.style.transform = 'translateY(0)';
     track.innerHTML = `
       <div class="history-ticker__item history-ticker__item--loading">
-        <span class="history-ticker__loading-dot"></span>
-        <span class="history-ticker__loading-dot"></span>
-        <span class="history-ticker__loading-dot"></span>
+        <div class="history-ticker__skeleton-wrapper">
+          <div class="history-ticker__skeleton-line w-3/4"></div>
+          <div class="history-ticker__skeleton-line w-1/2"></div>
+        </div>
       </div>`;
     content.style.height = 'auto';
     yearDisplay.textContent = '----';
+    yearDisplay.classList.add('history-ticker__year-display--loading');
     label.textContent = isZh ? "历史上的今天" : "On This Day";
 
     const requestId = Date.now();
@@ -104,6 +107,7 @@ const day = today.getDate();
         const items = track.querySelectorAll('.history-ticker__item');
         
         function updateYear(year) {
+            yearDisplay.classList.remove('history-ticker__year-display--loading');
             yearDisplay.style.opacity = '0';
             setTimeout(() => {
                 yearDisplay.textContent = year || '----';
@@ -188,19 +192,37 @@ const day = today.getDate();
   }
 
   .history-ticker__item--loading {
-    @apply h-20 justify-start;
+    @apply w-full h-20 justify-start;
+  }
+  
+  .history-ticker__skeleton-wrapper {
+    @apply flex flex-col gap-2.5 w-full;
   }
 
-  .history-ticker__loading-dot {
-    @apply w-1 h-1 rounded-full bg-base-content/30 mx-0.5;
-    animation: ticker-dot 1.4s infinite;
+  .history-ticker__skeleton-line {
+    @apply h-3 bg-base-content/10 rounded-full relative overflow-hidden;
   }
-  .history-ticker__loading-dot:nth-child(2) { animation-delay: 0.2s; }
-  .history-ticker__loading-dot:nth-child(3) { animation-delay: 0.4s; }
 
-  @keyframes ticker-dot {
-    0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
-    40% { opacity: 1; transform: scale(1.2); }
+  .history-ticker__skeleton-line::after,
+  .history-ticker__year-display--loading::after {
+    content: "";
+    @apply absolute inset-0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--fallback-bc, oklch(var(--bc) / 0.05)),
+      transparent
+    );
+    animation: ticker-shimmer 1.8s infinite;
+  }
+
+  .history-ticker__year-display--loading {
+    @apply relative overflow-hidden text-transparent border-none bg-base-content/10 !important;
+  }
+
+  @keyframes ticker-shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
   }
 
   .history-ticker__text {
