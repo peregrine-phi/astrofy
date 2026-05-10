@@ -1,9 +1,10 @@
 ---
 // src/components/ui/HotNews.astro
-const { sourceId = 507, title = "人民网-今日要闻", count = 6 } = Astro.props;
+const { sourceId = 507, title = "今日要闻", count = 6 } = Astro.props;
+const proxyUrl = import.meta.env.PUBLIC_HOT_API_PROXY || 'https://api.allhot.top/api/open/v1';
 ---
 
-<div class="hot-news-section mb-10" data-source-id={sourceId} data-count={count}>
+<div class="hot-news-section mb-10" data-source-id={sourceId} data-count={count} data-proxy-url={proxyUrl}>
   <div class="flex items-center justify-between mb-5">
     <h2 class="text-3xl font-bold flex items-center gap-3">
       {title}
@@ -38,6 +39,7 @@ const { sourceId = 507, title = "人民网-今日要闻", count = 6 } = Astro.pr
     containers.forEach(container => {
       const sourceId = container.dataset.sourceId;
       const count = parseInt(container.dataset.count);
+      const proxyUrl = container.dataset.proxyUrl;
       const list = container.querySelector('#news-list');
       const loading = container.querySelector('#news-loading');
       const updateTime = container.querySelector('#news-update-time');
@@ -45,14 +47,19 @@ const { sourceId = 507, title = "人民网-今日要闻", count = 6 } = Astro.pr
 
       if (!list || !template) return;
 
-      // 建议：在此处填入你的 CF Worker 代理地址以实现缓存和 API Key 隐藏
-      // 如果直接请求，请确保 window.ALLHOT_API_KEY 已设置
-      const apiUrl = `https://api.allhot.top/api/open/v1/sources/data?id=${sourceId}`;
+      const apiUrl = `${proxyUrl}/sources/data?id=${sourceId}`;
       const apiKey = window.ALLHOT_API_KEY || ''; 
 
-      fetch(apiUrl, {
-        headers: { 'X-API-Key': apiKey }
-      })
+      const fetchOptions = {
+        headers: {}
+      };
+
+      // 只有在没有使用代理（直连原站）时才尝试手动添加 Key
+      if (proxyUrl.includes('api.allhot.top') && apiKey) {
+        fetchOptions.headers['X-API-Key'] = apiKey;
+      }
+
+      fetch(apiUrl, fetchOptions)
       .then(res => res.json())
       .then(json => {
         if (json.code === 200 && json.data.list) {
