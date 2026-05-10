@@ -97,10 +97,27 @@ const proxyUrl = import.meta.env.PUBLIC_HOT_API_PROXY || 'https://api.allhot.top
           });
 
           if (updateTime) {
-            const date = cacheTime ? new Date(cacheTime) : new Date();
+            const storageKey = `hotnews_time_${sourceId}`;
+            let finalTime = cacheTime;
+
+            // 1. 如果 Worker 传了时间，存入本地
+            if (cacheTime) {
+              localStorage.setItem(storageKey, cacheTime);
+            } 
+            // 2. 如果 Worker 没传（或被浏览器缓存抹除），尝试读本地历史记录
+            else {
+              finalTime = localStorage.getItem(storageKey);
+            }
+
+            // 3. 实在没有，就用当前时间兜底，并存起来
+            const date = finalTime ? new Date(finalTime) : new Date();
+            if (!finalTime) {
+              localStorage.setItem(storageKey, date.toISOString());
+            }
+
             const hours = date.getHours().toString().padStart(2, '0');
             const minutes = date.getMinutes().toString().padStart(2, '0');
-            updateTime.textContent = `${cacheTime ? '数据生成于' : '实时更新'} ${hours}:${minutes}`;
+            updateTime.textContent = `${finalTime ? '数据同步于' : '本地更新'} ${hours}:${minutes}`;
           }
         }
       })
