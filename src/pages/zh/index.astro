@@ -5,10 +5,11 @@ import { getCollection } from "astro:content";
 import createSlug from "../../lib/createSlug";
 import SectionHeader from "../../components/ui/SectionHeader.astro";
 import HistoryOnThisDay from "../../components/ui/HistoryOnThisDay.astro";
+import HotNews from "../../components/ui/HotNews.astro";
 
-const posts = (await getCollection("blog", ({ id }) => id.startsWith("zh/"))).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
+const posts = (
+  await getCollection("blog", ({ id }) => id.startsWith("zh/"))
+).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
 const last_posts = posts.slice(0, 3);
 ---
@@ -19,7 +20,7 @@ const last_posts = posts.slice(0, 3);
     <h1 class="text-5xl font-bold">我是 悠道</h1>
     <div class="text-3xl py-3 font-bold">Full Stack Lifeplayer</div>
     <div class="py-2">
-      <text class="text-lg"> 天地者，萬物之逆旅。光陰者，百代之過客。 </text>
+      <text class="text-lg"> 天地者，萬物之逆旅。光陰者，百代之過客。</text>
     </div>
     <div class="mt-8">
       <a class="btn" href="https://peregrinlog.restin.icu/" target="_blank">
@@ -30,21 +31,8 @@ const last_posts = posts.slice(0, 3);
 
   <HistoryOnThisDay />
 
-  <SectionHeader title={'最近的瞬间 📸'} class="mb-2" />
-
-  <HorizontalCard
-    title="瞬间 1"
-    img="/post_img.webp"
-    desc="关于这个视觉瞬间的简短描述。"
-    url="/zh/gallery"
-  />
-  <div class="divider my-0"></div>
-  <HorizontalCard
-    title="瞬间 2"
-    img="/post_img.webp"
-    desc="另一个被捕捉到的瞬间。"
-    url="/zh/gallery"
-  />
+  <div class="mt-10"></div>
+  <HotNews sourceId={507} title="今日要闻" count={6} />
 
   <SectionHeader title="最新博客" class="mb-5 mt-10" />
 
@@ -55,7 +43,10 @@ const last_posts = posts.slice(0, 3);
           title={post.data.title}
           img={post.data.heroImage}
           desc={post.data.description}
-          url={"/zh/blog/" + createSlug(post.data.title, post.slug).replace(/^zh\//, "")}
+          url={
+            "/zh/blog/" +
+            createSlug(post.data.title, post.slug).replace(/^zh\//, "")
+          }
           target="_self"
           badge={post.data.badge}
         />

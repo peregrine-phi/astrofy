@@ -13,15 +13,22 @@
   },
   "dependencies": {
     "@astrojs/mdx": "^2.0.3",
+    "@astrojs/react": "^3.6.3",
     "@astrojs/rss": "^3.0.0",
     "@astrojs/sitemap": "^3.1.6",
     "@astrojs/tailwind": "^5.0.3",
+    "@astrojs/vue": "^4.5.3",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
     "astro": "^4.0.2",
     "astro-loading-indicator": "^0.8.0",
     "daisyui": "^4.4.10",
     "dayjs": "^1.11.9",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "sharp": "^0.32.6",
-    "tailwindcss": "^3.3.5"
+    "tailwindcss": "^3.3.5",
+    "vue": "^3.4.0"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.10",

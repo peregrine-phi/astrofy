@@ -23,3 +23,5 @@ pnpm-debug.log*
 
 # contents for local use
 /src/content
+
+/material
