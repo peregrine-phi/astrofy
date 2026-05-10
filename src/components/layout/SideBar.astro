@@ -28,14 +28,15 @@ const lang = Astro.currentLocale || "en";
         </div>
       </a>
     </div>
+    
     <Search />
     <SideBarMenu sideBarActiveItemID={sideBarActiveItemID} />
-    
-    <div class="mt-6">
-      <Weather />
-    </div>
 
     <div class="grow"></div>
+
+    <div class="mt-4">
+      <Weather />
+    </div>
     
     <div class="flex items-center justify-center gap-2 mb-2 px-4">
       <LanguagePicker />

@@ -8,14 +8,14 @@ const t = useTranslations(lang);
 
 <div class="weather-wrapper group relative inline-block w-full px-4 mb-6">
   <!-- 常驻紧凑视图 -->
-  <div class="weather-trigger flex items-center justify-between px-4 py-3 rounded-xl border border-base-content/5 bg-base-content/[0.02] hover:bg-base-content/[0.05] hover:border-primary/20 transition-all duration-300 cursor-help">
+  <div class="weather-trigger flex items-center justify-between px-4 py-2.5 rounded-2xl border border-base-content/5 bg-base-content/5 hover:bg-base-content/10 transition-all duration-300 cursor-help">
     <div class="flex items-center gap-3 overflow-hidden">
-      <div id="weather-icon-main" class="text-primary w-6 h-6 flex items-center justify-center shrink-0">
+      <div id="weather-icon-main" class="text-primary w-5 h-5 flex items-center justify-center shrink-0">
          <div class="w-4 h-4 rounded-full bg-base-content/10 animate-pulse"></div>
       </div>
-      <span id="weather-city-main" class="text-sm font-bold text-base-content/70 truncate">{t('weather.loading')}</span>
+      <span id="weather-city-main" class="text-sm font-medium opacity-40 group-hover:opacity-60 transition-opacity truncate">{t('weather.loading')}</span>
     </div>
-    <span id="weather-temp-main" class="text-sm font-black font-mono opacity-40 group-hover:opacity-100 transition-opacity whitespace-nowrap ml-2">--°</span>
+    <span id="weather-temp-main" class="text-sm font-black font-mono opacity-20 group-hover:opacity-50 transition-opacity whitespace-nowrap ml-2">--°</span>
   </div>
 
   <!-- 悬浮详情面板 (Popover) -->
