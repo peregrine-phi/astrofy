@@ -47,7 +47,9 @@ const proxyUrl = import.meta.env.PUBLIC_HOT_API_PROXY || 'https://api.allhot.top
 
       if (!list || !template) return;
 
-      const apiUrl = `${proxyUrl}/sources/data?id=${sourceId}`;
+      // 移除可能存在的尾部斜杠，防止拼出 //sources/data 的情况
+      const cleanProxyUrl = proxyUrl.replace(/\/+$/, '');
+      const apiUrl = `${cleanProxyUrl}/sources/data?id=${sourceId}`;
       const apiKey = window.ALLHOT_API_KEY || ''; 
 
       const fetchOptions = {
