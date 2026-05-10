@@ -1,0 +1,126 @@
+---
+// src/components/ui/Weather.astro
+import { useTranslations, getLangFromUrl } from "../../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<div class="weather-wrapper group relative inline-block w-full px-4 mb-6">
+  <!-- 常驻紧凑视图 -->
+  <div class="weather-trigger flex items-center justify-between px-4 py-3 rounded-xl border border-base-content/5 bg-base-content/[0.02] hover:bg-base-content/[0.05] hover:border-primary/20 transition-all duration-300 cursor-help">
+    <div class="flex items-center gap-3 overflow-hidden">
+      <div id="weather-icon-main" class="text-primary w-6 h-6 flex items-center justify-center shrink-0">
+         <div class="w-4 h-4 rounded-full bg-base-content/10 animate-pulse"></div>
+      </div>
+      <span id="weather-city-main" class="text-sm font-bold text-base-content/70 truncate">{t('weather.loading')}</span>
+    </div>
+    <span id="weather-temp-main" class="text-sm font-black font-mono opacity-40 group-hover:opacity-100 transition-opacity whitespace-nowrap ml-2">--°</span>
+  </div>
+
+  <!-- 悬浮详情面板 (Popover) -->
+  <div class="weather-popover invisible opacity-0 group-hover:visible group-hover:opacity-100 absolute left-1/2 -translate-x-1/2 bottom-full mb-3 w-56 p-5 rounded-2xl bg-base-content text-base-100 shadow-2xl transition-all duration-500 z-50 pointer-events-none">
+    <!-- 小箭头 -->
+    <div class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-base-content rotate-45"></div>
+    
+    <div class="flex flex-col gap-4">
+      <div class="flex items-center justify-between">
+        <div class="flex flex-col gap-0.5">
+            <span id="weather-desc-detail" class="text-[10px] font-black uppercase tracking-wider opacity-60">---</span>
+            <span id="weather-location-detail" class="text-[9px] opacity-40 truncate max-w-[120px]">---</span>
+        </div>
+        <span id="weather-temp-detail" class="text-2xl font-black font-mono">--°</span>
+      </div>
+      
+      <div class="h-px bg-base-100/10"></div>
+      
+      <div class="grid grid-cols-2 gap-4 text-[10px] font-bold opacity-80">
+        <div class="flex flex-col gap-1">
+          <span class="opacity-50 text-[8px] uppercase tracking-tighter">Feels Like</span>
+          <span id="weather-feels-detail" class="font-mono">--°C</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="opacity-50 text-[8px] uppercase tracking-tighter">Humidity</span>
+          <span id="weather-hum-detail" class="font-mono">--%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  function initWeather() {
+    const container = document.querySelector('.weather-wrapper');
+    if (!container) return;
+
+    const cityMain = container.querySelector('#weather-city-main');
+    const tempMain = container.querySelector('#weather-temp-main');
+    const iconMain = container.querySelector('#weather-icon-main');
+    
+    const tempDetail = container.querySelector('#weather-temp-detail');
+    const descDetail = container.querySelector('#weather-desc-detail');
+    const feelsDetail = container.querySelector('#weather-feels-detail');
+    const humDetail = container.querySelector('#weather-hum-detail');
+    const locDetail = container.querySelector('#weather-location-detail');
+    
+    const lang = document.documentElement.lang || 'en';
+    const isZh = lang.startsWith('zh');
+
+    const weatherMap = {
+      0: { en: 'Clear Sky', zh: '晴朗', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>' },
+      1: { en: 'Mostly Clear', zh: '晴间多云', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="M20 12h2"/><path d="m19.07 4.93-1.41 1.41"/><path d="M15.947 12.65a4 4 0 0 0-5.925-4.128"/><path d="M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z"/></svg>' },
+      2: { en: 'Partly Cloudy', zh: '多云', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="M20 12h2"/><path d="m19.07 4.93-1.41 1.41"/><path d="M15.947 12.65a4 4 0 0 0-5.925-4.128"/><path d="M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z"/></svg>' },
+      3: { en: 'Overcast', zh: '阴天', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19a3.5 3.5 0 1 1 0-7c.1 0 .2 0 .3.1a5 5 0 1 0-8.8-1.5A3.5 3.5 0 1 0 5.5 18H17a1 1 0 0 0 1-1Z"/></svg>' },
+      45: { en: 'Foggy', zh: '大雾', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16"/><path d="M8 10h8"/><path d="M16 14H8"/><path d="M20 18H4"/></svg>' },
+      51: { en: 'Drizzle', zh: '毛毛雨', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M8 19v2"/><path d="M12 19v2"/><path d="M16 19v2"/></svg>' },
+      61: { en: 'Rainy', zh: '下雨', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M8 19v2"/><path d="M12 19v2"/><path d="M16 19v2"/></svg>' },
+      95: { en: 'Thunderstorm', zh: '雷雨', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="m13 18-3 3h4l-3 3"/></svg>' },
+    };
+
+    fetch('/api/location')
+      .then(res => {
+        if (!res.ok) throw new Error('Local API fallback');
+        return res.json();
+      })
+      .catch(() => {
+        return fetch('http://ip-api.com/json/').then(res => res.json()).then(d => ({
+          latitude: d.lat, longitude: d.lon, city: d.city, country: d.countryCode
+        }));
+      })
+      .then(loc => {
+        cityMain.textContent = loc.city;
+        locDetail.textContent = `${loc.city}, ${loc.country}`;
+        return fetch(`https://api.open-meteo.com/v1/forecast?latitude=${loc.latitude}&longitude=${loc.longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code`);
+      })
+      .then(res => res.json())
+      .then(data => {
+        const c = data.current;
+        const info = weatherMap[c.weather_code] || weatherMap[3];
+        
+        iconMain.innerHTML = info.icon;
+        const tempStr = `${Math.round(c.temperature_2m)}°`;
+        tempMain.textContent = tempStr;
+        tempDetail.textContent = tempStr;
+        descDetail.textContent = isZh ? info.zh : info.en;
+        feelsDetail.textContent = `${Math.round(c.apparent_temperature)}°C`;
+        humDetail.textContent = `${c.relative_humidity_2m}%`;
+      })
+      .catch(e => {
+        console.error(e);
+        cityMain.textContent = 'Error';
+      });
+  }
+
+  initWeather();
+  document.addEventListener('astro:after-swap', initWeather);
+</script>
+
+<style>
+  .weather-popover {
+    transform: translateX(-50%) translateY(10px);
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .group:hover .weather-popover {
+    transform: translateX(-50%) translateY(0);
+  }
+</style>

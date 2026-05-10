@@ -16,6 +16,8 @@ export const ui = {
     'nav.contact': 'Contact',
     'post.readingTime': 'Reading Time',
     'post.viewCount': 'Views',
+    'weather.title': 'Local Weather',
+    'weather.loading': 'Locating...',
   },
   zh: {
     'nav.home': '主页',
@@ -27,5 +29,7 @@ export const ui = {
     'nav.contact': '联系',
     'post.readingTime': '阅读时间',
     'post.viewCount': '阅读量',
+    'weather.title': '当地天气',
+    'weather.loading': '定位中...',
   },
 } as const;

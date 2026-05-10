@@ -9,6 +9,7 @@ import ThemeToggle from "../ui/ThemeToggle.astro";
 
 
 import Search from "../ui/Search.astro";
+import Weather from "../ui/Weather.astro";
 
 
 const { sideBarActiveItemID } = Astro.props;
@@ -29,6 +30,11 @@ const lang = Astro.currentLocale || "en";
     </div>
     <Search />
     <SideBarMenu sideBarActiveItemID={sideBarActiveItemID} />
+    
+    <div class="mt-6">
+      <Weather />
+    </div>
+
     <div class="grow"></div>
     
     <div class="flex items-center justify-center gap-2 mb-2 px-4">
