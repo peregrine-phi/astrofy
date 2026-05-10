@@ -7,7 +7,7 @@ const proxyUrl = import.meta.env.PUBLIC_HOT_API_PROXY || 'https://api.allhot.top
 <div class="hot-news-section mb-16" data-source-id={sourceId} data-initial-count={initialCount} data-proxy-url={proxyUrl}>
   <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
     <div class="flex items-center gap-4">
-      <h2 class="text-4xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-base-content to-base-content/60">
+      <h2 class="text-3xl font-bold">
         {title}
       </h2>
       <span class="news-count-badge opacity-0 transition-opacity duration-500 badge badge-ghost font-mono text-xs">0 items</span>
@@ -99,9 +99,11 @@ const proxyUrl = import.meta.env.PUBLIC_HOT_API_PROXY || 'https://api.allhot.top
         
         list.appendChild(clone);
         
+        // 同步捕获当前添加的卡片，避免异步闭包导致的指针错误
+        const addedCard = list.lastElementChild;
+        
         // 触发重绘并开启动画
         requestAnimationFrame(() => {
-          const addedCard = list.lastElementChild;
           setTimeout(() => {
             addedCard.style.opacity = '1';
             addedCard.style.transform = 'translateY(0)';
