@@ -61,8 +61,14 @@ const proxyUrl = import.meta.env.PUBLIC_HOT_API_PROXY || 'https://api.allhot.top
         fetchOptions.headers['X-API-Key'] = apiKey;
       }
 
+      let cacheTime = null;
+
       fetch(apiUrl, fetchOptions)
-      .then(res => res.json())
+      .then(res => {
+        // 尝试从 Header 获取 Worker 记录的真实缓存时间
+        cacheTime = res.headers.get('X-Cache-Time');
+        return res.json();
+      })
       .then(json => {
         if (json.code === 200 && json.data.list) {
           if (loading) loading.classList.add('hidden');
@@ -91,8 +97,10 @@ const proxyUrl = import.meta.env.PUBLIC_HOT_API_PROXY || 'https://api.allhot.top
           });
 
           if (updateTime) {
-            const now = new Date();
-            updateTime.textContent = `更新于 ${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+            const date = cacheTime ? new Date(cacheTime) : new Date();
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            updateTime.textContent = `${cacheTime ? '数据生成于' : '实时更新'} ${hours}:${minutes}`;
           }
         }
       })
