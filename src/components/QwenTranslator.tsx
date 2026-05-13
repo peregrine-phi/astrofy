@@ -245,13 +245,13 @@ export default function QwenTranslator({ lang = 'en' }: { lang?: string }) {
           </select>
           <div className="relative group">
             <textarea
-              className="textarea textarea-bordered w-full h-64 rounded-none border-2 border-black bg-white focus:outline-none focus:ring-0 text-lg font-medium p-4"
+              className="textarea textarea-bordered w-full h-64 rounded-none border-2 border-black bg-base-100 focus:outline-none focus:ring-0 text-lg font-medium p-4"
               placeholder={t.transPlaceholder}
               value={translatedText}
               readOnly
             />
             {loading && !isStreaming && (
-              <div className="absolute inset-0 flex items-center justify-center bg-white/50 border-2 border-black">
+              <div className="absolute inset-0 flex items-center justify-center bg-base-100/50 border-2 border-black">
                 <span className="loading loading-spinner loading-lg text-primary"></span>
               </div>
             )}
