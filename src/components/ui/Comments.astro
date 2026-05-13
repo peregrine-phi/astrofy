@@ -72,7 +72,14 @@ const ARTALK_SITE = "Peregrine";
       pageTitle: title,
       server: ARTALK_SERVER,
       site: ARTALK_SITE,
-      darkMode: "auto",
+    const artalk = Artalk.init({
+      el: "#ArtalkComments",
+      pageKey: window.location.pathname,
+      pageTitle: title,
+      server: ARTALK_SERVER,
+      site: ARTALK_SITE,
+      darkMode: document.documentElement.getAttribute('data-theme') === 'black' || 
+                document.documentElement.getAttribute('data-theme') === 'dracula',
       locale: lang,
       pv: true,
     });
@@ -94,6 +101,16 @@ const ARTALK_SITE = "Peregrine";
         maintenance.style.display = 'none';
       }
     });
+
+    // Sync theme changes with Artalk
+    const syncTheme = () => {
+      const theme = document.documentElement.getAttribute('data-theme');
+      const isDark = theme === 'black' || theme === 'dracula';
+      artalk.setDarkMode(isDark);
+    };
+    
+    window.addEventListener('theme-changed', syncTheme);
+    document.addEventListener('astro:after-swap', syncTheme);
   }
   document.addEventListener("astro:page-load", initArtalk);
 </script>
@@ -109,37 +126,48 @@ const ARTALK_SITE = "Peregrine";
     --at-color-sub: var(--fallback-bc, oklch(var(--bc) / 0.5)) !important;
   }
 
-  /* 彻底修复深色模式白块问题 */
+  /* 彻底修复各种主题下的“白块”或背景不匹配问题 */
   #ArtalkComments, 
   .atk-main-editor, 
   .atk-textarea, 
   .atk-editor-container,
-  .atk-header input {
+  .atk-header input,
+  .atk-editor-wrap,
+  .atk-list-header,
+  .atk-list-footer,
+  .atk-grp,
+  .atk-plug-panel-wrap,
+  .atk-editor-plug-box {
     background-color: transparent !important;
     color: var(--fallback-bc, oklch(var(--bc))) !important;
   }
 
+  /* 强制编辑器容器透明且符合整体审美 */
   .atk-main-editor {
     @apply border border-base-content/10 bg-base-content/[0.02] rounded-3xl p-4 transition-all duration-500 focus-within:bg-base-content/[0.05] focus-within:border-primary/30 !important;
     box-shadow: none !important;
   }
 
-  /* 恢复极简下划线样式 */
+  /* 修正编辑器上方的 Header */
   .atk-header {
-    @apply flex flex-wrap gap-2 mb-4 !important;
+    @apply flex flex-wrap gap-2 mb-4 bg-transparent !important;
   }
 
   .atk-header input {
-    @apply border-b border-base-content/10 transition-all focus:border-primary px-2 py-2 text-sm !important;
+    @apply border-b border-base-content/10 transition-all focus:border-primary px-2 py-2 text-sm bg-transparent !important;
     border-top: none !important;
     border-left: none !important;
     border-right: none !important;
     border-radius: 0 !important;
   }
 
-  /* 解决 Textarea 默认背景 */
+  /* 解决 Textarea 默认背景和占位符 */
   .atk-textarea {
-    @apply py-4 min-h-[120px] !important;
+    @apply py-4 min-h-[120px] bg-transparent !important;
+  }
+  
+  .atk-textarea::placeholder {
+    @apply opacity-30 !important;
   }
 
   /* 发送按钮 */
@@ -147,7 +175,7 @@ const ARTALK_SITE = "Peregrine";
     @apply btn btn-primary btn-md rounded-2xl px-10 border-none transition-all shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 !important;
   }
 
-  /* 评论卡片样式 */
+  /* 评论卡片样式 - 确保在深色主题下背景透明或微调 */
   .atk-comment-wrap {
     @apply border-none bg-base-content/[0.02] mb-4 p-6 rounded-3xl transition-colors hover:bg-base-content/[0.04] !important;
   }
@@ -156,10 +184,15 @@ const ARTALK_SITE = "Peregrine";
     @apply rounded-2xl shadow-sm !important;
   }
 
-  /* 修正下拉列表和弹出层背景 */
+  /* 修正下拉列表和弹出层背景 - 使用模糊效果防止完全透明导致的重叠干扰 */
   .atk-layer-wrap {
     @apply rounded-2xl shadow-2xl border border-base-content/10 backdrop-blur-2xl bg-base-200/95 !important;
     color: var(--fallback-bc, oklch(var(--bc))) !important;
+  }
+
+  /* 修正列表中的预览项背景 */
+  .atk-list-footer, .atk-error-wrap {
+    background: transparent !important;
   }
 
   /* 修正所有残留链接色 */
