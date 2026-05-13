@@ -180,28 +180,37 @@ const recent_posts = posts.slice(0, 3);
   </style>
 
   <script is:inline>
-    const styles = ['minimalist-flat', 'neo-brutalist', 'geometric-bold', 'neumorphism'];
-    let currentIdx = 0;
-    
-    const wrapper = document.getElementById('style-wrapper');
-    const luckyBtn = document.getElementById('lucky-btn');
+    function init404Style() {
+      const styles = ['minimalist-flat', 'neo-brutalist', 'geometric-bold', 'neumorphism'];
+      let currentIdx = 0;
+      
+      const wrapper = document.getElementById('style-wrapper');
+      const luckyBtn = document.getElementById('lucky-btn');
 
-    // Initialize from local storage
-    const savedStyle = localStorage.getItem('404-style');
-    if (savedStyle && styles.includes(savedStyle)) {
-        currentIdx = styles.indexOf(savedStyle);
-        wrapper.setAttribute('data-style', savedStyle);
+      if (!wrapper || !luckyBtn) return;
+
+      // Initialize from local storage
+      const savedStyle = localStorage.getItem('404-style');
+      if (savedStyle && styles.includes(savedStyle)) {
+          currentIdx = styles.indexOf(savedStyle);
+          wrapper.setAttribute('data-style', savedStyle);
+      }
+
+      luckyBtn.addEventListener('click', () => {
+          currentIdx = (currentIdx + 1) % styles.length;
+          const newStyle = styles[currentIdx];
+          wrapper.setAttribute('data-style', newStyle);
+          localStorage.setItem('404-style', newStyle);
+          
+          // Add a little "pop" animation
+          luckyBtn.classList.add('scale-110');
+          setTimeout(() => luckyBtn.classList.remove('scale-110'), 200);
+      });
     }
 
-    luckyBtn.addEventListener('click', () => {
-        currentIdx = (currentIdx + 1) % styles.length;
-        const newStyle = styles[currentIdx];
-        wrapper.setAttribute('data-style', newStyle);
-        localStorage.setItem('404-style', newStyle);
-        
-        // Add a little "pop" animation
-        luckyBtn.classList.add('scale-110');
-        setTimeout(() => luckyBtn.classList.remove('scale-110'), 200);
-    });
+    // Run on initial load
+    init404Style();
+    // Run on each View Transitions navigation
+    document.addEventListener('astro:page-load', init404Style);
   </script>
 </BaseLayout>

@@ -1,0 +1,10 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import QwenTranslator from "../../components/QwenTranslator";
+---
+
+<BaseLayout title="Qwen MT 翻译器 | Astrofy" sideBarActiveItemID="qwen-translator">
+  <div className="pb-12 mt-5">
+    <QwenTranslator client:load lang="zh" />
+  </div>
+</BaseLayout>
