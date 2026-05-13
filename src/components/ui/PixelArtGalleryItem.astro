@@ -1,5 +1,5 @@
 ---
-const { title, desc, img, colorClass = "bg-primary", slideDirection = "right", layout = "vertical", ratio = "50", url } = Astro.props;
+const { title, desc, img, colorClass = "bg-primary", slideDirection = "right", orientation = "vertical", ratio = "50", url } = Astro.props;
 
 const slideClasses = {
   right: "group-hover:translate-x-[105%] top-0 left-0 h-full w-full",
@@ -8,7 +8,7 @@ const slideClasses = {
   bottom: "group-hover:translate-y-[105%] top-0 left-0 w-full h-full",
 };
 
-const flexDir = layout === "horizontal" ? "flex-row" : "flex-col";
+const flexDir = orientation === "horizontal" ? "flex-row" : "flex-col";
 const colorStyle = { flex: `${ratio} 1 0%` };
 const imageStyle = { flex: `${100 - ratio} 1 0%` };
 ---
@@ -54,7 +54,7 @@ const imageStyle = { flex: `${100 - ratio} 1 0%` };
         )
       }
       <!-- Divider -->
-      <div class={`absolute z-20 ${layout === 'vertical' ? 'top-0 left-0 w-full h-1' : 'top-0 left-0 h-full w-1'} bg-black`}></div>
+      <div class={`absolute z-20 ${orientation === 'vertical' ? 'top-0 left-0 w-full h-1' : 'top-0 left-0 h-full w-1'} bg-black`}></div>
     </div>
 
     <!-- Resize Handle (Pixel Art style) -->
