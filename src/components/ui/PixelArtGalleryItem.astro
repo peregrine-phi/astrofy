@@ -1,0 +1,95 @@
+---
+const { title, desc, img, colorClass = "bg-primary", slideDirection = "right", layout = "vertical", ratio = "50", url } = Astro.props;
+
+const slideClasses = {
+  right: "group-hover:translate-x-[105%] top-0 left-0 h-full w-full",
+  left: "group-hover:translate-x-[-105%] top-0 right-0 h-full w-full",
+  top: "group-hover:translate-y-[-105%] bottom-0 left-0 w-full h-full",
+  bottom: "group-hover:translate-y-[105%] top-0 left-0 w-full h-full",
+};
+
+const flexDir = layout === "horizontal" ? "flex-row" : "flex-col";
+const colorStyle = { flex: `${ratio} 1 0%` };
+const imageStyle = { flex: `${100 - ratio} 1 0%` };
+---
+
+<div class="gallery-card relative group cursor-pointer overflow-visible font-mono w-full h-full">
+  <!-- Main Card (Spliced & Textured) -->
+  <div
+    class="main-card relative z-10 w-full h-full border-4 border-black bg-black flex transition-all duration-300 group-hover:-translate-x-2 group-hover:-translate-y-2 shadow-[4px_4px_0_#000] group-hover:shadow-[12px_12px_0_#000] overflow-hidden"
+    style={{ ...flexDir === 'flex-row' ? { flexDirection: 'row' } : { flexDirection: 'column' } }}
+  >
+    <!-- Color Section with Pattern -->
+    <div 
+      class={`relative flex items-center justify-center p-4 ${colorClass} ${colorClass.replace('bg-', 'text-')}-content pixel-pattern`}
+      style={colorStyle}
+    >
+      <div class="z-10 bg-black/80 text-white px-3 py-1 border-2 border-white/20 select-none flex items-center gap-2">
+        <span class="text-lg font-bold uppercase tracking-tighter text-center leading-none">{title}</span>
+        {url && (
+          <a 
+            href={url} 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            class="hover:text-primary transition-colors duration-200 pointer-events-auto"
+            title="Open Link"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="square" stroke-linejoin="miter" class="hover:translate-x-0.5 hover:-translate-y-0.5 transition-transform duration-200">
+              <path d="M7 17l10-10M7 7h10v10"/>
+            </svg>
+          </a>
+        )}
+      </div>
+    </div>
+    
+    <!-- Image Section -->
+    <div class="bg-white border-black overflow-hidden relative min-h-[120px]" style={imageStyle}>
+      {
+        img ? (
+          <img src={img} alt={title} class="absolute inset-0 w-full h-full object-cover rendering-pixelated grayscale group-hover:grayscale-0 transition-all duration-500 pointer-events-none" />
+        ) : (
+          <div class="absolute inset-0 flex items-center justify-center opacity-10">
+             <span class="text-6xl font-black">PIXEL</span>
+          </div>
+        )
+      }
+      <!-- Divider -->
+      <div class={`absolute z-20 ${layout === 'vertical' ? 'top-0 left-0 w-full h-1' : 'top-0 left-0 h-full w-1'} bg-black`}></div>
+    </div>
+
+    <!-- Resize Handle (Pixel Art style) -->
+    <div class="resize-handle absolute bottom-0 right-0 w-6 h-6 z-30 cursor-nwse-resize opacity-0 group-hover:opacity-100 transition-opacity">
+       <div class="absolute bottom-1 right-1 w-1 h-1 bg-black"></div>
+       <div class="absolute bottom-1 right-2.5 w-1 h-1 bg-black"></div>
+       <div class="absolute bottom-2.5 right-1 w-1 h-1 bg-black"></div>
+    </div>
+  </div>
+
+
+  <!-- Detail Slide-out (Pixel Fold) -->
+  <div
+    class={`hidden md:block absolute z-0 border-4 border-black bg-base-100 p-6 transition-all duration-300 transform opacity-0 group-hover:opacity-100 ${slideClasses[slideDirection]} shadow-[4px_4px_0_#000]`}
+  >
+    <div class="h-full flex items-center justify-center text-center">
+      <p class="text-sm leading-relaxed font-bold">{desc}</p>
+    </div>
+  </div>
+
+  <!-- Mobile Details -->
+  <div class="md:hidden mt-3 p-3 border-l-4 border-black bg-base-200">
+    <h3 class="font-black text-sm uppercase">{title}</h3>
+    <p class="text-xs opacity-70 mt-1">{desc}</p>
+  </div>
+</div>
+
+<style>
+  .pixel-pattern {
+    background-image: radial-gradient(rgba(0,0,0,0.1) 1px, transparent 1px);
+    background-size: 4px 4px;
+  }
+  
+  .rendering-pixelated {
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+  }
+</style>

@@ -24,7 +24,7 @@ export const ui = {
     'nav.home': '主页',
     'nav.gallery': '画廊',
     'nav.neighbors': '邻居',
-    'nav.tutorials': '教程',
+    'nav.tutorials': '折腾',
     'nav.blog': '博客',
     'nav.cv': '简历',
     'nav.contact': '联系',

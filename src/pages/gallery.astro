@@ -1,35 +1,184 @@
 ---
+import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import HorizontalCard from "../components/ui/HorizontalCard.astro";
+import PixelArtGalleryItem from "../components/ui/PixelArtGalleryItem.astro";
+
+const galleryEntries = await getCollection("gallery", ({ id }) => {
+  return !id.startsWith('zh/');
+});
+const galleryItems = galleryEntries
+  .sort((a, b) => (a.data.order || 99) - (b.data.order || 99))
+  .map(entry => entry.data);
 ---
 
 <BaseLayout title="Gallery" sideBarActiveItemID="gallery">
-  <div class="mb-5">
-    <div class="text-3xl w-full font-bold">Gallery</div>
+  <div class="mb-10">
+    <div class="text-5xl w-full font-black uppercase tracking-tighter mb-4 italic">
+      The Gallery
+    </div>
+    <p class="text-lg opacity-80 max-w-2xl">
+      A curated collection of visual experiments. 
+      <span class="text-primary font-bold">Try dragging or resizing the cards!</span>
+    </p>
   </div>
 
-  <p class="mb-10 text-justify">
-    Welcome to my gallery. Here I share visual moments and inspirations.
-  </p>
-
-  <ul>
-    <li>
-      <HorizontalCard
-        title="Moment 1"
-        img="/post_img.webp"
-        desc="A brief description of this visual moment."
-        url="/gallery"
-      />
-      <div class="divider my-0" />
-    </li>
-    <li>
-      <HorizontalCard
-        title="Moment 2"
-        img="/post_img.webp"
-        desc="Another moment captured in time."
-        url="/gallery"
-      />
-      <div class="divider my-0" />
-    </li>
-  </ul>
+  <div class="grid grid-cols-1 md:grid-cols-4 auto-rows-[minmax(150px,auto)] gap-8 md:gap-12 pb-20 overflow-visible" id="gallery-grid">
+    {
+      galleryItems.map((item, index) => {
+        const stagger = [32, -16, 0][index % 3];
+        return (
+          <div
+            class={`${item.span} gallery-item relative z-0 hover:z-20`}
+            style={{ marginTop: `${stagger}px` }}
+          >
+            <PixelArtGalleryItem
+              title={item.title}
+              desc={item.description}
+              img={item.image}
+              colorClass={item.colorClass}
+              slideDirection={item.slide}
+              layout={item.layout}
+              ratio={item.ratio}
+              url={item.url}
+            />
+          </div>
+        );
+      })
+    }
+  </div>
 </BaseLayout>
+
+<script is:inline>
+  function initDesktopMode() {
+    const grid = document.getElementById('gallery-grid');
+    if (!grid || grid.dataset.desktopMode === 'true') return;
+    
+    // Only apply on desktop
+    if (window.innerWidth < 768) return; 
+
+    // Wait for a tiny bit to ensure layout is settled
+    setTimeout(() => {
+      const items = Array.from(grid.querySelectorAll('.gallery-item'));
+      
+      // 1. Measure all items' initial grid positions
+      const rects = items.map(item => {
+        const rect = item.getBoundingClientRect();
+        const parentRect = grid.getBoundingClientRect();
+        return {
+          left: rect.left - parentRect.left,
+          top: rect.top - parentRect.top,
+          width: rect.width,
+          height: rect.height,
+          el: item
+        };
+      });
+
+      // 2. Fix container height to prevent collapse
+      grid.style.height = grid.offsetHeight + 'px';
+      grid.style.position = 'relative';
+      // Remove grid classes so they don't fight with absolute positioning
+      grid.className = grid.className.replace(/grid|grid-cols-\d+|md:grid-cols-\d+|auto-rows-[^\s]+|gap-\d+|md:gap-\d+/g, '');
+
+      // 3. Apply absolute positions
+      let maxZ = 50;
+      rects.forEach(r => {
+        const el = r.el;
+        el.style.position = 'absolute';
+        el.style.left = r.left + 'px';
+        el.style.top = r.top + 'px';
+        el.style.width = r.width + 'px';
+        el.style.height = r.height + 'px';
+        el.style.margin = '0'; // Reset stagger margins
+        
+        // Remove tailwind transform classes
+        el.className = el.className.replace(/md:-?translate-y-\d+/g, '');
+        
+        // Remove transition to make dragging instant
+        el.style.transition = 'none';
+
+        // Event listeners for Drag & Resize
+        let isDragging = false;
+        let isResizing = false;
+        let startX, startY, startLeft, startTop, startWidth, startHeight;
+
+        el.addEventListener('mousedown', (e) => {
+          // Bring to front
+          maxZ++;
+          el.style.zIndex = maxZ;
+
+          // Check if clicking the resize handle
+          if (e.target.closest('.resize-handle')) {
+            isResizing = true;
+          } else {
+            isDragging = true;
+            el.style.cursor = 'grabbing';
+          }
+
+          startX = e.clientX;
+          startY = e.clientY;
+          startLeft = parseFloat(el.style.left) || 0;
+          startTop = parseFloat(el.style.top) || 0;
+          startWidth = parseFloat(el.style.width) || r.width;
+          startHeight = parseFloat(el.style.height) || r.height;
+          
+          e.preventDefault(); // Prevent text selection
+        });
+
+        window.addEventListener('mousemove', (e) => {
+          if (isDragging) {
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+            el.style.left = (startLeft + dx) + 'px';
+            el.style.top = (startTop + dy) + 'px';
+          } else if (isResizing) {
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+            el.style.width = Math.max(150, startWidth + dx) + 'px';
+            el.style.height = Math.max(100, startHeight + dy) + 'px';
+          }
+        });
+
+        window.addEventListener('mouseup', () => {
+          if (isDragging) {
+            isDragging = false;
+            el.style.cursor = 'move';
+          }
+          if (isResizing) {
+            isResizing = false;
+          }
+        });
+
+        // Set initial cursor
+        el.style.cursor = 'move';
+      });
+
+      grid.dataset.desktopMode = 'true';
+    }, 100);
+  }
+
+  // Run initialization
+  document.addEventListener('DOMContentLoaded', initDesktopMode);
+  document.addEventListener('astro:page-load', () => {
+    const grid = document.getElementById('gallery-grid');
+    if(grid) grid.dataset.desktopMode = 'false';
+    initDesktopMode();
+  });
+  
+  if (document.readyState === 'complete') {
+    initDesktopMode();
+  }
+</script>
+
+<style>
+  .grid {
+    overflow: visible;
+  }
+
+  .gallery-item {
+    overflow: visible;
+    user-select: none;
+    touch-action: none;
+  }
+</style>
+
+
