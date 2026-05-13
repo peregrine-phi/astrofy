@@ -131,9 +131,25 @@ const ARTALK_SITE = "Peregrine";
   .atk-list-footer,
   .atk-grp,
   .atk-plug-panel-wrap,
-  .atk-editor-plug-box {
+  .atk-editor-plug-box,
+  .atk-grp-switcher {
     background-color: transparent !important;
     color: var(--fallback-bc, oklch(var(--bc))) !important;
+  }
+
+  /* 修正表情选择器底部的切换栏 */
+  .atk-grp-switcher {
+    @apply border-t border-b border-base-content/10 bg-base-content/[0.05] !important;
+  }
+
+  .atk-grp-switcher span {
+    @apply transition-colors !important;
+  }
+
+  .atk-grp-switcher span:hover,
+  .atk-grp-switcher span.active {
+    background-color: var(--fallback-p, oklch(var(--p) / 0.15)) !important;
+    color: var(--fallback-p, oklch(var(--p))) !important;
   }
 
   /* 强制编辑器容器透明且符合整体审美 */
