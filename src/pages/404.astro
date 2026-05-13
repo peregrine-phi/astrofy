@@ -2,7 +2,6 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 import createSlug from "../lib/createSlug";
-import HorizontalCard from "../components/ui/HorizontalCard.astro";
 
 const lang = Astro.currentLocale || "en";
 const isZh = lang === "zh";
@@ -10,94 +9,199 @@ const isZh = lang === "zh";
 const title = isZh ? "404: 页面走丢了" : "404: Page Not Found";
 const description = isZh ? "您访问的页面不存在或已被移除。" : "The page you're looking for doesn't exist.";
 
-// Fetch 3 most recent posts to help the user find something interesting
+// Fetch 3 most recent posts
 const posts = (await getCollection("blog", ({ id }) => {
   return isZh ? id.startsWith("zh/") : !id.startsWith("zh/");
 })).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
-const recent_posts = posts.slice(0, 2);
+const recent_posts = posts.slice(0, 3);
 ---
 
 <BaseLayout title={title} includeSidebar={false} noindex={true}>
-  <div class="flex flex-col items-center justify-center min-h-[70vh] px-4">
-    <!-- Animated Illustration Area -->
-    <div class="relative mb-8 group">
-      <div class="absolute -inset-4 bg-primary/20 blur-3xl rounded-full opacity-50 group-hover:opacity-100 transition-opacity duration-1000"></div>
-      <div class="relative text-[120px] sm:text-[180px] font-black leading-none tracking-tighter select-none bg-clip-text text-transparent bg-gradient-to-b from-base-content to-base-content/20">
-        404
-      </div>
-      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-5xl sm:text-7xl animate-bounce pointer-events-none">
-        🌱
-      </div>
-    </div>
-
-    <!-- Error Message -->
-    <div class="text-center max-w-lg mb-12">
-      <h1 class="text-2xl sm:text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
-        {isZh ? "糟糕！进入了未知的荒野" : "Whoops! You've wandered into the wild"}
-      </h1>
-      <p class="text-base-content/60 leading-relaxed mb-8">
-        {isZh 
-          ? "你请求的页面可能已经搬迁或者在某个时空裂缝中失踪了。不如在花园里随便逛逛？" 
-          : "The page you're looking for might have been moved or is hiding in a digital thicket. Why not explore other paths?"}
-      </p>
+  <div id="style-wrapper" class="min-h-screen flex flex-col items-center justify-center p-4 transition-colors duration-500" data-style="minimalist-flat">
+    
+    <div class="style-container max-w-4xl w-full p-8 md:p-16 flex flex-col items-center text-center">
       
-      <!-- Action Buttons -->
-      <div class="flex flex-wrap justify-center gap-4 mb-6">
-        <a href={isZh ? "/zh/" : "/"} class="btn btn-primary btn-md sm:btn-lg rounded-2xl px-8 shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all">
-          {isZh ? "返回首页" : "Return Home"}
-        </a>
-        <button onclick="history.back()" class="btn btn-outline btn-md sm:btn-lg rounded-2xl px-8 border-base-content/20 hover:bg-base-content/5 transition-all">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mr-2 opacity-60"><polyline points="15 18 9 12 15 6"></polyline></svg>
-          {isZh ? "返回上一页" : "Go Back"}
-        </button>
+      <!-- 404 Display -->
+      <div class="relative mb-12">
+        <h1 class="error-code text-[120px] md:text-[200px] font-black leading-none tracking-tighter">
+          404
+        </h1>
+        <div class="floating-icon absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-6xl md:text-8xl">
+          👻
+        </div>
       </div>
 
-      <!-- Language Tip -->
-      <p class="text-xs opacity-40 italic">
-        {isZh 
-          ? "提示：如果您是在切换语言后看到此页面，说明该内容目前暂未提供对应语言的版本。" 
-          : "Tip: If you reached this page after switching languages, it means this content is not yet available in that language."}
-      </p>
-    </div>
+      <!-- Message -->
+      <div class="mb-12">
+        <h2 class="text-3xl md:text-5xl font-black mb-6 uppercase">
+          {isZh ? "糟糕！进入了未知的荒野" : "Whoops! Lost in the Wild"}
+        </h2>
+        <p class="text-xl font-bold opacity-80 max-w-2xl mx-auto">
+          {isZh 
+            ? "你请求的页面可能已经搬迁或者在某个时空裂缝中失踪了。" 
+            : "The page you're looking for might have been moved or is hiding in a digital thicket."}
+        </p>
+      </div>
 
-    <!-- Helpful Suggestions -->
-    {recent_posts.length > 0 && (
-      <div class="w-full max-w-2xl bg-base-200/50 backdrop-blur-xl border border-base-content/5 rounded-[2.5rem] p-6 sm:p-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-        <div class="flex items-center gap-3 mb-6 opacity-60">
-          <div class="h-px flex-1 bg-gradient-to-r from-transparent to-base-content/20"></div>
-          <span class="text-xs font-bold uppercase tracking-widest">{isZh ? "或许你是在找这些？" : "Maybe you were looking for..."}</span>
-          <div class="h-px flex-1 bg-gradient-to-l from-transparent to-base-content/20"></div>
+      <!-- Actions -->
+      <div class="flex flex-col items-center gap-8 mb-16">
+        <div class="flex flex-wrap justify-center gap-6">
+          <button onclick="history.back()" class="btn-style btn-primary text-lg font-black px-10 py-4 uppercase">
+            {isZh ? "返回上一页" : "Go Back"}
+          </button>
+          <button id="lucky-btn" class="btn-style btn-lucky text-lg font-black px-10 py-4 uppercase">
+            {isZh ? "手气不错" : "I'm Feeling Lucky"}
+          </button>
         </div>
         
-        <div class="grid gap-6">
-          {recent_posts.map((post) => (
-            <HorizontalCard
-              title={post.data.title}
-              img={post.data.heroImage}
-              desc={post.data.description}
-              url={(isZh ? "/zh/blog/" : "/blog/") + createSlug(post.data.title, post.slug)}
-              target="_self"
-            />
-          ))}
-        </div>
+        <!-- Language Tip -->
+        <p class="text-xs font-bold opacity-40 italic max-w-md">
+          {isZh 
+            ? "提示：如果你是在切换语言后跳转至此，说明该内容目前暂无对应语言的版本。" 
+            : "Tip: If you landed here after switching languages, it means this content is not yet available in the selected language."}
+        </p>
       </div>
-    )}
+
+      <!-- Suggestions -->
+      {recent_posts.length > 0 && (
+        <div class="w-full">
+          <h3 class="text-sm font-black uppercase tracking-widest mb-8 opacity-60">
+            {isZh ? "或许你是在找这些？" : "Maybe explore these instead?"}
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {recent_posts.map((post) => (
+              <a 
+                href={(isZh ? "/zh/blog/" : "/blog/") + createSlug(post.data.title, post.slug)}
+                class="card-style p-6 flex flex-col items-center text-center transition-all"
+              >
+                <div class="font-black mb-2 line-clamp-2">{post.data.title}</div>
+                <div class="text-xs opacity-70 line-clamp-2">{post.data.description}</div>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
   </div>
 
+  <style is:global>
+    /* Reset some BaseLayout defaults if needed for full effect */
+    #style-wrapper {
+        margin: -2.5rem -1.5rem; /* Offset BaseLayout padding */
+    }
+
+    /* --- COMMON TRANSITIONS --- */
+    .style-container, .btn-style, .card-style, .error-code, .floating-icon {
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* --- STYLE: NEO-BRUTALIST --- */
+    [data-style="neo-brutalist"] {
+        @apply bg-[#f1f1f1];
+    }
+    [data-style="neo-brutalist"] .style-container {
+        @apply bg-white border-4 border-black shadow-[16px_16px_0px_0px_rgba(0,0,0,1)];
+    }
+    [data-style="neo-brutalist"] .error-code {
+        @apply text-black drop-shadow-[8px_8px_0px_rgba(255,255,0,1)];
+    }
+    [data-style="neo-brutalist"] .btn-primary {
+        @apply bg-primary text-primary-content border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none;
+    }
+    [data-style="neo-brutalist"] .btn-lucky {
+        @apply bg-accent text-accent-content border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none;
+    }
+    [data-style="neo-brutalist"] .card-style {
+        @apply bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none;
+    }
+
+    /* --- STYLE: MINIMALIST FLAT --- */
+    [data-style="minimalist-flat"] {
+        @apply bg-white;
+    }
+    [data-style="minimalist-flat"] .error-code {
+        @apply text-black;
+    }
+    [data-style="minimalist-flat"] .btn-primary {
+        @apply bg-black text-white rounded-none hover:bg-gray-800;
+    }
+    [data-style="minimalist-flat"] .btn-lucky {
+        @apply bg-white text-black border-2 border-black rounded-none hover:bg-black hover:text-white;
+    }
+    [data-style="minimalist-flat"] .card-style {
+        @apply border border-black rounded-none hover:bg-black hover:text-white;
+    }
+
+    /* --- STYLE: GEOMETRIC BOLD --- */
+    [data-style="geometric-bold"] {
+        @apply bg-black text-white;
+    }
+    [data-style="geometric-bold"] .error-code {
+        @apply text-primary font-black scale-150;
+    }
+    [data-style="geometric-bold"] .btn-primary {
+        @apply bg-secondary text-secondary-content border-none rounded-none hover:scale-110;
+    }
+    [data-style="geometric-bold"] .btn-lucky {
+        @apply bg-accent text-accent-content border-none rounded-none hover:scale-110;
+    }
+    [data-style="geometric-bold"] .card-style {
+        @apply bg-white/10 border-none rounded-none hover:bg-primary hover:text-primary-content;
+    }
+    [data-style="geometric-bold"] .floating-icon {
+        @apply rotate-45 scale-125;
+    }
+
+    /* --- STYLE: NEUMORPHISM --- */
+    [data-style="neumorphism"] {
+        @apply bg-[#e0e5ec];
+    }
+    [data-style="neumorphism"] .style-container {
+        @apply bg-[#e0e5ec] rounded-[50px] shadow-[20px_20px_60px_#bebebe,-20px_-20px_60px_#ffffff];
+    }
+    [data-style="neumorphism"] .error-code {
+        @apply text-[#e0e5ec] drop-shadow-[2px_2px_2px_rgba(255,255,255,0.5)] shadow-[inset_2px_2px_5px_#b8bcc2,inset_-2px_-2px_5px_#ffffff] p-4 rounded-3xl;
+        background: #e0e5ec;
+        box-shadow: inset 6px 6px 12px #b8bcc2, inset -6px -6px 12px #ffffff;
+    }
+    [data-style="neumorphism"] .btn-primary {
+        @apply bg-[#e0e5ec] text-gray-600 rounded-2xl shadow-[6px_6px_12px_#b8bcc2,-6px_-6px_12px_#ffffff] hover:shadow-[inset_4px_4px_8px_#b8bcc2,inset_-4px_-4px_8px_#ffffff];
+    }
+    [data-style="neumorphism"] .btn-lucky {
+        @apply bg-[#e0e5ec] text-gray-600 rounded-2xl shadow-[6px_6px_12px_#b8bcc2,-6px_-6px_12px_#ffffff] hover:shadow-[inset_4px_4px_8px_#b8bcc2,inset_-4px_-4px_8px_#ffffff];
+    }
+    [data-style="neumorphism"] .card-style {
+        @apply bg-[#e0e5ec] text-gray-600 rounded-2xl shadow-[6px_6px_12px_#b8bcc2,-6px_-6px_12px_#ffffff] hover:shadow-[inset_4px_4px_8px_#b8bcc2,inset_-4px_-4px_8px_#ffffff];
+    }
+    [data-style="neumorphism"] h2, [data-style="neumorphism"] p, [data-style="neumorphism"] h3 {
+        @apply text-gray-600;
+    }
+  </style>
+
   <script is:inline>
-    // Handle go back logic is handled inline via onclick="history.back()"
+    const styles = ['minimalist-flat', 'neo-brutalist', 'geometric-bold', 'neumorphism'];
+    let currentIdx = 0;
+    
+    const wrapper = document.getElementById('style-wrapper');
+    const luckyBtn = document.getElementById('lucky-btn');
+
+    // Initialize from local storage
+    const savedStyle = localStorage.getItem('404-style');
+    if (savedStyle && styles.includes(savedStyle)) {
+        currentIdx = styles.indexOf(savedStyle);
+        wrapper.setAttribute('data-style', savedStyle);
+    }
+
+    luckyBtn.addEventListener('click', () => {
+        currentIdx = (currentIdx + 1) % styles.length;
+        const newStyle = styles[currentIdx];
+        wrapper.setAttribute('data-style', newStyle);
+        localStorage.setItem('404-style', newStyle);
+        
+        // Add a little "pop" animation
+        luckyBtn.classList.add('scale-110');
+        setTimeout(() => luckyBtn.classList.remove('scale-110'), 200);
+    });
   </script>
 </BaseLayout>
-
-<style>
-  /* Subtle pulse for the 404 text shadow area */
-  @keyframes pulse-slow {
-    0%, 100% { opacity: 0.5; transform: scale(1); }
-    50% { opacity: 0.8; transform: scale(1.05); }
-  }
-  
-  .blur-3xl {
-    animation: pulse-slow 8s infinite ease-in-out;
-  }
-</style>

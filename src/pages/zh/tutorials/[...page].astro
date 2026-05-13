@@ -1,56 +1,104 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import HorizontalTutorialItem from "../../../components/ui/HorizontalTutorialItem.astro";
 import { getCollection } from "astro:content";
 
 export async function getStaticPaths({ paginate }) {
   const items = await getCollection("tutorials", ({ id }) => id.startsWith("zh/"));
   items.sort((a, b) => b.data.updatedDate.valueOf() - a.data.updatedDate.valueOf());
-  return paginate(items, { pageSize: 10 });
+  return paginate(items, { pageSize: 12 });
 }
 const { page } = Astro.props;
+
+const colors = [
+  "bg-primary text-primary-content",
+  "bg-secondary text-secondary-content",
+  "bg-accent text-accent-content",
+  "bg-info text-info-content",
+  "bg-success text-success-content",
+  "bg-warning text-warning-content",
+  "bg-error text-error-content",
+  "bg-neutral text-neutral-content",
+];
+
+const gridSpans = [
+  "md:col-span-8 md:row-span-2",
+  "md:col-span-4 md:row-span-1",
+  "md:col-span-4 md:row-span-1",
+  "md:col-span-6 md:row-span-2",
+  "md:col-span-6 md:row-span-1",
+  "md:col-span-12 md:row-span-1",
+];
 ---
 
 <BaseLayout title="教程" sideBarActiveItemID="tutorials" noindex={!!page.url.prev}>
-  <ul>
-    {
-      page.data.map((item) => (
-        <>
-          <HorizontalTutorialItem
-            title={item.data.title}
-            img={item.data.heroImage}
-            desc={item.data.description}
-            pricing={item.data.pricing}
-            oldPricing={item.data.oldPricing}
-            checkoutUrl={item.data.checkoutUrl}
-            badge={item.data.badge}
-            details={item.data.details}
-            tags={item.data.tags}
-            url={"/zh/tutorials/" + item.slug.replace(/^zh\//, "")}
-            custom_link={item.data.custom_link}
-            custom_link_label={item.data.custom_link_label}
-          />
-          <div class="divider my-0" />
-        </>
-      ))
-    }
-  </ul>
+  <div class="mb-16 relative pt-8">
+    <h1 class="text-8xl md:text-[14rem] font-black uppercase leading-none opacity-5 select-none absolute -top-10 -left-10 z-0 overflow-hidden w-full whitespace-nowrap">
+      TUTORIALS TUTORIALS
+    </h1>
+    <div class="relative z-10 flex flex-col">
+        <h1 class="text-6xl md:text-9xl font-black uppercase tracking-tighter mb-2">
+          教程中心
+        </h1>
+        <div class="h-6 w-48 bg-black"></div>
+        <p class="text-xl md:text-2xl font-bold mt-6 max-w-2xl bg-white text-black p-4 border-l-8 border-black">
+            这里汇集了关于项目开发、系统架构以及维护技巧的深度教程，助力你掌握核心技术细节。
+        </p>
+    </div>
+  </div>
 
-  <div class="flex justify-between">
+  <div class="grid grid-cols-1 md:grid-cols-12 gap-0 auto-rows-[250px] border-4 border-black bg-black">
+    {
+      page.data.map((item, index) => {
+        const colorClass = colors[index % colors.length];
+        const spanClass = gridSpans[index % gridSpans.length];
+        return (
+          <a 
+            href={"/zh/tutorials/" + item.slug.replace(/^zh\//, "")}
+            class={`group relative overflow-hidden flex flex-col p-8 transition-all hover:z-20 hover:scale-[1.01] ${colorClass} ${spanClass} border-2 border-black`}
+          >
+            {/* Geometric shape decoration */}
+            <div class="absolute -bottom-10 -right-10 w-32 h-32 bg-black opacity-10 rounded-full group-hover:scale-150 transition-transform"></div>
+            
+            <div class="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-all transform translate-x-4 group-hover:translate-x-0">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="square" stroke-linejoin="miter"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+            </div>
+            
+            {item.data.badge && (
+                <div class="bg-black text-white px-4 py-1 text-sm font-black uppercase self-start mb-6 tracking-widest">
+                    {item.data.badge}
+                </div>
+            )}
+            
+            <h2 class="text-3xl md:text-5xl font-black uppercase leading-none mb-4 group-hover:underline decoration-4 md:decoration-8 underline-offset-4">
+              {item.data.title}
+            </h2>
+            
+            <p class="text-lg font-bold opacity-90 line-clamp-3 md:line-clamp-4 max-w-prose">
+              {item.data.description}
+            </p>
+            
+            <div class="mt-auto flex items-end justify-between relative z-10">
+                <div class="flex flex-col">
+                    <span class="text-xs font-black uppercase tracking-[0.3em] opacity-60 mb-1">Explore</span>
+                    <span class="text-sm font-black uppercase tracking-widest border-b-4 border-black pb-1">
+                        {item.data.custom_link_label || "阅读更多"}
+                    </span>
+                </div>
+                <span class="text-7xl md:text-9xl font-black opacity-10 group-hover:opacity-20 transition-opacity leading-none -mb-4">
+                    {String(index + 1).padStart(2, '0')}
+                </span>
+            </div>
+          </a>
+        );
+      })
+    }
+  </div>
+
+  <div class="flex justify-between mt-16 bg-black p-4">
     {
       page.url.prev ? (
-        <a href={page.url.prev} class="btn btn-ghost my-10 mx-5">
-          {" "}
-          <svg
-            class="h-6 w-6 fill-current md:h-8 md:w-8"
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-          >
-            <path d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" />
-          </svg>{" "}
-          Previous page
+        <a href={page.url.prev} class="bg-white text-black px-10 py-5 font-black uppercase hover:bg-primary hover:text-primary-content transition-all border-4 border-transparent hover:border-white">
+          ← PREV
         </a>
       ) : (
         <div />
@@ -58,18 +106,8 @@ const { page } = Astro.props;
     }
     {
       page.url.next ? (
-        <a href={page.url.next} class="btn btn-ghost my-10 mx-5">
-          Next page{" "}
-          <svg
-            class="h-6 w-6 fill-current md:h-8 md:w-8"
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-          >
-            {" "}
-            <path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" />
-          </svg>
+        <a href={page.url.next} class="bg-white text-black px-10 py-5 font-black uppercase hover:bg-primary hover:text-primary-content transition-all border-4 border-transparent hover:border-white">
+          NEXT →
         </a>
       ) : (
         <div />
@@ -77,3 +115,4 @@ const { page } = Astro.props;
     }
   </div>
 </BaseLayout>
+

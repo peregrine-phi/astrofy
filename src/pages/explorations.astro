@@ -1,0 +1,232 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Explorations - Retro System" description="Interactive Windows 95 style retro operating system experience. Explore frontend development resources and more." sideBarActiveItemID="neighbors">
+  <div class="fixed inset-0 z-[100] bg-[#008080] overflow-hidden select-none font-['MS_Sans_Serif',Arial,sans-serif]" style="image-rendering: pixelated;">
+    <!-- Desktop Area -->
+    <div id="desktop" class="absolute inset-0 bottom-8 p-4 flex flex-col flex-wrap content-start gap-8">
+      
+      <!-- Icon: My Computer -->
+      <div class="desktop-icon group" data-window="my-computer">
+        <div class="icon-visual bg-gray-300 border-2 border-white border-r-gray-800 border-b-gray-800 p-1 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-black"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="20" x2="22" y2="20"></line><polyline points="7 20 12 17 17 20"></polyline></svg>
+        </div>
+        <span class="icon-label text-white text-[11px] px-1 group-focus:bg-[#000080] group-active:bg-[#000080]">My Computer</span>
+      </div>
+
+      <!-- Icon: Network -->
+      <div class="desktop-icon group" data-window="network">
+        <div class="icon-visual bg-gray-300 border-2 border-white border-r-gray-800 border-b-gray-800 p-1 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-black"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+        </div>
+        <span class="icon-label text-white text-[11px] px-1 group-focus:bg-[#000080] group-active:bg-[#000080]">Network</span>
+      </div>
+
+      <!-- Icon: Frontend Dev (The functional one) -->
+      <div id="frontend-launcher" class="desktop-icon group" tabindex="0">
+        <div class="icon-visual bg-gray-300 border-2 border-white border-r-gray-800 border-b-gray-800 p-1 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#0000ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+        </div>
+        <span class="icon-label text-white text-[11px] px-1 text-center leading-tight group-focus:bg-[#000080] group-active:bg-[#000080]">Frontend Development</span>
+      </div>
+
+      <!-- Icon: Recycle Bin -->
+      <div class="desktop-icon group mt-auto" data-window="recycle-bin">
+        <div class="icon-visual bg-gray-300 border-2 border-white border-r-gray-800 border-b-gray-800 p-1 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-black"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+        </div>
+        <span class="icon-label text-white text-[11px] px-1 group-focus:bg-[#000080] group-active:bg-[#000080]">Recycle Bin</span>
+      </div>
+    </div>
+
+    <!-- Window: Frontend Development -->
+    <div id="frontend-window" class="hidden absolute top-[15%] left-[20%] w-[500px] bg-[#c0c0c0] border-2 border-white border-r-gray-800 border-b-gray-800 shadow-[2px_2px_10px_rgba(0,0,0,0.5)] flex flex-col z-[200]">
+      <!-- Title Bar -->
+      <div id="window-header" class="bg-gradient-to-r from-[#000080] to-[#1084d0] text-white flex justify-between items-center px-1 py-1 cursor-default">
+        <div class="flex items-center gap-1 ml-1">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="w-3 h-3"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+          <span class="text-[11px] font-bold">Frontend Development</span>
+        </div>
+        <div class="flex gap-1">
+          <button class="win-btn">_</button>
+          <button class="win-btn">□</button>
+          <button id="close-btn" class="win-btn font-bold">X</button>
+        </div>
+      </div>
+      
+      <!-- Menu Bar -->
+      <div class="flex gap-3 px-2 py-0.5 text-[11px] border-b border-gray-400">
+        <span class="hover:bg-[#000080] hover:text-white px-1"><u>F</u>ile</span>
+        <span class="hover:bg-[#000080] hover:text-white px-1"><u>E</u>dit</span>
+        <span class="hover:bg-[#000080] hover:text-white px-1"><u>V</u>iew</span>
+        <span class="hover:bg-[#000080] hover:text-white px-1"><u>H</u>elp</span>
+      </div>
+
+      <!-- Address Bar (Simplified Win98 style) -->
+      <div class="flex items-center gap-2 px-2 py-1 border-b border-gray-400 text-[11px]">
+        <span>Address</span>
+        <div class="flex-grow bg-white border border-gray-800 border-r-white border-b-white px-1 py-0.5 overflow-hidden whitespace-nowrap italic text-gray-500">
+            C:\Windows\Desktop\Frontend Development
+        </div>
+      </div>
+
+      <!-- Content Area -->
+      <div class="bg-white m-1 border-2 border-gray-800 border-r-white border-b-white p-6 h-[300px] overflow-auto grid grid-cols-4 content-start gap-y-8">
+        
+        <!-- Folder Icons / App Icons -->
+        <a href="https://www.stylekit.top/" target="_blank" class="window-item group">
+            <div class="item-visual">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#d946ef" stroke-width="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+            </div>
+            <span class="item-label">StyleKit</span>
+        </a>
+
+        <a href="https://astro.build" target="_blank" class="window-item group">
+            <div class="item-visual">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ff5a1f" stroke-width="2"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11l-3 3z"/><path d="M9 12H4s.5-1 1-4c1.5 0 3 .5 3 .5L9 12z"/><path d="M15 11l3 3s.5 1.5 1.5 3c-3 1.5-4.5 1-4.5 1l-3-3s0-1.5 1-4.5c1.5 0 2 .5 2 .5z"/></svg>
+            </div>
+            <span class="item-label">Astro</span>
+        </a>
+
+        <a href="https://tailwindcss.com" target="_blank" class="window-item group">
+            <div class="item-visual">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5z"/><circle cx="12" cy="12" r="3"/></svg>
+            </div>
+            <span class="item-label">Tailwind</span>
+        </a>
+
+        <a href="https://daisyui.com" target="_blank" class="window-item group">
+            <div class="item-visual">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#570df8" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+            </div>
+            <span class="item-label">DaisyUI</span>
+        </a>
+
+      </div>
+
+      <!-- Status Bar -->
+      <div class="px-2 py-0.5 text-[11px] border-t border-gray-400 flex justify-between bg-[#c0c0c0]">
+        <div class="flex-grow border-r border-gray-500 px-1">4 object(s)</div>
+        <div class="w-32 px-2 flex items-center gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-3 h-3"><rect x="3" y="4" width="18" height="12" rx="2" ry="2"></rect><line x1="2" y1="20" x2="22" y2="20"></line></svg>
+            <span>My Computer</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Taskbar -->
+    <div class="absolute bottom-0 left-0 right-0 h-8 bg-[#c0c0c0] border-t-2 border-white flex items-center p-1 gap-1">
+      <button id="start-btn" class="flex items-center gap-1 px-1 py-0.5 border-2 border-white border-r-gray-800 border-b-gray-800 active:border-inset active:pt-[2px] active:pl-[2px]">
+        <div class="w-5 h-5 bg-gradient-to-br from-red-500 via-yellow-400 to-blue-500 flex items-center justify-center">
+            <span class="text-[10px] font-black text-white">田</span>
+        </div>
+        <span class="text-[11px] font-bold">Start</span>
+      </button>
+
+      <div class="h-full w-[2px] bg-gray-400 border-l border-white mx-1"></div>
+
+      <div id="taskbar-apps" class="flex-grow flex items-center gap-1 overflow-hidden h-full">
+        <div id="task-item" class="hidden h-full px-2 border-2 border-gray-800 border-r-white border-b-white bg-[#c0c0c0] flex items-center gap-1 min-w-[150px] max-w-[180px]">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="w-3 h-3"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+            <span class="text-[11px] font-bold truncate">Frontend Development</span>
+        </div>
+      </div>
+
+      <div class="h-full px-3 border-2 border-gray-800 border-r-white border-b-white flex items-center gap-2 bg-[#c0c0c0] shadow-inner">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="opacity-50"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        <span id="time" class="text-[11px] font-bold">12:00 PM</span>
+      </div>
+    </div>
+    
+    <!-- Back to site link -->
+    <a href="/neighbors" class="absolute top-2 right-2 text-white/50 hover:text-white text-[10px] underline">Close OS</a>
+  </div>
+
+  <style>
+    .desktop-icon {
+        @apply flex flex-col items-center w-24 gap-1 cursor-pointer outline-none;
+    }
+    .icon-visual {
+        @apply w-12 h-12 flex items-center justify-center mb-1;
+    }
+    .icon-label {
+        @apply text-center break-words;
+    }
+    
+    .window-item {
+        @apply flex flex-col items-center gap-1 cursor-pointer outline-none;
+    }
+    .item-visual {
+        @apply w-10 h-10 flex items-center justify-center group-hover:bg-[#000080]/10;
+    }
+    .item-label {
+        @apply text-[10px] text-black text-center group-hover:bg-[#000080] group-hover:text-white px-1;
+    }
+
+    .win-btn {
+        @apply w-4 h-4 bg-[#c0c0c0] border border-white border-r-gray-800 border-b-gray-800 text-black text-[10px] flex items-center justify-center active:border-gray-800 active:border-r-white active:border-b-white active:pt-[1px] active:pl-[1px];
+    }
+
+    .border-inset {
+        border-top-color: #404040 !important;
+        border-left-color: #404040 !important;
+        border-right-color: #ffffff !important;
+        border-bottom-color: #ffffff !important;
+    }
+  </style>
+
+  <script is:inline>
+    const launcher = document.getElementById('frontend-launcher');
+    const win = document.getElementById('frontend-window');
+    const closeBtn = document.getElementById('close-btn');
+    const taskItem = document.getElementById('task-item');
+    const timeDisplay = document.getElementById('time');
+
+    function updateTime() {
+      const now = new Date();
+      timeDisplay.innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+
+    launcher.addEventListener('dblclick', () => {
+      win.classList.remove('hidden');
+      taskItem.classList.remove('hidden');
+    });
+
+    launcher.addEventListener('click', () => {
+      // Support single click for web
+      win.classList.remove('hidden');
+      taskItem.classList.remove('hidden');
+    });
+
+    closeBtn.addEventListener('click', () => {
+      win.classList.add('hidden');
+      taskItem.classList.add('hidden');
+    });
+
+    // Simple Dragging
+    const header = document.getElementById('window-header');
+    let isDragging = false;
+    let offsetX, offsetY;
+
+    header.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      offsetX = e.clientX - win.offsetLeft;
+      offsetY = e.clientY - win.offsetTop;
+      win.style.zIndex = '300';
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (isDragging) {
+        win.style.left = (e.clientX - offsetX) + 'px';
+        win.style.top = (e.clientY - offsetY) + 'px';
+      }
+    });
+
+    document.addEventListener('mouseup', () => {
+      isDragging = false;
+    });
+  </script>
+</BaseLayout>

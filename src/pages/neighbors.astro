@@ -1,37 +1,39 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import HorizontalCard from "../components/ui/HorizontalCard.astro";
+import NeoBrutalistCard from "../components/ui/NeoBrutalistCard.astro";
 ---
 
 <BaseLayout title="Neighbors" sideBarActiveItemID="neighbors">
-  <div class="mb-5">
-    <div class="text-3xl w-full font-bold">Neighbors</div>
+  <div class="mb-12">
+    <h1 class="text-6xl md:text-8xl font-black uppercase border-b-4 md:border-b-8 border-black pb-4 mb-8">
+      Neighbors
+    </h1>
+    
+    <div class="inline-block bg-accent text-accent-content px-6 py-3 border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] md:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] -rotate-1 hover:rotate-0 transition-transform cursor-default">
+      <p class="text-xl md:text-2xl font-black uppercase">
+        Digital gardens & blogs I find inspiring
+      </p>
+    </div>
   </div>
 
-  <p class="mb-10 text-justify">
-    Other digital gardens and blogs that I find inspiring.
-  </p>
-
-  <ul>
-    <li>
-      <HorizontalCard
-        title="Neighbor Blog"
-        img="/post_img.webp"
-        desc="An inspiring digital garden by a fellow explorer."
-        url="https://example.com"
-        target="_blank"
-      />
-      <div class="divider my-0" />
-    </li>
-    <li>
-      <HorizontalCard
-        title="Inspiration Source"
-        img="/post_img.webp"
-        desc="A place where I often find new ideas."
-        url="https://example.org"
-        target="_blank"
-      />
-      <div class="divider my-0" />
-    </li>
-  </ul>
+  <div class="grid grid-cols-1 gap-4">
+    <NeoBrutalistCard
+      title="Neighbor Blog"
+      img="/post_img.webp"
+      desc="An inspiring digital garden by a fellow explorer."
+      url="https://example.com"
+      badge="Inspiring"
+      tags={["garden", "tech"]}
+    />
+    
+    <NeoBrutalistCard
+      title="Inspiration Source"
+      img="/post_img.webp"
+      desc="A place where I often find new ideas."
+      url="/explorations"
+      badge="Creative"
+      tags={["ideas", "design"]}
+    />
+  </div>
 </BaseLayout>
+

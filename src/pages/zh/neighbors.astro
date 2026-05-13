@@ -1,37 +1,39 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import HorizontalCard from "../../components/ui/HorizontalCard.astro";
+import NeoBrutalistCard from "../../components/ui/NeoBrutalistCard.astro";
 ---
 
 <BaseLayout title="邻居" sideBarActiveItemID="neighbors">
-  <div class="mb-5">
-    <div class="text-3xl w-full font-bold">邻居</div>
+  <div class="mb-12">
+    <h1 class="text-6xl md:text-8xl font-black uppercase border-b-4 md:border-b-8 border-black pb-4 mb-8">
+      邻居
+    </h1>
+    
+    <div class="inline-block bg-accent text-accent-content px-6 py-3 border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] md:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] -rotate-1 hover:rotate-0 transition-transform cursor-default">
+      <p class="text-xl md:text-2xl font-black uppercase">
+        我关注的其他数字花园和博主
+      </p>
+    </div>
   </div>
 
-  <p class="mb-10 text-justify">
-    我关注的其他数字花园和博主，这里是我的邻居们。
-  </p>
-
-  <ul>
-    <li>
-      <HorizontalCard
-        title="邻居博客"
-        img="/post_img.webp"
-        desc="一位同行的数字花园。"
-        url="https://example.com"
-        target="_blank"
-      />
-      <div class="divider my-0" />
-    </li>
-    <li>
-      <HorizontalCard
-        title="灵感来源"
-        img="/post_img.webp"
-        desc="一个我经常能发现新点子的地方。"
-        url="https://example.org"
-        target="_blank"
-      />
-      <div class="divider my-0" />
-    </li>
-  </ul>
+  <div class="grid grid-cols-1 gap-4">
+    <NeoBrutalistCard
+      title="邻居博客"
+      img="/post_img.webp"
+      desc="一位同行的数字花园，充满智慧与洞见。"
+      url="https://example.com"
+      badge="推荐"
+      tags={["数字花园", "技术"]}
+    />
+    
+    <NeoBrutalistCard
+      title="灵感来源"
+      img="/post_img.webp"
+      desc="一个我经常能发现新点子的地方，启发无限可能。"
+      url="/zh/explorations"
+      badge="精选"
+      tags={["灵感", "设计"]}
+    />
+  </div>
 </BaseLayout>
+
