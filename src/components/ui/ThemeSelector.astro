@@ -30,19 +30,16 @@ const themes = [
 </div>
 
 <script is:inline>
-  function applyTheme() {
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme && savedTheme !== 'auto') {
-      document.documentElement.setAttribute('data-theme', savedTheme);
-    }
-  }
-
   function initThemeSelector() {
     const themeButtons = document.querySelectorAll('.theme-select-btn');
     
     themeButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const theme = btn.getAttribute('data-theme-set');
+      // Remove old listener if any to avoid duplicates on swap
+      const newBtn = btn.cloneNode(true);
+      btn.parentNode.replaceChild(newBtn, btn);
+      
+      newBtn.addEventListener('click', () => {
+        const theme = newBtn.getAttribute('data-theme-set');
         if (theme) {
           localStorage.setItem('theme', theme);
           document.documentElement.setAttribute('data-theme', theme);
@@ -53,11 +50,7 @@ const themes = [
     });
   }
 
-  applyTheme();
   initThemeSelector();
 
-  document.addEventListener('astro:after-swap', () => {
-    applyTheme();
-    initThemeSelector();
-  });
+  document.addEventListener('astro:after-swap', initThemeSelector);
 </script>

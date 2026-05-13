@@ -81,27 +81,35 @@ if (month === 6 || month === 5) {
       /* Theme initialization script - runs before any rendering to prevent FOUC */
     }
     <script is:inline>
-      const savedTheme = localStorage.getItem("theme");
-      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'black' : 'lofi';
-      
-      if (savedTheme && savedTheme !== 'auto') {
-        document.documentElement.setAttribute("data-theme", savedTheme);
-      } else {
-        document.documentElement.setAttribute("data-theme", systemTheme);
-      }
+      const getTheme = () => {
+        const savedTheme = localStorage.getItem("theme");
+        if (savedTheme && savedTheme !== 'auto') return savedTheme;
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'black' : 'lofi';
+      };
 
-      // Detect Safari to apply specific CSS fixes for rubber-band sticky bug
-      if (/^((?!chrome|android).)*safari/i.test(navigator.userAgent)) {
-        document.documentElement.classList.add('is-safari');
-      }
+      const applyTheme = () => {
+        const theme = getTheme();
+        document.documentElement.setAttribute("data-theme", theme);
+        
+        // Detect Safari to apply specific CSS fixes for rubber-band sticky bug
+        if (/^((?!chrome|android).)*safari/i.test(navigator.userAgent)) {
+          document.documentElement.classList.add('is-safari');
+        }
+      };
+
+      // Initial apply
+      applyTheme();
 
       // Listen for system theme changes
       window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
         const currentSaved = localStorage.getItem('theme');
         if (!currentSaved || currentSaved === 'auto') {
-          document.documentElement.setAttribute('data-theme', e.matches ? 'black' : 'lofi');
+          applyTheme();
         }
       });
+
+      // Handle View Transitions swap
+      document.addEventListener('astro:after-swap', applyTheme);
     </script>
 
     {/* 将进度条组件移至 head 中，防止 View Transitions 导致重复初始化 */}
