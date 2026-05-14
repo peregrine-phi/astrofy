@@ -63,7 +63,9 @@ export default function AIPlayground({ lang = 'en' }: { lang?: string }) {
   const [showGuide, setShowGuide] = useState(false);
   
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const isFirstRender = useRef(true);
 
   // Persistence
   useEffect(() => {
@@ -96,7 +98,16 @@ export default function AIPlayground({ lang = 'en' }: { lang?: string }) {
   }, [messages]);
 
   const scrollToBottom = () => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTo({
+        top: scrollContainerRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
   };
 
   const updateConfig = (updates: Partial<Config>) => {
@@ -465,7 +476,10 @@ export default function AIPlayground({ lang = 'en' }: { lang?: string }) {
         </div>
 
         {/* Messages List */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-8 space-y-6 bg-base-100 bg-[radial-gradient(currentColor_1px,transparent_1px)] [background-size:16px_16px] opacity-[0.98] bg-opacity-5">
+        <div 
+          ref={scrollContainerRef}
+          className="flex-1 overflow-y-auto p-4 md:p-8 space-y-6 bg-base-100 bg-[radial-gradient(currentColor_1px,transparent_1px)] [background-size:16px_16px] opacity-[0.98] bg-opacity-5"
+        >
           {messages.length === 0 && (
             <div className="h-full flex flex-col items-center justify-center space-y-4 opacity-20">
               <div className="text-8xl">🤖</div>
