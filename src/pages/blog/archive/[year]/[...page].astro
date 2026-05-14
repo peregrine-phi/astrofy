@@ -1,43 +1,43 @@
 ---
-import BaseLayout from "../../../../../layouts/BaseLayout.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
-import createSlug from "../../../../../lib/createSlug";
-import BlogFilter from "../../../../../components/ui/BlogFilter.astro";
+import createSlug from "../../../../lib/createSlug"
+import BlogFilter from "../../../../components/ui/BlogFilter.astro";
 
 export async function getStaticPaths({ paginate }) {
-  const allPosts = await getCollection("blog", ({ id }) => id.startsWith("zh/"));
+  const allPosts = await getCollection("blog", ({ id }) => !id.startsWith("zh/"));
   allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
-  const allTags = [...new Set(allPosts.flatMap(post => post.data.tags || []))].sort();
+  const tags = [...new Set(allPosts.flatMap(post => post.data.tags || []))].sort();
   const allYears = [...new Set(allPosts.map(post => post.data.pubDate.getFullYear().toString()))].sort((a, b) => b - a);
 
-  return allTags.flatMap((tag) => {
+  return allYears.flatMap((year) => {
     const filteredPosts = allPosts.filter((post) => {
-      return post.data.tags?.includes(tag);
+      return post.data.pubDate.getFullYear().toString() === year;
     });
     return paginate(filteredPosts, {
-      params: { tag },
+      params: { year },
       pageSize: 10,
-      props: { tags: allTags, years: allYears },
+      props: { tags, years: allYears },
     });
   });
 }
 
 const { page, tags, years } = Astro.props;
-const { tag } = Astro.params;
+const { year } = Astro.params;
 ---
 
-<BaseLayout title={"博客 - " + tag} sideBarActiveItemID="blog" noindex={true}>
+<BaseLayout title={"Archive - " + year} sideBarActiveItemID="blog" noindex={true}>
   <div class="mb-5">
-    <div class="text-3xl w-full font-black uppercase tracking-tighter mb-8 italic">标签：{tag}</div>
+    <div class="text-3xl w-full font-black uppercase tracking-tighter mb-8 italic">Archive: {year}</div>
   </div>
 
-  <BlogFilter tags={tags} years={years} activeTag={tag} lang="zh" />
+  <BlogFilter tags={tags} years={years} activeYear={year} lang="en" />
 
   {
     page.data.length === 0 ? (
       <div class="bg-base-200 border-2 border-base-content w-full p-4 min-w-full">
-        <p class="font-bold uppercase italic text-xl tracking-widest text-center py-20 opacity-30">空空如也</p>
+        <p class="font-bold uppercase italic text-xl tracking-widest text-center py-20 opacity-30">Nothing here!</p>
       </div>
     ) : (
       <div class="relative border-l-4 border-base-content ml-4 md:ml-8 mt-10">
@@ -46,10 +46,7 @@ const { tag } = Astro.params;
             <div class="absolute w-4 h-4 bg-base-content rounded-none -left-[10px] mt-1.5 transition-transform group-hover:scale-125" />
             <div class="flex flex-col">
               <a 
-                href={
-                  "/zh/blog/" +
-                  createSlug(post.data.title, post.slug).replace(/^zh\//, "")
-                }
+                href={"/blog/" + createSlug(post.data.title, post.slug)}
                 class="inline-block w-fit"
               >
                 <h3 class="text-2xl md:text-3xl font-black uppercase relative pb-1 overflow-hidden">
@@ -61,7 +58,7 @@ const { tag } = Astro.params;
               <div class="flex gap-2 mt-2">
                 {post.data.badge && <span class="px-2 py-0.5 border-2 border-base-content text-[10px] font-black uppercase">{post.data.badge}</span>}
                 <time class="text-xs font-black uppercase opacity-50 flex items-center">
-                  {post.data.pubDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}
+                  {post.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
                 </time>
               </div>
             </div>
@@ -75,7 +72,7 @@ const { tag } = Astro.params;
     {
       page.url.prev ? (
         <a href={page.url.prev} class="px-6 py-3 border-4 border-base-content font-black uppercase tracking-widest hover:bg-base-content hover:text-base-100 transition-colors">
-          上一页
+          Previous
         </a>
       ) : (
         <div />
@@ -84,7 +81,7 @@ const { tag } = Astro.params;
     {
       page.url.next ? (
         <a href={page.url.next} class="px-6 py-3 border-4 border-base-content font-black uppercase tracking-widest hover:bg-base-content hover:text-base-100 transition-colors">
-          下一页
+          Next
         </a>
       ) : (
         <div />

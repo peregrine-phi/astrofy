@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import PixelArtGalleryItem from "../components/ui/PixelArtGalleryItem.astro";
+import MobileGalleryItem from "../components/ui/MobileGalleryItem.astro";
 
 const galleryEntries = await getCollection("gallery", ({ id }) => {
   return !id.startsWith('zh/');
@@ -18,7 +19,7 @@ const galleryItems = galleryEntries
     </div>
     <p class="text-lg opacity-80 max-w-2xl">
       A curated collection of visual experiments. 
-      <span class="text-primary font-bold">Try dragging or resizing the cards!</span>
+      <span class="text-primary font-bold">Try dragging or resizing the cards, if you're on desktop!</span>
     </p>
   </div>
 
@@ -28,19 +29,32 @@ const galleryItems = galleryEntries
         const stagger = [32, -16, 0][index % 3];
         return (
           <div
-            class={`${item.span} gallery-item relative z-0 hover:z-20`}
-            style={{ marginTop: `${stagger}px` }}
+            class={`${item.span} relative z-0 hover:z-20`}
           >
-            <PixelArtGalleryItem
-              title={item.title}
-              desc={item.description}
-              img={item.image}
-              colorClass={item.colorClass}
-              slideDirection={item.slide}
-              orientation={item.orientation}
-              ratio={item.ratio}
-              url={item.url}
-            />
+            <!-- Desktop: Drag/Resize Enabled -->
+            <div class="hidden md:block gallery-item h-full w-full" style={{ marginTop: `${stagger}px` }}>
+              <PixelArtGalleryItem
+                title={item.title}
+                desc={item.description}
+                img={item.image}
+                colorClass={item.colorClass}
+                slideDirection={item.slide}
+                orientation={item.orientation}
+                ratio={item.ratio}
+                url={item.url}
+              />
+            </div>
+
+            <!-- Mobile: Scrollable & Static -->
+            <div class="block md:hidden h-full w-full mb-8">
+              <MobileGalleryItem
+                title={item.title}
+                desc={item.description}
+                img={item.image}
+                colorClass={item.colorClass}
+                url={item.url}
+              />
+            </div>
           </div>
         );
       })
@@ -174,10 +188,20 @@ const galleryItems = galleryEntries
     overflow: visible;
   }
 
-  .gallery-item {
-    overflow: visible;
-    user-select: none;
-    touch-action: none;
+  /* Only apply touch-action: none on desktop where dragging logic is active */
+  @media (min-width: 768px) {
+    .gallery-item {
+      overflow: visible;
+      user-select: none;
+      touch-action: none;
+    }
+  }
+
+  /* Ensure mobile items allow scrolling */
+  @media (max-width: 767px) {
+    .mobile-gallery-item {
+      touch-action: auto;
+    }
   }
 </style>
 

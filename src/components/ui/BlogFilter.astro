@@ -1,0 +1,50 @@
+---
+const { tags, years, activeTag, activeYear, lang = 'en' } = Astro.props;
+
+const baseUrl = lang === 'zh' ? '/zh/blog' : '/blog';
+---
+
+<div class="mb-10 space-y-6">
+  <!-- Section Title -->
+  <div class="inline-block border-2 border-base-content bg-base-content text-base-100 px-4 py-1 font-black uppercase text-sm tracking-widest">
+    {lang === 'zh' ? '过滤器' : 'Filters'}
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <!-- Tags Filter -->
+    <div class="space-y-3">
+      <h4 class="font-black uppercase text-xs opacity-50 tracking-widest">{lang === 'zh' ? '按标签' : 'By Tags'}</h4>
+      <div class="flex flex-wrap gap-2">
+        <a 
+          href={baseUrl} 
+          class={`px-3 py-1 border-2 border-base-content font-bold uppercase text-[10px] transition-colors rounded-none ${!activeTag && !activeYear ? 'bg-base-content text-base-100' : 'bg-transparent hover:bg-base-content/10'}`}
+        >
+          {lang === 'zh' ? '全部' : 'All'}
+        </a>
+        {tags.map((tag) => (
+          <a 
+            href={`${baseUrl}/tag/${tag}`} 
+            class={`px-3 py-1 border-2 border-base-content font-bold uppercase text-[10px] transition-colors rounded-none ${activeTag === tag ? 'bg-base-content text-base-100' : 'bg-transparent hover:bg-base-content/10'}`}
+          >
+            {tag}
+          </a>
+        ))}
+      </div>
+    </div>
+
+    <!-- Year Filter -->
+    <div class="space-y-3">
+      <h4 class="font-black uppercase text-xs opacity-50 tracking-widest">{lang === 'zh' ? '按年份' : 'By Year'}</h4>
+      <div class="flex flex-wrap gap-2">
+        {years.map((year) => (
+          <a 
+            href={`${baseUrl}/archive/${year}`} 
+            class={`px-3 py-1 border-2 border-base-content font-bold uppercase text-[10px] transition-colors rounded-none ${activeYear === year ? 'bg-base-content text-base-100' : 'bg-transparent hover:bg-base-content/10'}`}
+          >
+            {year}
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</div>

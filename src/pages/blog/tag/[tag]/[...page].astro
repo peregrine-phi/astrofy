@@ -1,75 +1,78 @@
 ---
 import BaseLayout from "@layouts/BaseLayout.astro";
-import HorizontalCard from "@components/ui/HorizontalCard.astro";
 import { getCollection } from "astro:content";
 import createSlug from "../../../../lib/createSlug";
+import BlogFilter from "../../../../components/ui/BlogFilter.astro";
 
 export async function getStaticPaths({ paginate }) {
-  const all_posts = await getCollection("blog", ({ id }) => !id.startsWith("zh/"));
-  const all_tags = all_posts.flatMap((post) => {
-    return post.data.tags || [];
-  });
+  const allPosts = await getCollection("blog", ({ id }) => !id.startsWith("zh/"));
+  allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
-  return all_tags.flatMap((tag) => {
-    const filtred_posts = all_posts.filter((post) => {
+  const allTags = [...new Set(allPosts.flatMap(post => post.data.tags || []))].sort();
+  const allYears = [...new Set(allPosts.map(post => post.data.pubDate.getFullYear().toString()))].sort((a, b) => b - a);
+
+  return allTags.flatMap((tag) => {
+    const filteredPosts = allPosts.filter((post) => {
       return post.data.tags?.includes(tag);
     });
-    return paginate(filtred_posts, {
+    return paginate(filteredPosts, {
       params: { tag },
       pageSize: 10,
+      props: { tags: allTags, years: allYears },
     });
   });
 }
 
-const { page } = Astro.props;
-const params = Astro.params;
+const { page, tags, years } = Astro.props;
+const { tag } = Astro.params;
 ---
 
-<BaseLayout title={"Blog - " + params.tag} sideBarActiveItemID="blog" noindex={true}>
+<BaseLayout title={"Blog - " + tag} sideBarActiveItemID="blog" noindex={true}>
   <div class="mb-5">
-    <div class="text-3xl w-full font-bold">Blog - {params.tag}</div>
+    <div class="text-3xl w-full font-black uppercase tracking-tighter mb-8 italic">Tag: {tag}</div>
   </div>
+
+  <BlogFilter tags={tags} years={years} activeTag={tag} lang="en" />
+
   {
     page.data.length === 0 ? (
-      <div class="bg-base-200 border-l-4 border-secondary w-full p-4 min-w-full">
-        <p class="font-bold">Sorry!</p>
-        <p>There are no blog posts to show at the moment. Check back later!</p>
+      <div class="bg-base-200 border-2 border-base-content w-full p-4 min-w-full">
+        <p class="font-bold uppercase italic text-xl tracking-widest text-center py-20 opacity-30">Nothing here!</p>
       </div>
     ) : (
-      <ul>
+      <div class="relative border-l-4 border-base-content ml-4 md:ml-8 mt-10">
         {page.data.map((post) => (
-          <>
-            <HorizontalCard
-              title={post.data.title}
-              img={post.data.heroImage}
-              desc={post.data.description}
-              url={"/blog/" + createSlug(post.data.title, post.slug)}
-              target="_self"
-              badge={post.data.badge}
-              tags={post.data.tags}
-            />
-            <div class="divider my-0" />
-          </>
+          <div class="mb-10 ml-8 group">
+            <div class="absolute w-4 h-4 bg-base-content rounded-none -left-[10px] mt-1.5 transition-transform group-hover:scale-125" />
+            <div class="flex flex-col">
+              <a 
+                href={"/blog/" + createSlug(post.data.title, post.slug)}
+                class="inline-block w-fit"
+              >
+                <h3 class="text-2xl md:text-3xl font-black uppercase relative pb-1 overflow-hidden">
+                  {post.data.title}
+                  <span class="absolute bottom-0 left-0 w-full h-1 bg-base-content transform -translate-x-[101%] transition-transform duration-300 group-hover:translate-x-0" />
+                </h3>
+              </a>
+              <p class="text-lg text-base-content/70 mt-2 line-clamp-2 font-medium">{post.data.description}</p>
+              <div class="flex gap-2 mt-2">
+                {post.data.badge && <span class="px-2 py-0.5 border-2 border-base-content text-[10px] font-black uppercase">{post.data.badge}</span>}
+                <time class="text-xs font-black uppercase opacity-50 flex items-center">
+                  {post.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                </time>
+              </div>
+            </div>
+          </div>
         ))}
-      </ul>
+      </div>
     )
   }
 
-  <div class="flex justify-between">
+  <div class="flex justify-between mt-10">
     {
       page.url.prev ? (
-        <a href={page.url.prev} class="btn btn-ghost my-10 mx-5">
-          {" "}
-          <svg
-            class="h-6 w-6 fill-current md:h-8 md:w-8"
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-          >
-            <path d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" />
-          </svg>{" "}
-          Recent posts
+        <a href={page.url.prev} class="px-6 py-3 border-4 border-base-content font-black uppercase tracking-widest hover:bg-base-content hover:text-base-100 transition-colors">
+          Previous
         </a>
       ) : (
         <div />
@@ -77,18 +80,8 @@ const params = Astro.params;
     }
     {
       page.url.next ? (
-        <a href={page.url.next} class="btn btn-ghost my-10 mx-5">
-          Older Posts{" "}
-          <svg
-            class="h-6 w-6 fill-current md:h-8 md:w-8"
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-          >
-            {" "}
-            <path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" />
-          </svg>
+        <a href={page.url.next} class="px-6 py-3 border-4 border-base-content font-black uppercase tracking-widest hover:bg-base-content hover:text-base-100 transition-colors">
+          Next
         </a>
       ) : (
         <div />
@@ -96,3 +89,4 @@ const params = Astro.params;
     }
   </div>
 </BaseLayout>
+

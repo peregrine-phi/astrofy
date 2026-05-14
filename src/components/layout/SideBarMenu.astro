@@ -9,12 +9,20 @@ const t = useTranslations(lang as any);
 ---
 
 <ul class="menu grow shrink menu-md overflow-y-auto">
-    <li><a class="py-3 text-base" id="home" href={getRelativeLocaleUrl(lang, "")}>{t('nav.home')}</a></li>
+
     <li><a class="py-3 text-base" id="blog" href={getRelativeLocaleUrl(lang, "blog")}>{t('nav.blog')}</a></li>
     <li><a class="py-3 text-base" id="tutorials" href={getRelativeLocaleUrl(lang, "tutorials")}>{t('nav.tutorials')}</a></li>
     <li><a class="py-3 text-base" id="gallery" href={getRelativeLocaleUrl(lang, "gallery")}>{t('nav.gallery')}</a></li>
     <li><a class="py-3 text-base" id="neighbors" href={getRelativeLocaleUrl(lang, "neighbors")}>{t('nav.neighbors')}</a></li>
-    <li><a class="py-3 text-base" id="qwen-translator" href={getRelativeLocaleUrl(lang, "qwen-translator")}>{t('nav.translator')}</a></li>
+    <li>
+        <details>
+            <summary class="py-3 text-base">{t('nav.tools')}</summary>
+            <ul>
+                <li><a class="py-3 text-base" id="qwen-translator" href={getRelativeLocaleUrl(lang, "tools/qwen-translator")}>{t('nav.translator')}</a></li>
+                <li><a class="py-3 text-base" id="ai-playground" href={getRelativeLocaleUrl(lang, "tools/ai-playground")}>{t('nav.playground')}</a></li>
+            </ul>
+        </details>
+    </li>
 
     <li>
         <a
@@ -28,5 +36,10 @@ const t = useTranslations(lang as any);
 
 <script define:vars={{ sideBarActiveItemID: sideBarActiveItemID, activeClass: activeClass }}>
 const activeItemElem = document.getElementById(sideBarActiveItemID);
-activeItemElem && activeItemElem.classList.add(activeClass);
+if (activeItemElem) {
+    activeItemElem.classList.add(activeClass);
+    // Auto-open details if sub-item is active
+    const details = activeItemElem.closest('details');
+    if (details) details.setAttribute('open', '');
+}
 </script>

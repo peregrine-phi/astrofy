@@ -8,31 +8,31 @@ export async function getStaticPaths({ paginate }) {
   const allPosts = await getCollection("blog", ({ id }) => id.startsWith("zh/"));
   allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
-  const allTags = [...new Set(allPosts.flatMap(post => post.data.tags || []))].sort();
+  const tags = [...new Set(allPosts.flatMap(post => post.data.tags || []))].sort();
   const allYears = [...new Set(allPosts.map(post => post.data.pubDate.getFullYear().toString()))].sort((a, b) => b - a);
 
-  return allTags.flatMap((tag) => {
+  return allYears.flatMap((year) => {
     const filteredPosts = allPosts.filter((post) => {
-      return post.data.tags?.includes(tag);
+      return post.data.pubDate.getFullYear().toString() === year;
     });
     return paginate(filteredPosts, {
-      params: { tag },
+      params: { year },
       pageSize: 10,
-      props: { tags: allTags, years: allYears },
+      props: { tags, years: allYears },
     });
   });
 }
 
 const { page, tags, years } = Astro.props;
-const { tag } = Astro.params;
+const { year } = Astro.params;
 ---
 
-<BaseLayout title={"博客 - " + tag} sideBarActiveItemID="blog" noindex={true}>
+<BaseLayout title={"归档 - " + year} sideBarActiveItemID="blog" noindex={true}>
   <div class="mb-5">
-    <div class="text-3xl w-full font-black uppercase tracking-tighter mb-8 italic">标签：{tag}</div>
+    <div class="text-3xl w-full font-black uppercase tracking-tighter mb-8 italic">归档：{year}</div>
   </div>
 
-  <BlogFilter tags={tags} years={years} activeTag={tag} lang="zh" />
+  <BlogFilter tags={tags} years={years} activeYear={year} lang="zh" />
 
   {
     page.data.length === 0 ? (

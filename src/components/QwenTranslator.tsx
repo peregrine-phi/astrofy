@@ -38,7 +38,6 @@ export default function QwenTranslator({ lang = 'en' }: { lang?: string }) {
     title: isZh ? 'Qwen MT 翻译器' : 'Qwen MT Translator',
     subtitle: isZh ? '新野兽派之力 x 阿里通义大模型' : 'Neo-Brutalist Power x Alibaba Cloud AI',
     apiKeyLabel: isZh ? 'DashScope API 密钥' : 'DashScope API Key',
-    storedLocally: isZh ? '本地存储' : 'Stored Locally',
     typePlaceholder: isZh ? '在此输入文本...' : 'Type your text here...',
     transPlaceholder: isZh ? '翻译结果将显示在此...' : 'Translation will appear here...',
     btnTranslate: isZh ? '立即翻译' : 'Translate Now',
@@ -59,6 +58,12 @@ export default function QwenTranslator({ lang = 'en' }: { lang?: string }) {
     seedLabel: isZh ? '随机种子' : 'Seed',
   };
 
+  const REGIONS = [
+    { id: 'singapore', label: isZh ? '新加坡 (Singapore)' : 'Singapore', url: 'https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions' },
+    { id: 'beijing', label: isZh ? '北京 (Beijing)' : 'Beijing', url: 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions' },
+    { id: 'virginia', label: isZh ? '弗吉尼亚 (Virginia)' : 'Virginia', url: 'https://dashscope-us.aliyuncs.com/compatible-mode/v1/chat/completions' },
+  ];
+
   const [sourceText, setSourceText] = useState('');
   const [translatedText, setTranslatedText] = useState('');
   const [sourceLang, setSourceLang] = useState('auto');
@@ -66,6 +71,7 @@ export default function QwenTranslator({ lang = 'en' }: { lang?: string }) {
   const [model, setModel] = useState('qwen-mt-plus');
   const [apiKey, setApiKey] = useState('');
   const [loading, setLoading] = useState(false);
+  const [endpoint, setEndpoint] = useState('https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions');
   const [error, setError] = useState('');
   
   // Advanced Options
@@ -82,11 +88,19 @@ export default function QwenTranslator({ lang = 'en' }: { lang?: string }) {
   useEffect(() => {
     const savedKey = localStorage.getItem('DASHSCOPE_API_KEY');
     if (savedKey) setApiKey(savedKey);
+    
+    const savedEndpoint = localStorage.getItem('DASHSCOPE_ENDPOINT');
+    if (savedEndpoint) setEndpoint(savedEndpoint);
   }, []);
 
   const saveApiKey = (key: string) => {
     setApiKey(key);
     localStorage.setItem('DASHSCOPE_API_KEY', key);
+  };
+
+  const saveEndpoint = (url: string) => {
+    setEndpoint(url);
+    localStorage.setItem('DASHSCOPE_ENDPOINT', url);
   };
 
   const handleTranslate = async () => {
@@ -101,7 +115,7 @@ export default function QwenTranslator({ lang = 'en' }: { lang?: string }) {
     setTranslatedText('');
 
     try {
-      const response = await fetch('https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions', {
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -207,10 +221,30 @@ export default function QwenTranslator({ lang = 'en' }: { lang?: string }) {
             value={apiKey}
             onChange={(e) => saveApiKey(e.target.value)}
             placeholder="sk-..."
-            className="input input-bordered w-full rounded-none border-2 border-black focus:outline-none focus:ring-0 focus:border-primary"
+            className="input input-bordered flex-1 rounded-none border-2 border-black focus:outline-none focus:ring-0 focus:border-primary"
           />
-          <div className="p-2 border-2 border-black bg-base-200 font-bold uppercase text-xs flex items-center">
-            {t.storedLocally}
+          <div className="dropdown dropdown-end">
+            <div 
+              tabIndex={0} 
+              role="button" 
+              className="h-full px-4 border-2 border-black bg-base-200 hover:bg-primary hover:text-primary-content transition-colors flex items-center gap-2 font-black uppercase text-xs cursor-pointer whitespace-nowrap"
+            >
+              {REGIONS.find(r => r.url === endpoint)?.label || (isZh ? '选择地区' : 'Region')}
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </div>
+            <ul tabIndex={0} className="dropdown-content z-[10] menu p-0 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-2 border-black bg-base-100 rounded-none w-48 mt-1">
+              {REGIONS.map(r => (
+                <li key={r.id} className="border-b last:border-b-0 border-black">
+                  <button 
+                    onClick={() => saveEndpoint(r.url)}
+                    className={`rounded-none px-4 py-3 font-black uppercase text-xs hover:bg-primary hover:text-primary-content flex justify-between items-center ${endpoint === r.url ? 'bg-primary/10' : ''}`}
+                  >
+                    {r.label}
+                    {endpoint === r.url && <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>}
+                  </button>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </div>
