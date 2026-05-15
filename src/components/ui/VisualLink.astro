@@ -1,0 +1,63 @@
+---
+const { href, label } = Astro.props;
+const lang = Astro.currentLocale || "en";
+
+// Localized default label
+const defaultLabel = lang === "zh" ? "进入交互式可视化" : "Enter Interactive Visualization";
+const subLabel = lang === "zh" ? "探索数据细节" : "Explore Data Details";
+const displayLabel = label || defaultLabel;
+---
+
+<a href={href} class="visual-link-container group block my-8 no-underline relative z-10" target="_blank" rel="noopener noreferrer">
+  <div class="relative overflow-hidden border-4 border-base-content bg-base-200 p-6 md:p-8 shadow-[8px_8px_0px_0px_oklch(var(--bc))] transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_0px_oklch(var(--bc))] active:translate-x-0 active:translate-y-0 active:shadow-[4px_4px_0px_0px_oklch(var(--bc))]">
+    
+    <!-- Background patterns -->
+    <div class="absolute top-0 right-0 w-32 h-32 bg-primary/10 -rotate-12 translate-x-12 -translate-y-12 -z-10 group-hover:bg-primary/20 transition-colors"></div>
+    <div class="absolute bottom-0 left-0 w-24 h-24 border-2 border-base-content/5 rounded-full -translate-x-10 translate-y-10 -z-10 group-hover:border-base-content/10 transition-colors"></div>
+
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <div class="flex items-center gap-6">
+        <div class="bg-primary p-4 border-2 border-base-content shadow-[4px_4px_0px_0px_oklch(var(--bc))] group-hover:bg-accent group-hover:-rotate-3 transition-all duration-300">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" stroke-linejoin="miter" class="text-primary-content">
+            <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
+            <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
+          </svg>
+        </div>
+        <div>
+          <span class="text-2xl md:text-3xl font-black uppercase tracking-tight text-base-content block leading-tight mb-1">
+            {displayLabel}
+          </span>
+          <span class="text-sm font-bold text-base-content/60 uppercase tracking-widest block">
+            {subLabel}
+          </span>
+        </div>
+      </div>
+      
+      <div class="flex items-center gap-4 self-end md:self-center">
+        <div class="hidden sm:flex flex-col items-end">
+          <span class="text-[10px] font-black uppercase text-base-content opacity-70">Interactive Mode</span>
+          <div class="flex gap-1 mt-1">
+             <div class="w-1.5 h-1.5 bg-base-content rounded-full animate-pulse"></div>
+             <div class="w-1.5 h-1.5 bg-base-content rounded-full animate-pulse [animation-delay:0.2s]"></div>
+             <div class="w-1.5 h-1.5 bg-base-content rounded-full animate-pulse [animation-delay:0.4s]"></div>
+          </div>
+        </div>
+        <div class="bg-base-content text-base-100 p-3 border-2 border-base-content group-hover:translate-x-2 transition-transform duration-300">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Decorative Corner -->
+    <div class="absolute top-0 right-0 border-t-8 border-r-8 border-accent"></div>
+  </div>
+</a>
+
+<style>
+  .visual-link-container {
+    text-decoration: none !important;
+  }
+</style>

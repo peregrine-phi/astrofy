@@ -1,0 +1,460 @@
+---
+// 女性主义、新自由主义与消费主义的合流：一种批判理论视角下的“虚假意识”分析
+// 视觉风格：极简扁平 (Minimalist Flat) + 非对称网格 (Asymmetric Grid)
+
+const colors = {
+    primary: "var(--color-base-content)",
+    secondary: "var(--color-base-100)",
+    accent: "#FF006E", // Keep branding colors but ensure they work on dark
+    accent2: "#3A86FF", 
+};
+
+const sections = [
+    {
+        id: "neoliberal",
+        title: "01. 个人化责任",
+        subtitle: "从结构批判到个人责任",
+        content:
+            "新自由主义将不平等解释为个人能力不足。Nancy Fraser 指出，女性主义的某些理想正与新自由主义发生“令人不安的汇合”，将政治诉求改写为自我投资的问题。",
+        colSpan: "md:col-span-7",
+        rowSpan: "md:row-span-2",
+        bg: "base-100",
+        textColor: "text-base-content",
+    },
+    {
+        id: "commodity",
+        title: "02. 购买赋权",
+        subtitle: "消费主义女性主义",
+        content:
+            "“女性主义商品行动”将解放等同于伦理消费。购买标语T恤或认同特定品牌，被误认为是在参与社会变革，而真实的政治表达被符号消费所取代。",
+        colSpan: "md:col-span-5",
+        bg: "base-content",
+        textColor: "text-base-100",
+        hasPattern: true,
+    },
+    {
+        id: "platform",
+        title: "03. 算法种草",
+        subtitle: "互联网平台的逻辑",
+        content:
+            "小红书等平台通过KOL构建理想范式。反容貌焦虑的表达往往被转化为医美或健身课程的推荐，可见性承诺反而限制了集体力量的产生。",
+        colSpan: "md:col-span-5",
+        rowSpan: "md:row-span-2",
+        bg: "base-100",
+        textColor: "text-base-content",
+        border: true,
+    },
+    {
+        id: "branding",
+        title: "04. 品牌伪共情",
+        subtitle: "Femvertising 陷阱",
+        content:
+            "品牌利用赋权话语建立形象，却不必触及真实的劳动关系和薪酬结构。女性主义在这里成为了一种品牌资产和情绪价值。",
+        colSpan: "md:col-span-7",
+        bg: "base-100",
+        textColor: "text-base-content",
+        border: true,
+    },
+    {
+        id: "all-female",
+        title: "05. 全女经济",
+        subtitle: "安全感的商品化",
+        content:
+            "本应由公共制度提供的安全被转化为付费的“全女空间”。如果“全女”只是收费标签而非资源重新分配，它可能沦为升级版的粉红税。",
+        colSpan: "md:col-span-12",
+        bg: "accent2", // This uses the hex from colors object via style
+        textColor: "text-white",
+    },
+    {
+        id: "consciousness",
+        title: "虚假意识：社会变革 vs 自我管理",
+        subtitle: "意识形态的终极逻辑",
+        content:
+            "虚假意识最核心的机制是把“改变社会”替换为“改变自己”。它告诉女性：通过不断购买、展示和优化自己，就能获得自由。",
+        colSpan: "md:col-span-12",
+        bg: "base-100",
+        textColor: "text-base-content",
+        special: true,
+    },
+];
+---
+
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>女性主义与消费主义合流可视化分析</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700;800&family=Google+Sans+Flex:wght@400;700&family=Noto+Sans+SC:wght@400;700&family=Noto+Serif+SC:wght@400;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+        <style>
+            html {
+                scroll-behavior: smooth;
+            }
+            body {
+                font-family: "Google Sans", "Google Sans Flex", "Noto Sans SC", system-ui, -apple-system, sans-serif;
+                line-height: 1.6;
+            }
+
+            h1, h2, h3, h4, h5, h6, .title {
+                font-family: "Playfair Display", "Noto Serif SC", serif;
+                letter-spacing: -0.01em;
+            }
+
+            .pattern-bg {
+                mask-image: linear-gradient(to bottom, transparent, currentColor);
+            }
+        </style>
+    </head>
+    <body
+        class="bg-base-100 text-base-content selection:bg-primary selection:text-primary-content antialiased"
+    >
+        <!-- 导航栏 -->
+        <nav
+            class="sticky top-0 z-50 bg-base-100 border-b-2 md:border-b-4 border-base-content px-4 md:px-8 py-4"
+        >
+            <div class="flex items-center justify-between max-w-7xl mx-auto">
+                <a
+                    href="/zh/blog/feminism-neoliberal-synthesis"
+                    class="font-black text-xl md:text-3xl tracking-tighter uppercase"
+                >
+                    Critical <span class="text-[#FF006E]">Feminism</span>
+                </a>
+                <div class="hidden md:flex gap-8 font-black uppercase text-sm">
+                    <a href="#neoliberal" class="hover:text-[#FF006E] cursor-pointer transition-colors no-underline text-base-content">Theoretical Frame</a>
+                    <a href="#commodity" class="hover:text-[#FF006E] cursor-pointer transition-colors no-underline text-base-content">Consumerism</a>
+                    <a href="#consciousness" class="border-2 border-base-content px-4 py-1 hover:bg-base-content hover:text-base-100 transition-all cursor-pointer no-underline text-base-content">Analysis</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <header
+            class="relative py-16 md:py-32 px-4 md:px-8 border-b-2 md:border-b-4 border-base-content bg-base-100 overflow-hidden"
+        >
+            <div class="max-w-7xl mx-auto grid grid-cols-12 gap-4">
+                <div class="col-span-12 lg:col-span-8 z-10">
+                    <h1
+                        class="font-black text-5xl md:text-8xl leading-[0.9] tracking-tighter mb-8"
+                    >
+                        女性主义、<br />
+                        新自由主义与<br />
+                        <span class="text-[#FF006E] underline decoration-8"
+                            >消费主义</span
+                        >的合流
+                    </h1>
+                    <p
+                        class="text-lg md:text-2xl max-w-2xl border-l-4 border-base-content pl-6 py-2 mb-12"
+                    >
+                        一种批判理论视角下的“虚假意识”分析。当解放诉求被重新编码为市场逻辑，我们是在赋权还是在被消费？
+                    </p>
+                </div>
+                <div
+                    class="col-span-12 lg:col-span-4 flex flex-col justify-end items-start md:items-end"
+                >
+                    <div
+                        class="w-full h-48 md:h-64 border-4 border-base-content bg-[#FF006E] relative transform rotate-3 hover:rotate-0 transition-transform duration-300"
+                    >
+                        <div
+                            class="absolute inset-0 flex items-center justify-center p-6 text-center"
+                        >
+                            <p
+                                class="font-black text-white text-3xl md:text-4xl"
+                            >
+                                SHE-ECONOMY?<br />OR<br />SHE-CONSUMED?
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- 核心内容网格 -->
+        <main class="py-12 md:py-24 px-4 md:px-8 max-w-7xl mx-auto">
+            <div
+                class="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8 auto-rows-auto"
+            >
+                {
+                    sections.map((section, idx) => (
+                        <div
+                            class={`
+                                ${section.colSpan} ${section.rowSpan || ""}
+                                p-8 md:p-12 border-2 md:border-4 border-base-content 
+                                flex flex-col justify-between group relative
+                                shadow-[4px_4px_0px_0px_oklch(var(--bc))] md:shadow-[12px_12px_0px_0px_oklch(var(--bc))]
+                                hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all
+                                ${section.bg.includes('base-') || section.bg.includes('accent') ? 'bg-' + section.bg : ''}
+                            `}
+                            style={section.bg === 'accent2' ? `background-color: ${colors.accent2}` : (section.bg === 'base-content' ? '' : '')}
+                            id={section.id}
+                        >
+                            {/* 特殊背景纹理 */}
+                            {section.hasPattern && (
+                                <div class="absolute inset-0 opacity-10 pointer-events-none overflow-hidden pattern-bg">
+                                    {[...Array(15)].map(() => (
+                                        <div
+                                            class="whitespace-nowrap font-black text-4xl"
+                                            style="transform: rotate(-15deg) translateY(20px)"
+                                        >
+                                            BUY NOW BUY LIBERATION BUY NOW BUY
+                                            LIBERATION
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            <div class="relative z-10">
+                                <h3
+                                    class={`font-black text-xs md:text-sm uppercase tracking-widest mb-4 ${section.textColor}`}
+                                >
+                                    {section.subtitle}
+                                </h3>
+                                <h2
+                                    class={`font-black text-3xl md:text-5xl leading-tight mb-6 ${section.textColor}`}
+                                >
+                                    {section.title}
+                                </h2>
+                                <p
+                                    class={`text-sm md:text-lg leading-relaxed ${section.textColor} opacity-90`}
+                                >
+                                    {section.content}
+                                </p>
+                            </div>
+
+                            <div class="mt-12 flex justify-between items-end relative z-10">
+                                <div
+                                    class={`w-12 h-12 border-2 border-current flex items-center justify-center font-bold ${section.textColor}`}
+                                >
+                                    {idx + 1}
+                                </div>
+                                {section.special && (
+                                    <a href="/zh/blog/feminism-neoliberal-synthesis" class="bg-base-content text-base-100 px-6 py-3 font-black text-sm uppercase hover:bg-[#FF006E] hover:text-white transition-colors border-2 border-base-content no-underline">
+                                        Read Full Article
+                                    </a>
+                                )}
+                            </div>
+                        </div>
+                    ))
+                }
+            </div>
+        </main>
+
+        <!-- 批判性对比区域 -->
+        <section
+            class="bg-base-content text-base-100 py-24 px-4 md:px-8 border-y-4 border-base-content"
+        >
+            <div
+                class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center"
+            >
+                <div class="order-2 md:order-1">
+                    <div
+                        class="border-4 border-base-100 p-8 md:p-12 relative bg-neutral text-neutral-content shadow-[8px_8px_0px_0px_oklch(var(--bc))]"
+                    >
+                        <div
+                            class="absolute -top-6 -left-6 bg-[#FF006E] text-white px-4 py-1 font-black text-xl border-2 border-base-100"
+                        >
+                            CONSUMERISM
+                        </div>
+                        <ul class="space-y-6 text-lg">
+                            <li class="flex gap-4">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    class="text-[#FF006E]"
+                                    ><path
+                                        d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"
+                                    ></path><path d="M12 9v4"></path><path
+                                        d="M12 17h.01"></path>
+                                </svg>
+                                <span>改变心理状态 vs 改变制度结构</span>
+                            </li>
+                            <li class="flex gap-4">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    class="text-[#FF006E]"
+                                    ><path
+                                        d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"
+                                    ></path><path d="M12 9v4"></path><path
+                                        d="M12 17h.01"></path>
+                                </svg>
+                                <span>付费安全空间 vs 公共空间安全</span>
+                            </li>
+                            <li class="flex gap-4">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    class="text-[#FF006E]"
+                                    ><path
+                                        d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"
+                                    ></path><path d="M12 9v4"></path><path
+                                        d="M12 17h.01"></path>
+                                </svg>
+                                <span>品牌故事赋权 vs 真实劳动平等</span>
+                            </li>
+                            <li class="flex gap-4">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    class="text-[#FF006E]"
+                                    ><path
+                                        d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"
+                                    ></path><path d="M12 9v4"></path><path
+                                        d="M12 17h.01"></path>
+                                </svg>
+                                <span>个人消费选择 vs 集体政治行动</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="order-1 md:order-2">
+                    <h2
+                        class="font-black text-4xl md:text-7xl mb-8 leading-none"
+                    >
+                        意识形态的<br />
+                        <span class="text-[#3A86FF]">符号置换</span>
+                    </h2>
+                    <p class="text-base-content/60 text-lg leading-relaxed">
+                        新自由主义将压迫转化为“消费机会”。它告诉女性：你可以通过购买、投资、管理和展示自己来获得自由。这种逻辑使结构性批判不断退场。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 结论区 -->
+        <section class="py-24 px-4 md:px-8 bg-base-100">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="font-black text-4xl md:text-6xl mb-12 leading-tight">
+                    从消费赋权回到结构批判
+                </h2>
+                <p class="text-xl md:text-2xl leading-relaxed mb-16">
+                    真正的女性主义批判不反对消费本身，而是反对将解放<span
+                        class="bg-base-content text-base-100 px-2">压缩</span
+                    >为消费。
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div
+                        class="border-4 border-base-content p-6 hover:bg-base-content hover:text-base-100 transition-all group"
+                    >
+                        <h4 class="font-black mb-2 uppercase">关注再分配</h4>
+                        <p class="text-sm opacity-80 group-hover:opacity-100">
+                            重新分配照护、劳动和资源。
+                        </p>
+                    </div>
+                    <div
+                        class="border-4 border-base-content p-6 hover:bg-base-content hover:text-base-100 transition-all group"
+                    >
+                        <h4 class="font-black mb-2 uppercase">关注公共性</h4>
+                        <p class="text-sm opacity-80 group-hover:opacity-100">
+                            让公共空间普遍安全，而非付费专属。
+                        </p>
+                    </div>
+                    <div
+                        class="border-4 border-base-content p-6 hover:bg-base-content hover:text-base-100 transition-all group"
+                    >
+                        <h4 class="font-black mb-2 uppercase">关注生产关系</h4>
+                        <p class="text-sm opacity-80 group-hover:opacity-100">
+                            改变企业内部真实的劳动与权力关系。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 页脚 -->
+        <footer class="bg-base-content text-base-100 py-16 px-4 md:px-8">
+            <div
+                class="max-w-7xl mx-auto border-t-2 border-gray-800 pt-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-8"
+            >
+                <div>
+                    <span class="font-black text-2xl tracking-tighter uppercase"
+                        >Theory & Practice</span
+                    >
+                    <p class="text-sm text-gray-500 mt-2">
+                        基于《女性主义、新自由主义与消费主义的合流》全文分析
+                    </p>
+                </div>
+                <div class="flex gap-6 text-sm font-bold">
+                    <button 
+                        onclick="navigator.clipboard.writeText(window.location.href); alert('Link copied!');"
+                        class="hover:text-[#FF006E] cursor-pointer flex items-center gap-2 bg-transparent border-none text-base-100 font-bold"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            ><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"
+                            ></path><polyline points="16 6 12 2 8 6"
+                            ></polyline><line x1="12" x2="12" y1="2" y2="15"
+                            ></line>
+                        </svg>
+                        SHARE ANALYSIS
+                    </button>
+                    <a
+                        href="/zh/blog/feminism-neoliberal-synthesis#references"
+                        class="hover:text-[#FF006E] cursor-pointer flex items-center gap-2 no-underline text-base-100"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            ><path
+                                d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
+                            ></path><polyline points="15 3 21 3 21 9"
+                            ></polyline><line x1="10" x2="21" y1="14" y2="3"
+                            ></line>
+                        </svg>
+                        VIEW SOURCES
+                    </a>
+                </div>
+            </div>
+            <div
+                class="max-w-7xl mx-auto mt-12 text-[10px] text-gray-700 tracking-widest uppercase font-bold"
+            >
+                DESIGNED FOR CRITICAL REFLECTION / NO ROUNDED CORNERS / NO
+                SHADOWS / NO COMPROMISE
+            </div>
+        </footer>
+    </body>
+</html>
