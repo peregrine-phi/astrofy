@@ -98,11 +98,19 @@ const day = today.getDate();
         }
 
         events.sort(() => Math.random() - 0.5);
-        track.innerHTML = events.map(e => `
-          <div class="history-ticker__item" data-year="${e.year}">
-            <div class="history-ticker__text">${e.text}</div>
-          </div>
-        `).join('');
+        track.innerHTML = '';
+        events.forEach(e => {
+          const item = document.createElement('div');
+          item.className = 'history-ticker__item';
+          item.setAttribute('data-year', e.year || '');
+
+          const textDiv = document.createElement('div');
+          textDiv.className = 'history-ticker__text';
+          textDiv.textContent = e.text;
+
+          item.appendChild(textDiv);
+          track.appendChild(item);
+        });
 
         const items = track.querySelectorAll('.history-ticker__item');
         
